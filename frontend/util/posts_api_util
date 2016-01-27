@@ -35,6 +35,7 @@ var PostApiUtil = {
   },
 
   createPost: function(data){
+    debugger
     $.ajax({
       data: {post: data},
       url: "api/posts",

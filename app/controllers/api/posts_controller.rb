@@ -2,7 +2,7 @@ class Api::PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
 
   def index
-    @posts = Post.all
+    @posts = Post.all.reverse
   end
 
 
@@ -20,6 +20,7 @@ class Api::PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
+    @post.author_id = current_user
       if @post.save
         render json: @post
       else
@@ -49,6 +50,6 @@ class Api::PostsController < ApplicationController
     end
 
     def post_params
-      params.require(:post).permit(:body, :author_id)
+      params.require(:post).permit(:body, :author_id, :profile_id)
     end
 end

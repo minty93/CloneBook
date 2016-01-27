@@ -51,7 +51,7 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var PostsForm = __webpack_require__(206);
-	var PostsIndex = __webpack_require__(207);
+	var PostsIndex = __webpack_require__(214);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -24018,7 +24018,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var PostsApiUtil = __webpack_require__(232);
+	var PostsApiUtil = __webpack_require__(207);
 	
 	var PostForm = React.createClass({
 	  displayName: "PostForm",
@@ -24027,17 +24027,10 @@
 	    return { body: "" };
 	  },
 	
-	  handleSubmit: function (e) {
-	    e.preventDefault();
-	    var post = { body: this.state.body };
-	    PostsApiUtil.createPost(post);
-	  },
-	
 	  render: function () {
-	    debugger;
 	    return React.createElement(
 	      "div",
-	      null,
+	      { className: "post-form" },
 	      React.createElement(
 	        "h2",
 	        null,
@@ -24046,15 +24039,26 @@
 	      React.createElement(
 	        "form",
 	        { onSubmit: this.handleSubmit },
-	        React.createElement("input", { type: "textarea", value: this.state.body }),
+	        React.createElement("input", { type: "text", onChange: this.changeBody }),
 	        React.createElement(
 	          "button",
-	          null,
-	          "Submit Post"
+	          { onClick: this.addUser },
+	          "Post"
 	        )
 	      )
 	    );
+	  },
+	
+	  changeBody: function (e) {
+	    this.setState({ body: e.currentTarget.value });
+	  },
+	
+	  handleSubmit: function (e) {
+	    e.preventDefault();
+	    var post = { body: this.state.body };
+	    PostsApiUtil.createPost(post);
 	  }
+	
 	});
 	
 	module.exports = PostForm;
@@ -24063,10 +24067,440 @@
 /* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var PostApiActions = __webpack_require__(208);
+	
+	var PostApiUtil = {
+	  fetchSinglePost: function(id){
+	    $.ajax({
+	      url: "api/posts" + id,
+	      type: "GET",
+	      dataType: "json",
+	      success: function(data){
+	        PostApiActions.receivePost(data);
+	      }
+	    });
+	  },
+	
+	  fetchAllPosts: function(){
+	    $.ajax({
+	      url: "api/posts",
+	      type: "GET",
+	      dataType: "json",
+	      success: function(data){
+	        PostApiActions.receivePosts(data);
+	      }
+	    });
+	  },
+	
+	  destroyPost: function(id){
+	    $.ajax({
+	      url: "api/posts" + id,
+	      type: "DELETE",
+	      dataType: "json",
+	      success: function(data){
+	        PostApiActions.deletePost(data);
+	      }
+	    });
+	  },
+	
+	  createPost: function(data){
+	    debugger
+	    $.ajax({
+	      data: {post: data},
+	      url: "api/posts",
+	      type: "POST",
+	      dataType: "json",
+	      success: function(data){
+	        PostApiActions.addPost(data);
+	      }
+	    });
+	  },
+	
+	};
+	
+	module.exports = PostApiUtil;
+
+
+/***/ },
+/* 208 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var PostConstants = __webpack_require__(209);
+	var AppDispatcher = __webpack_require__(210);
+	
+	var ApiActions = {
+	  receivePosts: function (posts) {
+	    AppDispatcher.dispatch({
+	      actionType: PostConstants.RECEIVE_POSTS,
+	      posts: posts
+	    });
+	  },
+	
+	  receivePost: function (post) {
+	    AppDispatcher.dispatch({
+	      actionType: PostConstants.RECEIVE_POST,
+	      post: post
+	    });
+	  },
+	
+	  deletePost: function (post) {
+	    AppDispatcher.dispatch({
+	      actionType: PostConstants.DELETE_POST,
+	      post: post
+	    });
+	  },
+	
+	  createPost: function (post) {
+	    AppDispatcher.dispatch({
+	      actionType: PostConstants.CREATE_POST,
+	      post: post
+	    });
+	  }
+	
+	};
+	
+	module.exports = ApiActions;
+
+/***/ },
+/* 209 */
+/***/ function(module, exports) {
+
+	
+	var PostConstants = {
+	  RECEIVE_POSTS: "RECEIVE_POSTS",
+	  RECEIVE_POST: "RECEIVE_POST",
+	  DELETE_POST: "DELETE_POST",
+	  ADD_POST: "CREATE_POST"
+	};
+	
+	module.exports = PostConstants;
+
+/***/ },
+/* 210 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Dispatcher = __webpack_require__(211).Dispatcher;
+	var AppDispatcher = new Dispatcher();
+	
+	module.exports = AppDispatcher;
+
+/***/ },
+/* 211 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+	
+	module.exports.Dispatcher = __webpack_require__(212);
+
+
+/***/ },
+/* 212 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule Dispatcher
+	 * 
+	 * @preventMunge
+	 */
+	
+	'use strict';
+	
+	exports.__esModule = true;
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var invariant = __webpack_require__(213);
+	
+	var _prefix = 'ID_';
+	
+	/**
+	 * Dispatcher is used to broadcast payloads to registered callbacks. This is
+	 * different from generic pub-sub systems in two ways:
+	 *
+	 *   1) Callbacks are not subscribed to particular events. Every payload is
+	 *      dispatched to every registered callback.
+	 *   2) Callbacks can be deferred in whole or part until other callbacks have
+	 *      been executed.
+	 *
+	 * For example, consider this hypothetical flight destination form, which
+	 * selects a default city when a country is selected:
+	 *
+	 *   var flightDispatcher = new Dispatcher();
+	 *
+	 *   // Keeps track of which country is selected
+	 *   var CountryStore = {country: null};
+	 *
+	 *   // Keeps track of which city is selected
+	 *   var CityStore = {city: null};
+	 *
+	 *   // Keeps track of the base flight price of the selected city
+	 *   var FlightPriceStore = {price: null}
+	 *
+	 * When a user changes the selected city, we dispatch the payload:
+	 *
+	 *   flightDispatcher.dispatch({
+	 *     actionType: 'city-update',
+	 *     selectedCity: 'paris'
+	 *   });
+	 *
+	 * This payload is digested by `CityStore`:
+	 *
+	 *   flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'city-update') {
+	 *       CityStore.city = payload.selectedCity;
+	 *     }
+	 *   });
+	 *
+	 * When the user selects a country, we dispatch the payload:
+	 *
+	 *   flightDispatcher.dispatch({
+	 *     actionType: 'country-update',
+	 *     selectedCountry: 'australia'
+	 *   });
+	 *
+	 * This payload is digested by both stores:
+	 *
+	 *   CountryStore.dispatchToken = flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'country-update') {
+	 *       CountryStore.country = payload.selectedCountry;
+	 *     }
+	 *   });
+	 *
+	 * When the callback to update `CountryStore` is registered, we save a reference
+	 * to the returned token. Using this token with `waitFor()`, we can guarantee
+	 * that `CountryStore` is updated before the callback that updates `CityStore`
+	 * needs to query its data.
+	 *
+	 *   CityStore.dispatchToken = flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'country-update') {
+	 *       // `CountryStore.country` may not be updated.
+	 *       flightDispatcher.waitFor([CountryStore.dispatchToken]);
+	 *       // `CountryStore.country` is now guaranteed to be updated.
+	 *
+	 *       // Select the default city for the new country
+	 *       CityStore.city = getDefaultCityForCountry(CountryStore.country);
+	 *     }
+	 *   });
+	 *
+	 * The usage of `waitFor()` can be chained, for example:
+	 *
+	 *   FlightPriceStore.dispatchToken =
+	 *     flightDispatcher.register(function(payload) {
+	 *       switch (payload.actionType) {
+	 *         case 'country-update':
+	 *         case 'city-update':
+	 *           flightDispatcher.waitFor([CityStore.dispatchToken]);
+	 *           FlightPriceStore.price =
+	 *             getFlightPriceStore(CountryStore.country, CityStore.city);
+	 *           break;
+	 *     }
+	 *   });
+	 *
+	 * The `country-update` payload will be guaranteed to invoke the stores'
+	 * registered callbacks in order: `CountryStore`, `CityStore`, then
+	 * `FlightPriceStore`.
+	 */
+	
+	var Dispatcher = (function () {
+	  function Dispatcher() {
+	    _classCallCheck(this, Dispatcher);
+	
+	    this._callbacks = {};
+	    this._isDispatching = false;
+	    this._isHandled = {};
+	    this._isPending = {};
+	    this._lastID = 1;
+	  }
+	
+	  /**
+	   * Registers a callback to be invoked with every dispatched payload. Returns
+	   * a token that can be used with `waitFor()`.
+	   */
+	
+	  Dispatcher.prototype.register = function register(callback) {
+	    var id = _prefix + this._lastID++;
+	    this._callbacks[id] = callback;
+	    return id;
+	  };
+	
+	  /**
+	   * Removes a callback based on its token.
+	   */
+	
+	  Dispatcher.prototype.unregister = function unregister(id) {
+	    !this._callbacks[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.unregister(...): `%s` does not map to a registered callback.', id) : invariant(false) : undefined;
+	    delete this._callbacks[id];
+	  };
+	
+	  /**
+	   * Waits for the callbacks specified to be invoked before continuing execution
+	   * of the current callback. This method should only be used by a callback in
+	   * response to a dispatched payload.
+	   */
+	
+	  Dispatcher.prototype.waitFor = function waitFor(ids) {
+	    !this._isDispatching ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): Must be invoked while dispatching.') : invariant(false) : undefined;
+	    for (var ii = 0; ii < ids.length; ii++) {
+	      var id = ids[ii];
+	      if (this._isPending[id]) {
+	        !this._isHandled[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): Circular dependency detected while ' + 'waiting for `%s`.', id) : invariant(false) : undefined;
+	        continue;
+	      }
+	      !this._callbacks[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): `%s` does not map to a registered callback.', id) : invariant(false) : undefined;
+	      this._invokeCallback(id);
+	    }
+	  };
+	
+	  /**
+	   * Dispatches a payload to all registered callbacks.
+	   */
+	
+	  Dispatcher.prototype.dispatch = function dispatch(payload) {
+	    !!this._isDispatching ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.') : invariant(false) : undefined;
+	    this._startDispatching(payload);
+	    try {
+	      for (var id in this._callbacks) {
+	        if (this._isPending[id]) {
+	          continue;
+	        }
+	        this._invokeCallback(id);
+	      }
+	    } finally {
+	      this._stopDispatching();
+	    }
+	  };
+	
+	  /**
+	   * Is this Dispatcher currently dispatching.
+	   */
+	
+	  Dispatcher.prototype.isDispatching = function isDispatching() {
+	    return this._isDispatching;
+	  };
+	
+	  /**
+	   * Call the callback stored with the given id. Also do some internal
+	   * bookkeeping.
+	   *
+	   * @internal
+	   */
+	
+	  Dispatcher.prototype._invokeCallback = function _invokeCallback(id) {
+	    this._isPending[id] = true;
+	    this._callbacks[id](this._pendingPayload);
+	    this._isHandled[id] = true;
+	  };
+	
+	  /**
+	   * Set up bookkeeping needed when dispatching.
+	   *
+	   * @internal
+	   */
+	
+	  Dispatcher.prototype._startDispatching = function _startDispatching(payload) {
+	    for (var id in this._callbacks) {
+	      this._isPending[id] = false;
+	      this._isHandled[id] = false;
+	    }
+	    this._pendingPayload = payload;
+	    this._isDispatching = true;
+	  };
+	
+	  /**
+	   * Clear bookkeeping used for dispatching.
+	   *
+	   * @internal
+	   */
+	
+	  Dispatcher.prototype._stopDispatching = function _stopDispatching() {
+	    delete this._pendingPayload;
+	    this._isDispatching = false;
+	  };
+	
+	  return Dispatcher;
+	})();
+	
+	module.exports = Dispatcher;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 213 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule invariant
+	 */
+	
+	"use strict";
+	
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+	
+	var invariant = function (condition, format, a, b, c, d, e, f) {
+	  if (process.env.NODE_ENV !== 'production') {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+	  }
+	
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error('Invariant Violation: ' + format.replace(/%s/g, function () {
+	        return args[argIndex++];
+	      }));
+	    }
+	
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	};
+	
+	module.exports = invariant;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 214 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1);
-	var PostStore = __webpack_require__(208);
-	var PostsIndexItem = __webpack_require__(230);
-	var PostsApiUtil = __webpack_require__(232);
+	var PostStore = __webpack_require__(215);
+	var PostsIndexItem = __webpack_require__(233);
+	var PostsApiUtil = __webpack_require__(207);
+	var PostsForm = __webpack_require__(206);
 	
 	var PostsIndex = React.createClass({
 	  displayName: "PostsIndex",
@@ -24093,11 +24527,12 @@
 	        { className: "title" },
 	        "Posts"
 	      ),
+	      React.createElement(PostsForm, null),
 	      React.createElement(
 	        "ul",
 	        { className: "posts-index" },
 	        this.state.posts.map(function (post) {
-	          return React.createElement(PostsIndexItem, { key: post.id, post: post });
+	          return React.createElement(PostsIndexItem, { key: post.id, post: post, location: this.props.location });
 	        })
 	      )
 	    );
@@ -24112,14 +24547,14 @@
 	module.exports = PostsIndex;
 
 /***/ },
-/* 208 */
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
 	var _posts = [],
-	    Store = __webpack_require__(209).Store,
-	    PostConstants = __webpack_require__(231),
-	    AppDispatcher = __webpack_require__(227),
+	    Store = __webpack_require__(216).Store,
+	    PostConstants = __webpack_require__(209),
+	    AppDispatcher = __webpack_require__(210),
 	    PostStore = new Store(AppDispatcher);
 	
 	PostStore.all = function () {
@@ -24164,7 +24599,7 @@
 	module.exports = PostStore;
 
 /***/ },
-/* 209 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24176,15 +24611,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Container = __webpack_require__(210);
-	module.exports.MapStore = __webpack_require__(214);
-	module.exports.Mixin = __webpack_require__(226);
-	module.exports.ReduceStore = __webpack_require__(215);
-	module.exports.Store = __webpack_require__(216);
+	module.exports.Container = __webpack_require__(217);
+	module.exports.MapStore = __webpack_require__(220);
+	module.exports.Mixin = __webpack_require__(232);
+	module.exports.ReduceStore = __webpack_require__(221);
+	module.exports.Store = __webpack_require__(222);
 
 
 /***/ },
-/* 210 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24206,10 +24641,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStoreGroup = __webpack_require__(211);
+	var FluxStoreGroup = __webpack_require__(218);
 	
-	var invariant = __webpack_require__(212);
-	var shallowEqual = __webpack_require__(213);
+	var invariant = __webpack_require__(213);
+	var shallowEqual = __webpack_require__(219);
 	
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -24367,7 +24802,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 211 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24386,7 +24821,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(212);
+	var invariant = __webpack_require__(213);
 	
 	/**
 	 * FluxStoreGroup allows you to execute a callback on every dispatch after
@@ -24448,62 +24883,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 212 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule invariant
-	 */
-	
-	"use strict";
-	
-	/**
-	 * Use invariant() to assert state which your program assumes to be true.
-	 *
-	 * Provide sprintf-style format (only %s is supported) and arguments
-	 * to provide information about what broke and what you were
-	 * expecting.
-	 *
-	 * The invariant message will be stripped in production, but the invariant
-	 * will remain to ensure logic does not differ in production.
-	 */
-	
-	var invariant = function (condition, format, a, b, c, d, e, f) {
-	  if (process.env.NODE_ENV !== 'production') {
-	    if (format === undefined) {
-	      throw new Error('invariant requires an error message argument');
-	    }
-	  }
-	
-	  if (!condition) {
-	    var error;
-	    if (format === undefined) {
-	      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-	    } else {
-	      var args = [a, b, c, d, e, f];
-	      var argIndex = 0;
-	      error = new Error('Invariant Violation: ' + format.replace(/%s/g, function () {
-	        return args[argIndex++];
-	      }));
-	    }
-	
-	    error.framesToPop = 1; // we don't care about invariant's own frame
-	    throw error;
-	  }
-	};
-	
-	module.exports = invariant;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
-/* 213 */
+/* 219 */
 /***/ function(module, exports) {
 
 	/**
@@ -24558,7 +24938,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 214 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24579,10 +24959,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxReduceStore = __webpack_require__(215);
-	var Immutable = __webpack_require__(225);
+	var FluxReduceStore = __webpack_require__(221);
+	var Immutable = __webpack_require__(231);
 	
-	var invariant = __webpack_require__(212);
+	var invariant = __webpack_require__(213);
 	
 	/**
 	 * This is a simple store. It allows caching key value pairs. An implementation
@@ -24708,7 +25088,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 215 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24729,10 +25109,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStore = __webpack_require__(216);
+	var FluxStore = __webpack_require__(222);
 	
-	var abstractMethod = __webpack_require__(224);
-	var invariant = __webpack_require__(212);
+	var abstractMethod = __webpack_require__(230);
+	var invariant = __webpack_require__(213);
 	
 	var FluxReduceStore = (function (_FluxStore) {
 	  _inherits(FluxReduceStore, _FluxStore);
@@ -24815,7 +25195,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 216 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24834,11 +25214,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _require = __webpack_require__(217);
+	var _require = __webpack_require__(223);
 	
 	var EventEmitter = _require.EventEmitter;
 	
-	var invariant = __webpack_require__(212);
+	var invariant = __webpack_require__(213);
 	
 	/**
 	 * This class should be extended by the stores in your application, like so:
@@ -24998,7 +25378,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 217 */
+/* 223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25011,14 +25391,14 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(218)
+	  EventEmitter: __webpack_require__(224)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 218 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25037,11 +25417,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(219);
-	var EventSubscriptionVendor = __webpack_require__(221);
+	var EmitterSubscription = __webpack_require__(225);
+	var EventSubscriptionVendor = __webpack_require__(227);
 	
-	var emptyFunction = __webpack_require__(223);
-	var invariant = __webpack_require__(222);
+	var emptyFunction = __webpack_require__(229);
+	var invariant = __webpack_require__(228);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -25215,7 +25595,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 219 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25236,7 +25616,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(220);
+	var EventSubscription = __webpack_require__(226);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -25268,7 +25648,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 220 */
+/* 226 */
 /***/ function(module, exports) {
 
 	/**
@@ -25322,7 +25702,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 221 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25341,7 +25721,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(222);
+	var invariant = __webpack_require__(228);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -25431,7 +25811,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 222 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25487,7 +25867,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 223 */
+/* 229 */
 /***/ function(module, exports) {
 
 	/**
@@ -25530,7 +25910,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 224 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25547,7 +25927,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(212);
+	var invariant = __webpack_require__(213);
 	
 	function abstractMethod(className, methodName) {
 	   true ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Subclasses of %s must override %s() with their own implementation.', className, methodName) : invariant(false) : undefined;
@@ -25557,7 +25937,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 225 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -30544,7 +30924,7 @@
 	}));
 
 /***/ },
-/* 226 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -30561,9 +30941,9 @@
 	
 	'use strict';
 	
-	var FluxStoreGroup = __webpack_require__(211);
+	var FluxStoreGroup = __webpack_require__(218);
 	
-	var invariant = __webpack_require__(212);
+	var invariant = __webpack_require__(213);
 	
 	/**
 	 * `FluxContainer` should be preferred over this mixin, but it requires using
@@ -30667,273 +31047,11 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 227 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Dispatcher = __webpack_require__(228).Dispatcher;
-	var AppDispatcher = new Dispatcher();
-	
-	module.exports = AppDispatcher;
-
-/***/ },
-/* 228 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright (c) 2014-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 */
-	
-	module.exports.Dispatcher = __webpack_require__(229);
-
-
-/***/ },
-/* 229 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright (c) 2014-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule Dispatcher
-	 * 
-	 * @preventMunge
-	 */
-	
-	'use strict';
-	
-	exports.__esModule = true;
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	var invariant = __webpack_require__(212);
-	
-	var _prefix = 'ID_';
-	
-	/**
-	 * Dispatcher is used to broadcast payloads to registered callbacks. This is
-	 * different from generic pub-sub systems in two ways:
-	 *
-	 *   1) Callbacks are not subscribed to particular events. Every payload is
-	 *      dispatched to every registered callback.
-	 *   2) Callbacks can be deferred in whole or part until other callbacks have
-	 *      been executed.
-	 *
-	 * For example, consider this hypothetical flight destination form, which
-	 * selects a default city when a country is selected:
-	 *
-	 *   var flightDispatcher = new Dispatcher();
-	 *
-	 *   // Keeps track of which country is selected
-	 *   var CountryStore = {country: null};
-	 *
-	 *   // Keeps track of which city is selected
-	 *   var CityStore = {city: null};
-	 *
-	 *   // Keeps track of the base flight price of the selected city
-	 *   var FlightPriceStore = {price: null}
-	 *
-	 * When a user changes the selected city, we dispatch the payload:
-	 *
-	 *   flightDispatcher.dispatch({
-	 *     actionType: 'city-update',
-	 *     selectedCity: 'paris'
-	 *   });
-	 *
-	 * This payload is digested by `CityStore`:
-	 *
-	 *   flightDispatcher.register(function(payload) {
-	 *     if (payload.actionType === 'city-update') {
-	 *       CityStore.city = payload.selectedCity;
-	 *     }
-	 *   });
-	 *
-	 * When the user selects a country, we dispatch the payload:
-	 *
-	 *   flightDispatcher.dispatch({
-	 *     actionType: 'country-update',
-	 *     selectedCountry: 'australia'
-	 *   });
-	 *
-	 * This payload is digested by both stores:
-	 *
-	 *   CountryStore.dispatchToken = flightDispatcher.register(function(payload) {
-	 *     if (payload.actionType === 'country-update') {
-	 *       CountryStore.country = payload.selectedCountry;
-	 *     }
-	 *   });
-	 *
-	 * When the callback to update `CountryStore` is registered, we save a reference
-	 * to the returned token. Using this token with `waitFor()`, we can guarantee
-	 * that `CountryStore` is updated before the callback that updates `CityStore`
-	 * needs to query its data.
-	 *
-	 *   CityStore.dispatchToken = flightDispatcher.register(function(payload) {
-	 *     if (payload.actionType === 'country-update') {
-	 *       // `CountryStore.country` may not be updated.
-	 *       flightDispatcher.waitFor([CountryStore.dispatchToken]);
-	 *       // `CountryStore.country` is now guaranteed to be updated.
-	 *
-	 *       // Select the default city for the new country
-	 *       CityStore.city = getDefaultCityForCountry(CountryStore.country);
-	 *     }
-	 *   });
-	 *
-	 * The usage of `waitFor()` can be chained, for example:
-	 *
-	 *   FlightPriceStore.dispatchToken =
-	 *     flightDispatcher.register(function(payload) {
-	 *       switch (payload.actionType) {
-	 *         case 'country-update':
-	 *         case 'city-update':
-	 *           flightDispatcher.waitFor([CityStore.dispatchToken]);
-	 *           FlightPriceStore.price =
-	 *             getFlightPriceStore(CountryStore.country, CityStore.city);
-	 *           break;
-	 *     }
-	 *   });
-	 *
-	 * The `country-update` payload will be guaranteed to invoke the stores'
-	 * registered callbacks in order: `CountryStore`, `CityStore`, then
-	 * `FlightPriceStore`.
-	 */
-	
-	var Dispatcher = (function () {
-	  function Dispatcher() {
-	    _classCallCheck(this, Dispatcher);
-	
-	    this._callbacks = {};
-	    this._isDispatching = false;
-	    this._isHandled = {};
-	    this._isPending = {};
-	    this._lastID = 1;
-	  }
-	
-	  /**
-	   * Registers a callback to be invoked with every dispatched payload. Returns
-	   * a token that can be used with `waitFor()`.
-	   */
-	
-	  Dispatcher.prototype.register = function register(callback) {
-	    var id = _prefix + this._lastID++;
-	    this._callbacks[id] = callback;
-	    return id;
-	  };
-	
-	  /**
-	   * Removes a callback based on its token.
-	   */
-	
-	  Dispatcher.prototype.unregister = function unregister(id) {
-	    !this._callbacks[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.unregister(...): `%s` does not map to a registered callback.', id) : invariant(false) : undefined;
-	    delete this._callbacks[id];
-	  };
-	
-	  /**
-	   * Waits for the callbacks specified to be invoked before continuing execution
-	   * of the current callback. This method should only be used by a callback in
-	   * response to a dispatched payload.
-	   */
-	
-	  Dispatcher.prototype.waitFor = function waitFor(ids) {
-	    !this._isDispatching ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): Must be invoked while dispatching.') : invariant(false) : undefined;
-	    for (var ii = 0; ii < ids.length; ii++) {
-	      var id = ids[ii];
-	      if (this._isPending[id]) {
-	        !this._isHandled[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): Circular dependency detected while ' + 'waiting for `%s`.', id) : invariant(false) : undefined;
-	        continue;
-	      }
-	      !this._callbacks[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): `%s` does not map to a registered callback.', id) : invariant(false) : undefined;
-	      this._invokeCallback(id);
-	    }
-	  };
-	
-	  /**
-	   * Dispatches a payload to all registered callbacks.
-	   */
-	
-	  Dispatcher.prototype.dispatch = function dispatch(payload) {
-	    !!this._isDispatching ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.') : invariant(false) : undefined;
-	    this._startDispatching(payload);
-	    try {
-	      for (var id in this._callbacks) {
-	        if (this._isPending[id]) {
-	          continue;
-	        }
-	        this._invokeCallback(id);
-	      }
-	    } finally {
-	      this._stopDispatching();
-	    }
-	  };
-	
-	  /**
-	   * Is this Dispatcher currently dispatching.
-	   */
-	
-	  Dispatcher.prototype.isDispatching = function isDispatching() {
-	    return this._isDispatching;
-	  };
-	
-	  /**
-	   * Call the callback stored with the given id. Also do some internal
-	   * bookkeeping.
-	   *
-	   * @internal
-	   */
-	
-	  Dispatcher.prototype._invokeCallback = function _invokeCallback(id) {
-	    this._isPending[id] = true;
-	    this._callbacks[id](this._pendingPayload);
-	    this._isHandled[id] = true;
-	  };
-	
-	  /**
-	   * Set up bookkeeping needed when dispatching.
-	   *
-	   * @internal
-	   */
-	
-	  Dispatcher.prototype._startDispatching = function _startDispatching(payload) {
-	    for (var id in this._callbacks) {
-	      this._isPending[id] = false;
-	      this._isHandled[id] = false;
-	    }
-	    this._pendingPayload = payload;
-	    this._isDispatching = true;
-	  };
-	
-	  /**
-	   * Clear bookkeeping used for dispatching.
-	   *
-	   * @internal
-	   */
-	
-	  Dispatcher.prototype._stopDispatching = function _stopDispatching() {
-	    delete this._pendingPayload;
-	    this._isDispatching = false;
-	  };
-	
-	  return Dispatcher;
-	})();
-	
-	module.exports = Dispatcher;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
-/* 230 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var PostStore = __webpack_require__(208);
+	var PostStore = __webpack_require__(215);
 	
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
@@ -30978,118 +31096,6 @@
 	});
 	
 	module.exports = PostsIndexItems;
-
-/***/ },
-/* 231 */
-/***/ function(module, exports) {
-
-	
-	var PostConstants = {
-	  RECEIVE_POSTS: "RECEIVE_POSTS",
-	  RECEIVE_POST: "RECEIVE_POST",
-	  DELETE_POST: "DELETE_POST",
-	  ADD_POST: "CREATE_POST"
-	};
-	
-	module.exports = PostConstants;
-
-/***/ },
-/* 232 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var PostApiActions = __webpack_require__(234);
-	
-	var PostApiUtil = {
-	  fetchSinglePost: function(id){
-	    $.ajax({
-	      url: "api/posts" + id,
-	      type: "GET",
-	      dataType: "json",
-	      success: function(data){
-	        PostApiActions.receivePost(data);
-	      }
-	    });
-	  },
-	
-	  fetchAllPosts: function(){
-	    $.ajax({
-	      url: "api/posts",
-	      type: "GET",
-	      dataType: "json",
-	      success: function(data){
-	        PostApiActions.receivePosts(data);
-	      }
-	    });
-	  },
-	
-	  destroyPost: function(id){
-	    $.ajax({
-	      url: "api/posts" + id,
-	      type: "DELETE",
-	      dataType: "json",
-	      success: function(data){
-	        PostApiActions.deletePost(data);
-	      }
-	    });
-	  },
-	
-	  createPost: function(data){
-	    $.ajax({
-	      data: {post: data},
-	      url: "api/posts",
-	      type: "POST",
-	      dataType: "json",
-	      success: function(data){
-	        PostApiActions.addPost(data);
-	      }
-	    });
-	  },
-	
-	};
-	
-	module.exports = PostApiUtil;
-
-
-/***/ },
-/* 233 */,
-/* 234 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var PostConstants = __webpack_require__(231);
-	var AppDispatcher = __webpack_require__(227);
-	
-	var ApiActions = {
-	  receivePosts: function (posts) {
-	    AppDispatcher.dispatch({
-	      actionType: PostConstants.RECEIVE_POSTS,
-	      posts: posts
-	    });
-	  },
-	
-	  receivePost: function (post) {
-	    AppDispatcher.dispatch({
-	      actionType: PostConstants.RECEIVE_POST,
-	      post: post
-	    });
-	  },
-	
-	  deletePost: function (post) {
-	    AppDispatcher.dispatch({
-	      actionType: PostConstants.DELETE_POST,
-	      post: post
-	    });
-	  },
-	
-	  createPost: function (post) {
-	    AppDispatcher.dispatch({
-	      actionType: PostConstants.CREATE_POST,
-	      post: post
-	    });
-	  }
-	
-	};
-	
-	module.exports = ApiActions;
 
 /***/ }
 /******/ ]);

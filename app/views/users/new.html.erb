@@ -1,4 +1,3 @@
-<div id="root">
 
 <header class="header group">
 
@@ -34,7 +33,8 @@
 
 </header>
 
-  <div class="main group">
+
+<div class="main group">
 
   <section class="sidebar group">
     <h2>Connect with friends all around the Universe on CloneBook</h2>
@@ -49,7 +49,7 @@
   <section class="main-content group">
   <h3>Sign Up</h3>
 
-  <form action="<%= users_url %>" method="post" class="signin group">
+  <form action="<%= users_url %>" method="post" class="signup group">
     <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
 
     <label>
@@ -86,7 +86,5 @@
     <input type="submit" value="Sign Up">
   </form>
   </section>
-
-  </div>
 
 </div>

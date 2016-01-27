@@ -8,6 +8,10 @@ class User < ActiveRecord::Base
 
   attr_reader :password
 
+  has_many(:authored_posts, foreign_key: :author_id, primary_key: :id, class_name: "Post")
+  
+  has_many(:received_posts, foreign_key: :profile_id, primary_key: :id, class_name: "User")
+
   def self.find_by_credentials(email,password)
     user = User.find_by_email(email)
     return nil if user.nil?

@@ -2,12 +2,12 @@
 
 ## Rails
 ### Models
-* User
+<!-- * User -->
 * Post
 
 ### Controllers
-* UsersController (create, new)
-* SessionsController (create, new, destroy)
+<!-- * UsersController (create, new)
+* SessionsController (create, new, destroy) -->
 * Api::PostsController (create, destroy, index, show, update)
 
 ### Views

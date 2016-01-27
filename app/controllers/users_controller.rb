@@ -3,6 +3,7 @@ class UsersController < ApplicationController
 
 
   def show
+    render json: @user
   end
 
   # GET /users/new

@@ -14,7 +14,7 @@ description | text      | not null -->
 column name | data type | details
 ------------|-----------|-----------------------
 id          | integer   | not null, primary key
-author_id   | intege    | not null
+author_id   | integer  | not null
 body        | string    |
 commentable_type| string|
 commentable_id| integer | not null, foreign key (references commentable), indexed
@@ -25,6 +25,7 @@ column name | data type | details
 id          | integer   | not null, primary key
 body        | text      | not null
 author_id   | integer   | not null not null, foreign key (references user), indexed
+profile_id  | integer   | not null not null, foreign key (references user), indexed
 
 
 

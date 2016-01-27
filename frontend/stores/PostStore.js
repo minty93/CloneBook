@@ -1,7 +1,7 @@
 
 var _posts = [],
     Store = require ("flux/utils").Store,
-    PostConstants = require("../constants/PostConstants"),
+    PostConstants = require("../constants/post_constants"),
     AppDispatcher = require('../dispatcher/dispatcher'),
     PostStore = new Store(AppDispatcher);
 
@@ -9,18 +9,9 @@ PostStore.all = function () {
   return _posts.slice(0);
 };
 
-PostStore.__onDispatch = function (payload) {
-  switch(payload.actionType) {
-  case PostConstants.:
-    PostStore._addPost(payload.post);
-    break;
-  case PostConstants.:
-    PostStore._removePost(payload.post);
-    break;
-  case PostConstants.:
-    PostStore._groupUpdate(payload.posts);
-    break;
-  }
+PostStore.resetPosts = function(posts){
+  _posts = posts;
+  this.__emitChange();
 };
 
 PostStore._addPost = function (post) {
@@ -31,7 +22,6 @@ PostStore._addPost = function (post) {
   }
 };
 
-
 PostStore._removePost = function (post) {
   var idx = _posts.indexOf(post);
   if (idx != -1) {
@@ -39,5 +29,20 @@ PostStore._removePost = function (post) {
     this.__emitChange();
   }
 };
+
+PostStore.__onDispatch = function (payload) {
+  switch(payload.actionType) {
+  case PostConstants.RECEIVE_POSTS:
+    PostStore.resetPosts(payload.posts);
+    break;
+  case PostConstants.DELETE_POST:
+    PostStore._removePost(payload.post);
+    break;
+  case PostConstants.RECEIVE_POST:
+    PostStore._addPost(payload.post);
+    break;
+  }
+};
+
 
 module.exports = PostStore;

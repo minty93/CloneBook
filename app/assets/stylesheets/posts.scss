@@ -8,3 +8,60 @@
   height: 200px;
   color: black;
 }
+
+.newsfeed {
+  background: #E9EAED;
+}
+
+.posts-index {
+  margin: auto;
+  width: 450px;
+}
+
+.post-form {
+  border: 1px solid black;
+  width: 494px;
+  height: 200px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+
+  background: white;
+}
+
+.post-form > form > input {
+  background: white;
+  border-top: 1px solid #E5E5E5;
+  border-bottom: 1px solid black;
+  height: 169px;
+  width: 492px;
+  margin: auto;
+  padding: 50px;
+}
+
+.post-form > form > button {
+  width: auto;
+  height: 22px;
+  background: #4C67A1;
+  float: right;
+  margin: 4px;
+  margin-right: 10px;
+  color: white;
+  padding: 3px;
+  border-radius: 3px;
+
+}
+
+.post-index-items {
+  width: 494px;
+  height: 200px;
+  margin-bottom: 15px;
+  background: white;
+  border: 1px solid black;
+
+}
+
+.actual-post{
+  margin: auto;
+  padding: 50px;
+
+}

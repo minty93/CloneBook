@@ -10,14 +10,14 @@ PostStore.all = function () {
 };
 
 PostStore.resetPosts = function(posts){
-  _posts = posts;
+  _posts = posts.reverse();
   this.__emitChange();
 };
 
 PostStore._addPost = function (post) {
   var idx = _posts.indexOf(post);
   if (idx == -1) {
-    _posts.push(post);
+    _posts.unshift(post);
   }
   this.__emitChange();
 };

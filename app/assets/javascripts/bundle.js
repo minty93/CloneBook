@@ -62,8 +62,8 @@
 	      null,
 	      React.createElement(
 	        'h3',
-	        null,
-	        'I made it here and am rendering'
+	        { className: 'header-bar' },
+	        'Temporary HeaderBar'
 	      ),
 	      this.props.children
 	    );
@@ -24019,6 +24019,7 @@
 
 	var React = __webpack_require__(1);
 	var PostsApiUtil = __webpack_require__(207);
+	var PostStore = __webpack_require__(215);
 	
 	var PostForm = React.createClass({
 	  displayName: "PostForm",
@@ -24032,11 +24033,6 @@
 	    return React.createElement(
 	      "div",
 	      { className: "post-form" },
-	      React.createElement(
-	        "h2",
-	        null,
-	        "Create A Post"
-	      ),
 	      React.createElement(
 	        "form",
 	        { onSubmit: this.handleSubmit },
@@ -24063,8 +24059,8 @@
 	  handleSubmit: function (e) {
 	    e.preventDefault();
 	    var post = { body: this.state.body, profile_id: this.props.location.hash };
-	    this.setState({ body: "" });
 	    PostsApiUtil.createPost(post);
+	    this.setState({ body: "" });
 	  }
 	
 	});
@@ -24528,19 +24524,22 @@
 	  render: function () {
 	    return React.createElement(
 	      "div",
-	      null,
-	      React.createElement(
-	        "h1",
-	        { className: "title" },
-	        "Posts"
-	      ),
-	      React.createElement(PostsForm, { location: this.props.location }),
+	      { className: "newsfeed" },
 	      React.createElement(
 	        "ul",
 	        { className: "posts-index" },
-	        this.state.posts.map(function (post) {
-	          return React.createElement(PostsIndexItem, { key: post.id, post: post });
-	        })
+	        React.createElement(
+	          "li",
+	          null,
+	          React.createElement(PostsForm, { location: this.props.location })
+	        ),
+	        React.createElement(
+	          "li",
+	          null,
+	          this.state.posts.map(function (post) {
+	            return React.createElement(PostsIndexItem, { key: post.id, post: post });
+	          })
+	        )
 	      )
 	    );
 	  },
@@ -24569,14 +24568,14 @@
 	};
 	
 	PostStore.resetPosts = function (posts) {
-	  _posts = posts;
+	  _posts = posts.reverse();
 	  this.__emitChange();
 	};
 	
 	PostStore._addPost = function (post) {
 	  var idx = _posts.indexOf(post);
 	  if (idx == -1) {
-	    _posts.push(post);
+	    _posts.unshift(post);
 	  }
 	  this.__emitChange();
 	};
@@ -31066,18 +31065,18 @@
 	  render: function () {
 	    return React.createElement(
 	      "div",
-	      { className: "post-index-items" },
-	      React.createElement(
-	        "h1",
-	        { className: "title" },
-	        "Post"
-	      ),
+	      null,
 	      React.createElement(
 	        "ul",
-	        null,
+	        { className: "post-index-items" },
+	        React.createElement(
+	          "h1",
+	          { className: "title" },
+	          "posted"
+	        ),
 	        React.createElement(
 	          "li",
-	          null,
+	          { className: "actual-post" },
 	          this.props.post.body
 	        )
 	      )

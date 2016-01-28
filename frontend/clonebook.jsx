@@ -13,7 +13,7 @@ var App = React.createClass({
   render: function(){
     return (
       <div>
-        <h3>I made it here and am rendering</h3>
+        <h3 className="header-bar">Temporary HeaderBar</h3>
         {this.props.children}
       </div>
     );

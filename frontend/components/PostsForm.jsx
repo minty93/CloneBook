@@ -1,5 +1,7 @@
 var React = require("react");
 var PostsApiUtil = require('../util/posts_api_util');
+var PostStore = require("../stores/PostStore");
+
 
 
 var PostForm = React.createClass({
@@ -11,7 +13,6 @@ var PostForm = React.createClass({
 
     return (
       <div className="post-form">
-        <h2>Create A Post</h2>
         <form onSubmit={this.handleSubmit}>
           <input type="text" onChange={this.changeBody}/>
           <button>Post</button>
@@ -33,8 +34,8 @@ var PostForm = React.createClass({
   handleSubmit: function(e){
     e.preventDefault();
     var post = {body: this.state.body, profile_id: this.props.location.hash };
-    this.setState({body: "" });
     PostsApiUtil.createPost(post);
+    this.setState({body: "" });
   },
 
 

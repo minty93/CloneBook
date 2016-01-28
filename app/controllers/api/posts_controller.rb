@@ -2,7 +2,7 @@ class Api::PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
 
   def index
-    @posts = Post.all.reverse
+    @posts = Post.all
   end
 
 
@@ -25,6 +25,7 @@ class Api::PostsController < ApplicationController
       @post.profile_id = current_user.id
     end
     @post.author_id = current_user.id
+    @post.author_name = current_user.fname + " " + current_user.lname
       if @post.save
         render json: @post
       else

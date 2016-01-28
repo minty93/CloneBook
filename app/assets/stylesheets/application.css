@@ -64,3 +64,10 @@
    content: "";
    display: block;
  }
+
+ .header-bar {
+   width: auto;
+   margin: 0 auto;
+   height: 45px;
+   background: #4c67a1;
+ }

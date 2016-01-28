@@ -106,7 +106,7 @@
 }
 
 .sidebar {
-  width: 409px;
+  width: 40%;
   height: 516px;
   float: left;
   margin-left: 70px;
@@ -126,9 +126,9 @@
   width: 409px;
 }
 .main-content {
-  float: right;
+  float: left;
   display: block;
-  width: 40%;
+  width: 50%;
 
 }
 
@@ -138,9 +138,17 @@
   margin-bottom: 70px;
 }
 
+.signup > label {
+
+  padding: 10px 0 0px 0px;
+  display: block;
+  margin: 5px
+}
+
 .signup > label > input{
   width: 150px;
   height: 20px;
   background: white;
   color: black;
+  border: 1px solid black;
 }

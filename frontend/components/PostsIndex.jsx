@@ -22,15 +22,14 @@ var PostsIndex = React.createClass({
 
   render: function() {
     return (
-      <div>
-        <h1 className="title">Posts</h1>
-        <PostsForm location={this.props.location}/>
+      <div className="newsfeed">
         <ul className="posts-index">
-          {
+        <li><PostsForm location={this.props.location}/></li>
+          <li>{
             this.state.posts.map(function(post) {
               return <PostsIndexItem key={post.id} post={post} />;
             })
-          }
+          }</li>
         </ul>
       </div>
     );

@@ -45,6 +45,7 @@ class Api::PostsController < ApplicationController
 
   def destroy
     @post.destroy
+    render json: "Post destroyed"
   end
 
   private

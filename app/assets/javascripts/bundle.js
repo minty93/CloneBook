@@ -24081,7 +24081,7 @@
 	var PostApiUtil = {
 	  fetchSinglePost: function(id){
 	    $.ajax({
-	      url: "api/posts" + id,
+	      url: "api/posts/" + id,
 	      type: "GET",
 	      dataType: "json",
 	      success: function(data){
@@ -24103,7 +24103,7 @@
 	
 	  destroyPost: function(id){
 	    $.ajax({
-	      url: "api/posts" + id,
+	      url: "api/posts/" + id,
 	      type: "DELETE",
 	      dataType: "json",
 	      success: function(data){
@@ -31064,7 +31064,7 @@
 
 	var React = __webpack_require__(1);
 	var PostStore = __webpack_require__(214);
-	
+	var PostsApiUtil = __webpack_require__(207);
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
 	
@@ -31085,9 +31085,20 @@
 	          "li",
 	          { className: "actual-post" },
 	          this.props.post.body
+	        ),
+	        React.createElement(
+	          "button",
+	          { onClick: this.handleDelete },
+	          "Delete Post"
 	        )
 	      )
 	    );
+	  },
+	
+	  handleDelete: function (e) {
+	    e.preventDefault();
+	    var that = this;
+	    PostsApiUtil.destroyPost(this.props.post.id);
 	  }
 	
 	});

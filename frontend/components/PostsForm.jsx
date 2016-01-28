@@ -10,11 +10,10 @@ var PostForm = React.createClass({
   },
 
   render: function(){
-
     return (
       <div className="post-form">
         <form onSubmit={this.handleSubmit}>
-          <input type="text" onChange={this.changeBody}/>
+          <input type="text" onChange={this.changeBody} value={this.state.body}/>
           <button>Post</button>
         </form>
       </div>
@@ -33,9 +32,11 @@ var PostForm = React.createClass({
 
   handleSubmit: function(e){
     e.preventDefault();
+    var that = this;
     var post = {body: this.state.body, profile_id: this.props.location.hash };
-    PostsApiUtil.createPost(post);
-    this.setState({body: "" });
+    var callback = function(){
+      that.setState({body: "" });};
+    PostsApiUtil.createPost(post, callback);
   },
 
 

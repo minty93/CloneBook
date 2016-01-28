@@ -34,13 +34,14 @@ var PostApiUtil = {
     });
   },
 
-  createPost: function(data){
+  createPost: function(data, callback){
     $.ajax({
       data: {post: data},
       url: "api/posts",
       type: "POST",
       dataType: "json",
       success: function(data){
+        callback && callback();
         PostApiActions.createPost(data);
       }
     });

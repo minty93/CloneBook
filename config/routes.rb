@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :comments
   root to: 'static_pages#root'
 
   resources :users, only: [:create, :new]
@@ -6,7 +7,9 @@ Rails.application.routes.draw do
 
 
   namespace :api, defaults: {format: :json} do
-    resources :posts
+    resources :posts do
+      resources :comments
+    end
     resources :users, only: [:show, :index]
   end
 

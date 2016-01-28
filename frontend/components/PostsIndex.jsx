@@ -20,14 +20,21 @@ var PostsIndex = React.createClass({
     this.listener.remove();
   },
 
+
+
+
   render: function() {
     return (
       <div className="newsfeed">
         <ul className="posts-index">
         <li><PostsForm params={this.props.params}/></li>
-          <li>{
-            this.state.posts.map(function(post) {
-              return <PostsIndexItem key={post.id} post={post} />;
+          <li>
+            {
+              this.state.posts.map(function(post) {
+              return(
+              <div>
+                <PostsIndexItem key={post.id} post={post}/>
+              </div>);
             })
           }</li>
         </ul>

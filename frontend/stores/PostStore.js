@@ -15,7 +15,11 @@ PostStore.resetPosts = function(posts){
 };
 
 PostStore._addPost = function (post) {
-  var idx = _posts.indexOf(post);
+  var _postsIds = [];
+  for (var i = 0; i < _posts.length; i++) {
+    _postsIds.push(_posts[i].id);
+  }
+  var idx = _postsIds.indexOf(post.id);
   if (idx == -1) {
     _posts.unshift(post);
   }
@@ -23,7 +27,11 @@ PostStore._addPost = function (post) {
 };
 
 PostStore._removePost = function (post) {
-  var idx = _posts.indexOf(post);
+  var _postsIds = [];
+  for (var i = 0; i < _posts.length; i++) {
+    _postsIds.push(_posts[i].id);
+  }
+  var idx = _postsIds.indexOf(post.id);
   if (idx != -1) {
     _posts.splice(idx, 1);
     this.__emitChange();

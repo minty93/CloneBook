@@ -24522,7 +24522,11 @@
 	};
 	
 	PostStore._addPost = function (post) {
-	  var idx = _posts.indexOf(post);
+	  var _postsIds = [];
+	  for (var i = 0; i < _posts.length; i++) {
+	    _postsIds.push(_posts[i].id);
+	  }
+	  var idx = _postsIds.indexOf(post.id);
 	  if (idx == -1) {
 	    _posts.unshift(post);
 	  }
@@ -24530,7 +24534,11 @@
 	};
 	
 	PostStore._removePost = function (post) {
-	  var idx = _posts.indexOf(post);
+	  var _postsIds = [];
+	  for (var i = 0; i < _posts.length; i++) {
+	    _postsIds.push(_posts[i].id);
+	  }
+	  var idx = _postsIds.indexOf(post.id);
 	  if (idx != -1) {
 	    _posts.splice(idx, 1);
 	    this.__emitChange();
@@ -31043,7 +31051,11 @@
 	          "li",
 	          null,
 	          this.state.posts.map(function (post) {
-	            return React.createElement(PostsIndexItem, { key: post.id, post: post });
+	            return React.createElement(
+	              "div",
+	              null,
+	              React.createElement(PostsIndexItem, { key: post.id, post: post })
+	            );
 	          })
 	        )
 	      )
@@ -31067,6 +31079,36 @@
 	var PostsApiUtil = __webpack_require__(207);
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
+	
+	  //  getInitialState: function(){
+	  //    var postId = this.props.post.id;
+	  //    var post = this._findPostById(postId) || {} ;
+	  //    return { post: post };
+	  //  },
+	  //
+	  //  _findPostById: function (id) {
+	  //     var res;
+	  //     PostStore.all().forEach(function (post) {
+	  //      if (id == post.id) {
+	  //        res = post;
+	  //      }
+	  //    }.bind(this));
+	  //     return res;
+	  //  },
+	  //
+	  //  componentDidMount: function () {
+	  //    this.listener = PostStore.addListener(this._onChange);
+	  //  },
+	  //
+	  //  componentWillUnmount: function () {
+	  //    this.listener.remove();
+	  //  },
+	  //
+	  //  _onChange: function () {
+	  //   var postId = this.props.post.postId;
+	  //   var post = this._findPostById(this.state.post.id);
+	  //   this.setState({ post: post });
+	  // },
 	
 	  render: function () {
 	    return React.createElement(

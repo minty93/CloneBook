@@ -52,6 +52,7 @@
 	var IndexRoute = ReactRouter.IndexRoute;
 	var PostsForm = __webpack_require__(206);
 	var PostsIndex = __webpack_require__(232);
+	var UserProfile = __webpack_require__(234);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -74,7 +75,8 @@
 	  Route,
 	  { path: '/', component: App },
 	  React.createElement(IndexRoute, { component: PostsIndex }),
-	  React.createElement(Route, { path: 'posts/new', component: PostsForm })
+	  React.createElement(Route, { path: 'posts/new', component: PostsForm }),
+	  React.createElement(Route, { path: 'users/:userId', component: UserProfile })
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
@@ -24134,7 +24136,7 @@
 	var PostConstants = __webpack_require__(209);
 	var AppDispatcher = __webpack_require__(210);
 	
-	var ApiActions = {
+	var PostApiActions = {
 	  receivePosts: function (posts) {
 	    AppDispatcher.dispatch({
 	      actionType: PostConstants.RECEIVE_POSTS,
@@ -24165,7 +24167,7 @@
 	
 	};
 	
-	module.exports = ApiActions;
+	module.exports = PostApiActions;
 
 /***/ },
 /* 209 */
@@ -31066,7 +31068,6 @@
 	  displayName: "PostsIndexItems",
 	
 	  render: function () {
-	    debugger;
 	    return React.createElement(
 	      "div",
 	      null,
@@ -31091,6 +31092,170 @@
 	});
 	
 	module.exports = PostsIndexItems;
+
+/***/ },
+/* 234 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var UserApiUtil = __webpack_require__(237);
+	var UserStore = __webpack_require__(235);
+	var PostsForm = __webpack_require__(206);
+	var PostsIndex = __webpack_require__(232);
+	
+	var UserProfile = React.createClass({
+	  displayName: "UserProfile",
+	
+	  getInitialState: function () {
+	    var userId = this.props.params.userId;
+	    var user = this._findUserById(userId) || {};
+	    return { user: user };
+	  },
+	
+	  _findUserById: function (id) {
+	    var res;
+	    UserStore.all().forEach(function (user) {
+	      if (id == user.id) {
+	        res = user;
+	      }
+	    }.bind(this));
+	    return res;
+	  },
+	
+	  componentDidMount: function () {
+	    this.listener = UserStore.addListener(this._onChange);
+	    UserApiUtil.fetchAllUsers();
+	  },
+	
+	  _onChange: function () {
+	    debugger;
+	    var userId = this.props.params.userId;
+	    var user = this._findUserById(userId);
+	    this.setState({ user: user });
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      "div",
+	      { className: "user-profile" },
+	      React.createElement(
+	        "h1",
+	        null,
+	        this.state.user.fname
+	      )
+	    );
+	  }
+	
+	});
+	module.exports = UserProfile;
+
+/***/ },
+/* 235 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var _users = [],
+	    Store = __webpack_require__ (215).Store,
+	    UserConstants = __webpack_require__(236),
+	    AppDispatcher = __webpack_require__(210),
+	    UserStore = new Store(AppDispatcher);
+	
+	UserStore.all = function () {
+	  return _users.slice(0);
+	};
+	
+	UserStore.resetUsers = function(users){
+	  _users = users;
+	  this.__emitChange();
+	};
+	
+	// UserStore._addUser = function (user) {
+	//   var idx = _users.indexOf(user);
+	//   if (idx == -1) {
+	//     _users.unshift(user);
+	//   }
+	//   this.__emitChange();
+	// };
+	//
+	// UserStore._removeUser = function (user) {
+	//   var idx = _users.indexOf(user);
+	//   if (idx != -1) {
+	//     _users.splice(idx, 1);
+	//     this.__emitChange();
+	//   }
+	// };
+	
+	UserStore.__onDispatch = function (payload) {
+	  switch(payload.actionType) {
+	  case UserConstants.RECEIVE_USERS:
+	    UserStore.resetUsers(payload.users);
+	    break;
+	  // case UserConstants.DELETE_POST:
+	  //   UserStore._removeUser(payload.user);
+	  //   break;
+	  // case UserConstants.CREATE_POST:
+	  //   UserStore._addUser(payload.user);
+	  //   break;
+	  }
+	};
+	
+	
+	module.exports = UserStore;
+
+
+/***/ },
+/* 236 */
+/***/ function(module, exports) {
+
+	
+	var UserConstants = {
+	  RECEIVE_USERS: "RECEIVE_USERS"
+	};
+	
+	module.exports = UserConstants;
+
+/***/ },
+/* 237 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var UserApiActions = __webpack_require__(238);
+	
+	var UsersApiUtil = {
+	fetchAllUsers: function(){
+	  $.ajax({
+	    url: "api/users",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data){
+	      UserApiActions.receiveUsers(data);
+	    }
+	  });
+	},
+	
+	};
+	
+	module.exports = UsersApiUtil;
+
+
+/***/ },
+/* 238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var UserConstants = __webpack_require__(209);
+	var AppDispatcher = __webpack_require__(210);
+	
+	var UserApiActions = {
+	  receiveUsers: function (users) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_USERS,
+	      users: users
+	    });
+	  },
+	
+	};
+	
+	module.exports = UserApiActions;
+
 
 /***/ }
 /******/ ]);

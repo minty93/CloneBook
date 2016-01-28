@@ -5,7 +5,6 @@ var PostsIndexItems = React.createClass({
 
 
   render: function() {
-    debugger
     return (
       <div >
         <ul className="post-index-items">

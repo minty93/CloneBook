@@ -6,6 +6,7 @@ var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
 var PostsForm = require('./components/PostsForm');
 var PostsIndex = require('./components/PostsIndex');
+var UserProfile = require('./components/UserProfile');
 
 
 
@@ -24,6 +25,7 @@ var routes = (
   <Route path="/" component={App}>
     <IndexRoute component={PostsIndex}/>
     <Route path="posts/new" component={PostsForm}/>
+    <Route path="users/:userId" component={UserProfile}/>
   </Route>
 );
 

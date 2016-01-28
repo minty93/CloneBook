@@ -1,7 +1,7 @@
 var PostConstants = require('../constants/post_constants');
 var AppDispatcher = require('../dispatcher/dispatcher');
 
-var ApiActions = {
+var PostApiActions = {
   receivePosts: function (posts) {
     AppDispatcher.dispatch({
       actionType: PostConstants.RECEIVE_POSTS,
@@ -32,4 +32,4 @@ var ApiActions = {
 
 };
 
-module.exports = ApiActions;
+module.exports = PostApiActions;

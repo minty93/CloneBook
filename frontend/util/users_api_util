@@ -1,0 +1,17 @@
+var UserApiActions = require("../actions/user_api_actions");
+
+var UsersApiUtil = {
+fetchAllUsers: function(){
+  $.ajax({
+    url: "api/users",
+    type: "GET",
+    dataType: "json",
+    success: function(data){
+      UserApiActions.receiveUsers(data);
+    }
+  });
+},
+
+};
+
+module.exports = UsersApiUtil;

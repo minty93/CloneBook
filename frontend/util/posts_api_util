@@ -35,14 +35,13 @@ var PostApiUtil = {
   },
 
   createPost: function(data){
-    debugger
     $.ajax({
       data: {post: data},
       url: "api/posts",
       type: "POST",
       dataType: "json",
       success: function(data){
-        PostApiActions.addPost(data);
+        PostApiActions.createPost(data);
       }
     });
   },

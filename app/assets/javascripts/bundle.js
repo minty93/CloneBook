@@ -24028,6 +24028,7 @@
 	  },
 	
 	  render: function () {
+	
 	    return React.createElement(
 	      "div",
 	      { className: "post-form" },
@@ -24042,12 +24043,18 @@
 	        React.createElement("input", { type: "text", onChange: this.changeBody }),
 	        React.createElement(
 	          "button",
-	          { onClick: this.addUser },
+	          null,
 	          "Post"
 	        )
 	      )
 	    );
 	  },
+	
+	  // addUser: function(){
+	  //   if (this.props.location == ) {
+	  //
+	  //   }
+	  // },
 	
 	  changeBody: function (e) {
 	    this.setState({ body: e.currentTarget.value });
@@ -24055,7 +24062,8 @@
 	
 	  handleSubmit: function (e) {
 	    e.preventDefault();
-	    var post = { body: this.state.body };
+	    var post = { body: this.state.body, profile_id: this.props.location.hash };
+	    this.setState({ body: "" });
 	    PostsApiUtil.createPost(post);
 	  }
 	
@@ -24104,14 +24112,13 @@
 	  },
 	
 	  createPost: function(data){
-	    debugger
 	    $.ajax({
 	      data: {post: data},
 	      url: "api/posts",
 	      type: "POST",
 	      dataType: "json",
 	      success: function(data){
-	        PostApiActions.addPost(data);
+	        PostApiActions.createPost(data);
 	      }
 	    });
 	  },
@@ -24170,7 +24177,7 @@
 	  RECEIVE_POSTS: "RECEIVE_POSTS",
 	  RECEIVE_POST: "RECEIVE_POST",
 	  DELETE_POST: "DELETE_POST",
-	  ADD_POST: "CREATE_POST"
+	  CREATE_POST: "CREATE_POST"
 	};
 	
 	module.exports = PostConstants;
@@ -24510,8 +24517,8 @@
 	  },
 	
 	  componentDidMount: function () {
-	    PostsApiUtil.fetchAllPosts();
 	    this.listener = PostStore.addListener(this._onChange);
+	    PostsApiUtil.fetchAllPosts();
 	  },
 	
 	  componentWillUnmount: function () {
@@ -24527,12 +24534,12 @@
 	        { className: "title" },
 	        "Posts"
 	      ),
-	      React.createElement(PostsForm, null),
+	      React.createElement(PostsForm, { location: this.props.location }),
 	      React.createElement(
 	        "ul",
 	        { className: "posts-index" },
 	        this.state.posts.map(function (post) {
-	          return React.createElement(PostsIndexItem, { key: post.id, post: post, location: this.props.location });
+	          return React.createElement(PostsIndexItem, { key: post.id, post: post });
 	        })
 	      )
 	    );
@@ -24570,8 +24577,8 @@
 	  var idx = _posts.indexOf(post);
 	  if (idx == -1) {
 	    _posts.push(post);
-	    this.__emitChange();
 	  }
+	  this.__emitChange();
 	};
 	
 	PostStore._removePost = function (post) {
@@ -24590,7 +24597,7 @@
 	    case PostConstants.DELETE_POST:
 	      PostStore._removePost(payload.post);
 	      break;
-	    case PostConstants.RECEIVE_POST:
+	    case PostConstants.CREATE_POST:
 	      PostStore._addPost(payload.post);
 	      break;
 	  }
@@ -31056,18 +31063,6 @@
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
 	
-	  getInitialState: function () {
-	    return {};
-	  },
-	
-	  componentDidMount: function () {
-	    this.listener = PostStore.addListener(this._onChange);
-	  },
-	
-	  componentWillUnmount: function () {
-	    this.listener.remove();
-	  },
-	
 	  render: function () {
 	    return React.createElement(
 	      "div",
@@ -31087,10 +31082,6 @@
 	        )
 	      )
 	    );
-	  },
-	
-	  _onChange: function () {
-	    this.setState();
 	  }
 	
 	});

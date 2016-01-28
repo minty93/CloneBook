@@ -18,8 +18,8 @@ PostStore._addPost = function (post) {
   var idx = _posts.indexOf(post);
   if (idx == -1) {
     _posts.push(post);
-    this.__emitChange();
   }
+  this.__emitChange();
 };
 
 PostStore._removePost = function (post) {
@@ -38,7 +38,7 @@ PostStore.__onDispatch = function (payload) {
   case PostConstants.DELETE_POST:
     PostStore._removePost(payload.post);
     break;
-  case PostConstants.RECEIVE_POST:
+  case PostConstants.CREATE_POST:
     PostStore._addPost(payload.post);
     break;
   }

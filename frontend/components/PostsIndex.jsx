@@ -12,8 +12,8 @@ var PostsIndex = React.createClass({
   },
 
   componentDidMount: function() {
-    PostsApiUtil.fetchAllPosts();
     this.listener = PostStore.addListener(this._onChange);
+    PostsApiUtil.fetchAllPosts();
   },
 
   componentWillUnmount: function() {
@@ -24,11 +24,11 @@ var PostsIndex = React.createClass({
     return (
       <div>
         <h1 className="title">Posts</h1>
-        <PostsForm/>
+        <PostsForm location={this.props.location}/>
         <ul className="posts-index">
           {
             this.state.posts.map(function(post) {
-              return <PostsIndexItem key={post.id} post={post} location={this.props.location} />;
+              return <PostsIndexItem key={post.id} post={post} />;
             })
           }
         </ul>

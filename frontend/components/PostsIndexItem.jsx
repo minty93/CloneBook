@@ -2,17 +2,7 @@ var React = require("react");
 var PostStore = require("../stores/PostStore");
 
 var PostsIndexItems = React.createClass({
-  getInitialState: function(){
-    return {};
-  },
 
-  componentDidMount: function() {
-    this.listener = PostStore.addListener(this._onChange);
-  },
-
-  componentWillUnmount: function() {
-    this.listener.remove();
-  },
 
   render: function() {
     return (
@@ -25,9 +15,7 @@ var PostsIndexItems = React.createClass({
     );
   },
 
-  _onChange: function() {
-    this.setState();
-  }
+
 
 });
 

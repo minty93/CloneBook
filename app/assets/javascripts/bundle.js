@@ -58,6 +58,7 @@
 	  displayName: 'App',
 	
 	  render: function () {
+	
 	    return React.createElement(
 	      'div',
 	      null,
@@ -24060,7 +24061,7 @@
 	  handleSubmit: function (e) {
 	    e.preventDefault();
 	    var that = this;
-	    var post = { body: this.state.body, profile_id: this.props.location.hash };
+	    var post = { body: this.state.body, profile_id: this.props.params.userId };
 	    var callback = function () {
 	      that.setState({ body: "" });
 	    };
@@ -31036,7 +31037,7 @@
 	        React.createElement(
 	          "li",
 	          null,
-	          React.createElement(PostsForm, { location: this.props.location })
+	          React.createElement(PostsForm, { params: this.props.params })
 	        ),
 	        React.createElement(
 	          "li",
@@ -31127,8 +31128,11 @@
 	    UserApiUtil.fetchAllUsers();
 	  },
 	
+	  componentWillUnmount: function () {
+	    this.listener.remove();
+	  },
+	
 	  _onChange: function () {
-	    debugger;
 	    var userId = this.props.params.userId;
 	    var user = this._findUserById(userId);
 	    this.setState({ user: user });
@@ -31142,7 +31146,8 @@
 	        "h1",
 	        null,
 	        this.state.user.fname
-	      )
+	      ),
+	      React.createElement(PostsIndex, { params: this.props.params })
 	    );
 	  }
 	
@@ -31218,7 +31223,7 @@
 /* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var UserApiActions = __webpack_require__(238);
+	var UserApiActions = __webpack_require__(239);
 	
 	var UsersApiUtil = {
 	fetchAllUsers: function(){
@@ -31238,10 +31243,11 @@
 
 
 /***/ },
-/* 238 */
+/* 238 */,
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var UserConstants = __webpack_require__(209);
+	var UserConstants = __webpack_require__(236);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var UserApiActions = {
@@ -31250,12 +31256,10 @@
 	      actionType: UserConstants.RECEIVE_USERS,
 	      users: users
 	    });
-	  },
-	
+	  }
 	};
 	
 	module.exports = UserApiActions;
-
 
 /***/ }
 /******/ ]);

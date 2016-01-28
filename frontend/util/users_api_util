@@ -1,4 +1,4 @@
-var UserApiActions = require("../actions/user_api_actions");
+var UserApiActions = require("../actions/users_api_actions");
 
 var UsersApiUtil = {
 fetchAllUsers: function(){

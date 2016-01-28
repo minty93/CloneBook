@@ -21,9 +21,7 @@ class Api::PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
-    if Post.hash_query(post_params)
-      @post.profile_id = current_user.id
-    end
+    @post.profile_id ||= current_user.id
     @post.author_id = current_user.id
     @post.author_name = current_user.fname + " " + current_user.lname
       if @post.save

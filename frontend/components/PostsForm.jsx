@@ -33,7 +33,7 @@ var PostForm = React.createClass({
   handleSubmit: function(e){
     e.preventDefault();
     var that = this;
-    var post = {body: this.state.body, profile_id: this.props.location.hash };
+    var post = {body: this.state.body, profile_id: this.props.params.userId};
     var callback = function(){
       that.setState({body: "" });};
     PostsApiUtil.createPost(post, callback);

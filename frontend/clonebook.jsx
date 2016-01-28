@@ -12,6 +12,7 @@ var UserProfile = require('./components/UserProfile');
 
 var App = React.createClass({
   render: function(){
+
     return (
       <div>
         <h3 className="header-bar">Temporary HeaderBar</h3>
@@ -22,6 +23,7 @@ var App = React.createClass({
 });
 
 var routes = (
+  
   <Route path="/" component={App}>
     <IndexRoute component={PostsIndex}/>
     <Route path="posts/new" component={PostsForm}/>

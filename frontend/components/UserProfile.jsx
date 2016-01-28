@@ -28,8 +28,11 @@ var UserProfile = React.createClass({
     UserApiUtil.fetchAllUsers();
   },
 
+  componentWillUnmount: function () {
+    this.listener.remove();
+  },
+
   _onChange: function () {
-    debugger
    var userId = this.props.params.userId;
    var user = this._findUserById(userId);
    this.setState({ user: user });
@@ -39,6 +42,7 @@ var UserProfile = React.createClass({
     return (
       <div className="user-profile">
         <h1>{this.state.user.fname}</h1>
+        <PostsIndex params={this.props.params}/>
       </div>
     );
   },

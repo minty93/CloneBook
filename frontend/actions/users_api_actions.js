@@ -1,4 +1,4 @@
-var UserConstants = require('../constants/post_constants');
+var UserConstants = require('../constants/user_constants');
 var AppDispatcher = require('../dispatcher/dispatcher');
 
 var UserApiActions = {
@@ -8,7 +8,6 @@ var UserApiActions = {
       users: users
     });
   },
-
 };
 
 module.exports = UserApiActions;

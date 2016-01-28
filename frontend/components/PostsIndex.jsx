@@ -24,7 +24,7 @@ var PostsIndex = React.createClass({
     return (
       <div className="newsfeed">
         <ul className="posts-index">
-        <li><PostsForm location={this.props.location}/></li>
+        <li><PostsForm params={this.props.params}/></li>
           <li>{
             this.state.posts.map(function(post) {
               return <PostsIndexItem key={post.id} post={post} />;

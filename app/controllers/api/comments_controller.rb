@@ -1,4 +1,4 @@
-class CommentsController < ApplicationController
+class Api::CommentsController < ApplicationController
   before_action :set_comment, only: [:show, :edit, :update, :destroy]
 
   # GET /comments
@@ -24,8 +24,7 @@ class CommentsController < ApplicationController
   # POST /comments
   # POST /comments.json
   def create
-    @comment.author_id = current_user.id
-    @comment.author_name = current_user.fname + " " + current_user.lname
+
     @comment = Comment.new(comment_params)
       if @comment.save
         render json: @comment

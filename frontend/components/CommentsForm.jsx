@@ -1,20 +1,21 @@
 var React = require("react");
-var PostsApiUtil = require('../util/posts_api_util');
-var PostStore = require("../stores/PostStore");
+var CommentsApiUtil = require('../util/comments_api_util');
+var CommentStore = require("../stores/CommentStore");
 
 
 
-var PostForm = React.createClass({
+var CommentForm = React.createClass({
   getInitialState: function(){
-    return {body: ""};
+    return {description: "fgfghfghgfhfg"};
   },
 
   render: function(){
+    
     return (
-      <div className="post-form">
+      <div className="comment-form">
         <form onSubmit={this.handleSubmit}>
-          <input type="text" onChange={this.changeBody} value={this.state.body}/>
-          <button>Post</button>
+          <input type="text" onChange={this.changeBody} value={this.state.description}/>
+          <button>Comment</button>
         </form>
       </div>
     );
@@ -27,19 +28,19 @@ var PostForm = React.createClass({
   // },
 
   changeBody: function(e){
-    this.setState({body: e.currentTarget.value });
+    this.setState({description: e.currentTarget.value });
   },
 
   handleSubmit: function(e){
     e.preventDefault();
     var that = this;
-    var post = {body: this.state.body, profile_id: this.props.params.userId};
+    var comment = {description: this.state.description};
     var callback = function(){
-      that.setState({body: "" });};
-    PostsApiUtil.createPost(post, callback);
+      that.setState({description: "" });};
+    CommentsApiUtil.createComment(comment, callback);
   },
 
 
 });
 
-module.exports = PostForm;
+module.exports = CommentForm;

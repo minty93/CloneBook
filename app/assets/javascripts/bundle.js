@@ -52,40 +52,57 @@
 	var IndexRoute = ReactRouter.IndexRoute;
 	var PostsForm = __webpack_require__(206);
 	var PostsIndex = __webpack_require__(232);
-	var UserProfile = __webpack_require__(234);
+	var UserProfile = __webpack_require__(238);
+	var CommentsForm = __webpack_require__(234);
+	var App = __webpack_require__(245);
+	var SessionForm = __webpack_require__(249);
+	var UserForm = __webpack_require__(250);
+	var CurrentUserStore = __webpack_require__(247);
+	var SessionsApiUtil = __webpack_require__(248);
+	var UsersIndex = __webpack_require__(251);
 	
-	var App = React.createClass({
-	  displayName: 'App',
+	// var App = React.createClass({
+	//   render: function(){
+	//
+	//     return (
+	//       <div>
+	//         <h3 className="header-bar">Temporary HeaderBar</h3>
+	//         {this.props.children}
+	//       </div>
+	//     );
+	//   }
+	// });
 	
-	  render: function () {
-	
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'h3',
-	        { className: 'header-bar' },
-	        'Temporary HeaderBar'
-	      ),
-	      this.props.children
-	    );
-	  }
-	});
-	
-	var routes = React.createElement(
-	  Route,
-	  { path: '/', component: App },
-	  React.createElement(IndexRoute, { component: PostsIndex }),
-	  React.createElement(Route, { path: 'posts/new', component: PostsForm }),
-	  React.createElement(Route, { path: 'users/:userId', component: UserProfile })
+	var router = React.createElement(
+	  Router,
+	  null,
+	  React.createElement(
+	    Route,
+	    { path: '/', component: App, onEnter: _ensureLoggedIn },
+	    React.createElement(IndexRoute, { component: PostsIndex, onEnter: _ensureLoggedIn }),
+	    React.createElement(Route, { path: 'login', component: SessionForm }),
+	    React.createElement(Route, { path: 'posts/new', component: PostsForm }),
+	    React.createElement(Route, { path: 'users/:userId', component: UserProfile })
+	  )
 	);
 	
-	document.addEventListener("DOMContentLoaded", function () {
-	  ReactDOM.render(React.createElement(
-	    Router,
-	    null,
-	    routes
-	  ), document.getElementById('root'));
+	function _ensureLoggedIn(nextState, replace, callback) {
+	  if (CurrentUserStore.userHasBeenFetched() === true) {
+	    _redirectIfNotLoggedIn();
+	  } else {
+	    SessionsApiUtil.fetchCurrentUser(_redirectIfNotLoggedIn);
+	  }
+	
+	  function _redirectIfNotLoggedIn() {
+	    if (!CurrentUserStore.isLoggedIn()) {
+	      replace({}, "/login");
+	    }
+	    callback();
+	  }
+	}
+	
+	document.addEventListener("DOMContentLoaded", function (event) {
+	  ReactDOM.render(router, document.getElementById('root'));
 	});
 
 /***/ },
@@ -9345,6 +9362,7 @@
 	 */
 	var EventInterface = {
 	  type: null,
+	  target: null,
 	  // currentTarget is set when dispatching; no use in copying it here
 	  currentTarget: emptyFunction.thatReturnsNull,
 	  eventPhase: null,
@@ -9378,8 +9396,6 @@
 	  this.dispatchConfig = dispatchConfig;
 	  this.dispatchMarker = dispatchMarker;
 	  this.nativeEvent = nativeEvent;
-	  this.target = nativeEventTarget;
-	  this.currentTarget = nativeEventTarget;
 	
 	  var Interface = this.constructor.Interface;
 	  for (var propName in Interface) {
@@ -9390,7 +9406,11 @@
 	    if (normalize) {
 	      this[propName] = normalize(nativeEvent);
 	    } else {
-	      this[propName] = nativeEvent[propName];
+	      if (propName === 'target') {
+	        this.target = nativeEventTarget;
+	      } else {
+	        this[propName] = nativeEvent[propName];
+	      }
 	    }
 	  }
 	
@@ -13239,7 +13259,10 @@
 	      }
 	    });
 	
-	    nativeProps.children = content;
+	    if (content) {
+	      nativeProps.children = content;
+	    }
+	
 	    return nativeProps;
 	  }
 	
@@ -18712,7 +18735,7 @@
 	
 	'use strict';
 	
-	module.exports = '0.14.6';
+	module.exports = '0.14.7';
 
 /***/ },
 /* 147 */
@@ -31018,6 +31041,7 @@
 	var PostsIndexItem = __webpack_require__(233);
 	var PostsApiUtil = __webpack_require__(207);
 	var PostsForm = __webpack_require__(206);
+	var CommentsForm = __webpack_require__(234);
 	
 	var PostsIndex = React.createClass({
 	  displayName: "PostsIndex",
@@ -31042,6 +31066,11 @@
 	      React.createElement(
 	        "ul",
 	        { className: "posts-index" },
+	        React.createElement(
+	          "li",
+	          null,
+	          React.createElement(CommentsForm, null)
+	        ),
 	        React.createElement(
 	          "li",
 	          null,
@@ -31077,6 +31106,8 @@
 	var React = __webpack_require__(1);
 	var PostStore = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
+	var CommentsForm = __webpack_require__(234);
+	
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
 	
@@ -31132,8 +31163,7 @@
 	          "button",
 	          { onClick: this.handleDelete },
 	          "Delete Post"
-	        ),
-	        React.createElement(CommentsIndex, null)
+	        )
 	      )
 	    );
 	  },
@@ -31153,8 +31183,145 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var UserApiUtil = __webpack_require__(237);
-	var UserStore = __webpack_require__(235);
+	var CommentsApiUtil = __webpack_require__(235);
+	var CommentStore = __webpack_require__(236);
+	
+	var CommentForm = React.createClass({
+	  displayName: "CommentForm",
+	
+	  getInitialState: function () {
+	    return { description: "fgfghfghgfhfg" };
+	  },
+	
+	  render: function () {
+	
+	    return React.createElement(
+	      "div",
+	      { className: "comment-form" },
+	      React.createElement(
+	        "form",
+	        { onSubmit: this.handleSubmit },
+	        React.createElement("input", { type: "text", onChange: this.changeBody, value: this.state.description }),
+	        React.createElement(
+	          "button",
+	          null,
+	          "Comment"
+	        )
+	      )
+	    );
+	  },
+	
+	  // addUser: function(){
+	  //   if (this.props.location == ) {
+	  //
+	  //   }
+	  // },
+	
+	  changeBody: function (e) {
+	    this.setState({ description: e.currentTarget.value });
+	  },
+	
+	  handleSubmit: function (e) {
+	    e.preventDefault();
+	    var that = this;
+	    var comment = { description: this.state.description };
+	    var callback = function () {
+	      that.setState({ description: "" });
+	    };
+	    CommentsApiUtil.createComment(comment, callback);
+	  }
+	
+	});
+	
+	module.exports = CommentForm;
+
+/***/ },
+/* 235 */
+/***/ function(module, exports) {
+
+
+
+/***/ },
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var _comments = [],
+	    Store = __webpack_require__(215).Store,
+	    CommentConstants = __webpack_require__(237),
+	    AppDispatcher = __webpack_require__(210),
+	    CommentStore = new Store(AppDispatcher);
+	
+	CommentStore.all = function () {
+	  return _comments.slice(0);
+	};
+	
+	CommentStore.resetComments = function (comments) {
+	  _comments = comments.reverse();
+	  this.__emitChange();
+	};
+	
+	CommentStore._addComment = function (comment) {
+	  var _commentsIds = [];
+	  for (var i = 0; i < _comments.length; i++) {
+	    _commentsIds.push(_comments[i].id);
+	  }
+	  var idx = _commentsIds.indexOf(comment.id);
+	  if (idx == -1) {
+	    _comments.unshift(comment);
+	  }
+	  this.__emitChange();
+	};
+	
+	CommentStore._removeComment = function (comment) {
+	  var _commentsIds = [];
+	  for (var i = 0; i < _comments.length; i++) {
+	    _commentsIds.push(_comments[i].id);
+	  }
+	  var idx = _commentsIds.indexOf(comment.id);
+	  if (idx != -1) {
+	    _comments.splice(idx, 1);
+	    this.__emitChange();
+	  }
+	};
+	
+	CommentStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case CommentConstants.RECEIVE_COMMENTS:
+	      CommentStore.resetComments(payload.comments);
+	      break;
+	    case CommentConstants.DELETE_COMMENT:
+	      CommentStore._removeComment(payload.comment);
+	      break;
+	    case CommentConstants.CREATE_COMMENT:
+	      CommentStore._addComment(payload.comment);
+	      break;
+	  }
+	};
+	
+	module.exports = CommentStore;
+
+/***/ },
+/* 237 */
+/***/ function(module, exports) {
+
+	
+	var CommentConstants = {
+	  RECEIVE_COMMENTS: "RECEIVE_COMMENTS",
+	  RECEIVE_COMMENT: "RECEIVE_COMMENT",
+	  DELETE_COMMENT: "DELETE_COMMENT",
+	  CREATE_COMMENT: "CREATE_COMMENT"
+	};
+	
+	module.exports = CommentConstants;
+
+/***/ },
+/* 238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var UserApiUtil = __webpack_require__(239);
+	var UserStore = __webpack_require__(244);
 	var PostsForm = __webpack_require__(206);
 	var PostsIndex = __webpack_require__(232);
 	
@@ -31209,13 +31376,127 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 235 */
+/* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var UserApiActions = __webpack_require__(240);
+	var CurrentUserActions = __webpack_require__(242);
+	
+	var UsersApiUtil = {
+	fetchAllUsers: function(){
+	  $.ajax({
+	    url: "api/users",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data){
+	      UserApiActions.receiveUsers(data);
+	    }
+	  });
+	},
+	
+	fetchUser: function (id) {
+	   $.ajax({
+	     url: '/api/users/' + id,
+	     type: 'GET',
+	     dataType: 'json',
+	     success: function (user) {
+	       UserApiActions.receiveUser(user);
+	     }
+	   });
+	 },
+	
+	 createUser: function (attrs, callback) {
+	   $.ajax({
+	     url: '/api/users',
+	     type: 'POST',
+	     dataType: 'json',
+	     data: attrs,
+	     success: function (user) {
+	       UserActions.receiveUser(user);
+	       CurrentUserActions.receive(user);
+	       callback && callback();
+	     }
+	   });
+	 }
+	
+	};
+	
+	module.exports = UsersApiUtil;
+
+
+/***/ },
+/* 240 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var UserConstants = __webpack_require__(241);
+	var AppDispatcher = __webpack_require__(210);
+	
+	var UserApiActions = {
+	  receiveUsers: function (users) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_USERS,
+	      users: users
+	    });
+	  },
+	
+	  receiveUser: function (user) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_USER,
+	      user: user
+	    });
+	  }
+	};
+	
+	module.exports = UserApiActions;
+
+/***/ },
+/* 241 */
+/***/ function(module, exports) {
+
+	
+	var UserConstants = {
+	  RECEIVE_USERS: "RECEIVE_USERS"
+	};
+	
+	module.exports = UserConstants;
+
+/***/ },
+/* 242 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(210);
+	var CurrentUserConstants = __webpack_require__(243);
+	
+	var CurrentUserActions = {
+	  receiveCurrentUser: function (currentUser) {
+	    debugger;
+	    AppDispatcher.dispatch({
+	      actionType: CurrentUserConstants.RECEIVE_CURRENT_USER,
+	      currentUser: currentUser
+	    });
+	  }
+	};
+	
+	module.exports = CurrentUserActions;
+
+/***/ },
+/* 243 */
+/***/ function(module, exports) {
+
+	var CurrentUserConstants = {
+	  RECEIVE_CURRENT_USER: "RECEIVE_CURRENT_USER"
+	};
+	
+	module.exports = CurrentUserConstants;
+
+/***/ },
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
 	var _users = [],
 	    Store = __webpack_require__ (215).Store,
-	    UserConstants = __webpack_require__(236),
+	    UserConstants = __webpack_require__(241),
 	    AppDispatcher = __webpack_require__(210),
 	    UserStore = new Store(AppDispatcher);
 	
@@ -31263,57 +31544,387 @@
 
 
 /***/ },
-/* 236 */
-/***/ function(module, exports) {
-
-	
-	var UserConstants = {
-	  RECEIVE_USERS: "RECEIVE_USERS"
-	};
-	
-	module.exports = UserConstants;
-
-/***/ },
-/* 237 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var UserApiActions = __webpack_require__(239);
+	var React = __webpack_require__(1),
+	    Header = __webpack_require__(246),
+	    SessionsApiUtil = __webpack_require__(248),
+	    CurrentUserStore = __webpack_require__(247);
 	
-	var UsersApiUtil = {
-	fetchAllUsers: function(){
-	  $.ajax({
-	    url: "api/users",
-	    type: "GET",
-	    dataType: "json",
-	    success: function(data){
-	      UserApiActions.receiveUsers(data);
+	var App = React.createClass({
+	  displayName: 'App',
+	
+	  componentDidMount: function () {
+	    CurrentUserStore.addListener(this.forceUpdate.bind(this));
+	    SessionsApiUtil.fetchCurrentUser();
+	  },
+	
+	  render: function () {
+	    if (!CurrentUserStore.userHasBeenFetched()) {
+	      return React.createElement(
+	        'p',
+	        null,
+	        'PLEASE WAIT'
+	      );
 	    }
-	  });
-	},
 	
-	};
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(Header, null),
+	      this.props.children
+	    );
+	  }
 	
-	module.exports = UsersApiUtil;
-
+	});
+	
+	module.exports = App;
 
 /***/ },
-/* 238 */,
-/* 239 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var UserConstants = __webpack_require__(236);
-	var AppDispatcher = __webpack_require__(210);
+	var React = __webpack_require__(1);
+	var CurrentUserStore = __webpack_require__(247);
 	
-	var UserApiActions = {
-	  receiveUsers: function (users) {
-	    AppDispatcher.dispatch({
-	      actionType: UserConstants.RECEIVE_USERS,
-	      users: users
-	    });
+	var Header = React.createClass({
+	  displayName: 'Header',
+	
+	  getInitialState: function () {
+	    return {
+	      currentUser: {}
+	    };
+	  },
+	
+	  componentDidMount: function () {
+	    CurrentUserStore.addListener(this._onChange);
+	  },
+	
+	  _onChange: function () {
+	    this.setState({ currentUser: CurrentUserStore.currentUser() });
+	  },
+	
+	  logout: function (e) {
+	    e.preventDefault();
+	    SessionsApiUtil.logout();
+	  },
+	
+	  render: function () {
+	    if (CurrentUserStore.isLoggedIn()) {
+	      // if we're logged in....
+	      return React.createElement(
+	        'div',
+	        null,
+	        'Logged in as',
+	        this.state.currentUser.email,
+	        React.createElement(
+	          'button',
+	          { onClick: this.logout },
+	          'LOG OUT'
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'a',
+	          { href: '#/login' },
+	          'Login'
+	        )
+	      );
+	    }
+	  }
+	
+	});
+	
+	module.exports = Header;
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(215).Store;
+	var AppDispatcher = __webpack_require__(210);
+	var CurrentUserConstants = __webpack_require__(243);
+	
+	var _currentUser = {};
+	var _currentUserHasBeenFetched = false;
+	var CurrentUserStore = new Store(AppDispatcher);
+	
+	CurrentUserStore.currentUser = function () {
+	  return $.extend({}, _currentUser);
+	};
+	
+	CurrentUserStore.isLoggedIn = function () {
+	  return !!_currentUser.id;
+	};
+	
+	CurrentUserStore.userHasBeenFetched = function () {
+	  return _currentUserHasBeenFetched;
+	};
+	
+	CurrentUserStore.__onDispatch = function (payload) {
+	  if (payload.actionType === CurrentUserConstants.RECEIVE_CURRENT_USER) {
+	    // do stuff
+	    _currentUserHasBeenFetched = true;
+	    _currentUser = payload.currentUser;
+	    CurrentUserStore.__emitChange();
 	  }
 	};
 	
-	module.exports = UserApiActions;
+	module.exports = CurrentUserStore;
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var CurrentUserActions = __webpack_require__(242);
+	var SessionsApiUtil = {
+	  login: function (credentials, success) {
+	    $.ajax({
+	      url: '/api/session',
+	      type: 'POST',
+	      dataType: 'json',
+	      data: credentials,
+	      success: function (currentUser) {
+	        CurrentUserActions.receiveCurrentUser(currentUser);
+	        success && success();
+	      }
+	
+	    });
+	  },
+	
+	  logout: function () {
+	    $.ajax({
+	      url: '/api/session',
+	      type: 'DELETE',
+	      dataType: 'json',
+	      success: function () {
+	        console.log("logged out!");
+	      }
+	    });
+	  },
+	
+	  fetchCurrentUser: function (cb) {
+	    debugger;
+	    $.ajax({
+	      url: '/api/session',
+	      type: 'GET',
+	      dataType: 'json',
+	      success: function (currentUser) {
+	        console.log("fetched current user!");
+	        CurrentUserActions.receiveCurrentUser(currentUser);
+	        cb && cb(currentUser);
+	      }
+	    });
+	  }
+	
+	};
+	
+	module.exports = SessionsApiUtil;
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
+	var SessionsApiUtil = __webpack_require__(248);
+	
+	var SessionForm = React.createClass({
+	  displayName: 'SessionForm',
+	
+	  mixins: [History],
+	
+	  submit: function (e) {
+	    e.preventDefault();
+	
+	    var credentials = $(e.currentTarget).serializeJSON();
+	    SessionsApiUtil.login(credentials, function () {
+	      this.history.pushState({}, "/");
+	    }.bind(this));
+	  },
+	
+	  render: function () {
+	
+	    return React.createElement(
+	      'form',
+	      { onSubmit: this.submit },
+	      React.createElement(
+	        'h1',
+	        null,
+	        'Logn In!'
+	      ),
+	      React.createElement(
+	        'label',
+	        null,
+	        'Email',
+	        React.createElement('input', { type: 'text', name: 'email' })
+	      ),
+	      React.createElement(
+	        'label',
+	        null,
+	        'Password',
+	        React.createElement('input', { type: 'password', name: 'password' })
+	      ),
+	      React.createElement(
+	        'button',
+	        null,
+	        'Log In!'
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = SessionForm;
+
+/***/ },
+/* 250 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
+	var UsersStore = __webpack_require__(244);
+	var UsersApiUtil = __webpack_require__(239);
+	
+	var UserForm = React.createClass({
+	  displayName: 'UserForm',
+	
+	  mixins: [History],
+	
+	  submit: function (e) {
+	    e.preventDefault();
+	    var credentials = $(e.currentTarget).serializeJSON();
+	    UsersApiUtil.createUser(credentials, function () {
+	      this.history.pushState({}, "/");
+	    }.bind(this));
+	  },
+	
+	  render: function () {
+	
+	    return React.createElement(
+	      'form',
+	      { onSubmit: this.submit },
+	      React.createElement(
+	        'h1',
+	        null,
+	        'Sign Up!'
+	      ),
+	      React.createElement(
+	        'label',
+	        null,
+	        'Email',
+	        React.createElement('input', { type: 'text', name: 'email' })
+	      ),
+	      React.createElement(
+	        'label',
+	        null,
+	        'Password',
+	        React.createElement('input', { type: 'password', name: 'password' })
+	      ),
+	      React.createElement(
+	        'label',
+	        null,
+	        'Fname',
+	        React.createElement('input', { type: 'text', name: 'fname' })
+	      ),
+	      React.createElement(
+	        'label',
+	        null,
+	        'Lname',
+	        React.createElement('input', { type: 'text', name: 'lname' })
+	      ),
+	      React.createElement(
+	        'label',
+	        null,
+	        'Birthday',
+	        React.createElement('input', { type: 'date', name: 'birthday' })
+	      ),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'label',
+	        null,
+	        'Gender',
+	        React.createElement('input', { type: 'radio', name: 'gender', value: 'male', checked: true }),
+	        ' Male',
+	        React.createElement('input', { type: 'radio', name: 'gender', value: 'female' }),
+	        ' Female',
+	        React.createElement('br', null)
+	      ),
+	      React.createElement(
+	        'button',
+	        null,
+	        'Join!'
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = UserForm;
+
+/***/ },
+/* 251 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var UsersStore = __webpack_require__(244);
+	var UsersApiUtil = __webpack_require__(239);
+	
+	var UsersIndex = React.createClass({
+	  displayName: 'UsersIndex',
+	
+	  getInitialState: function () {
+	    return { users: UsersStore.all() };
+	  },
+	
+	  componentDidMount: function () {
+	    this.listener = UsersStore.addListener(this._onChange);
+	    UsersApiUtil.fetchUsers();
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.listener.remove();
+	  },
+	
+	  render: function () {
+	    var users = this.state.users.map(function (user) {
+	      return React.createElement(
+	        'li',
+	        { key: user.id },
+	        React.createElement(
+	          'a',
+	          { href: "#/users/" + user.id },
+	          user.email
+	        )
+	      );
+	    });
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h1',
+	        { className: 'title' },
+	        'Users'
+	      ),
+	      React.createElement(
+	        'ul',
+	        { className: 'users-index' },
+	        users
+	      )
+	    );
+	  },
+	
+	  _onChange: function () {
+	    this.setState({ users: UsersStore.all() });
+	  }
+	});
+	
+	module.exports = UsersIndex;
 
 /***/ }
 /******/ ]);

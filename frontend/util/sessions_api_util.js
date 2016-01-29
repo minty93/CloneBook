@@ -1,6 +1,4 @@
 var CurrentUserActions = require("./../actions/current_user_actions");
-
-
 var SessionsApiUtil = {
   login: function (credentials, success) {
     $.ajax({
@@ -28,6 +26,7 @@ var SessionsApiUtil = {
   },
 
   fetchCurrentUser: function (cb) {
+    debugger
     $.ajax({
       url: '/api/session',
       type: 'GET',

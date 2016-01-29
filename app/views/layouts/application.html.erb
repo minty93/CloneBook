@@ -15,12 +15,12 @@
    <% end %>
   <% end %>
 
-  <% if !current_user.nil? %>
+  <!-- <% if !current_user.nil? %>
   <ul>
     <li>Logged in as: <%= current_user.fname %></li>
     <li><%= button_to "Logout", session_url, method: :delete %></li>
   </ul>
-<% end %>
+<% end %> -->
 
 <%= yield %>
 

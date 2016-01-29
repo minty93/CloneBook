@@ -22,6 +22,6 @@ class ApplicationController < ActionController::Base
   end
 
   def ensure_user_logged_in
-    redirect_to new_user_url unless current_user 
+    render json: ["Please log in"] unless current_user
   end
 end

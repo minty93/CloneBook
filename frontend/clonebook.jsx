@@ -7,31 +7,57 @@ var IndexRoute = ReactRouter.IndexRoute;
 var PostsForm = require('./components/PostsForm');
 var PostsIndex = require('./components/PostsIndex');
 var UserProfile = require('./components/UserProfile');
+var CommentsForm = require('./components/CommentsForm');
+var App = require('./components/app');
+var SessionForm = require('./components/sessions/new');
+var UserForm = require('./components/user_form');
+var CurrentUserStore = require('./stores/current_user_store');
+var SessionsApiUtil = require('./util/sessions_api_util');
+var UsersIndex = require('./components/users_index');
 
 
 
-var App = React.createClass({
-  render: function(){
 
-    return (
-      <div>
-        <h3 className="header-bar">Temporary HeaderBar</h3>
-        {this.props.children}
-      </div>
-    );
-  }
-});
+// var App = React.createClass({
+//   render: function(){
+//
+//     return (
+//       <div>
+//         <h3 className="header-bar">Temporary HeaderBar</h3>
+//         {this.props.children}
+//       </div>
+//     );
+//   }
+// });
 
-var routes = (
-  
-  <Route path="/" component={App}>
-    <IndexRoute component={PostsIndex}/>
+var router = (
+  <Router>
+  <Route path="/" component={App} onEnter={_ensureLoggedIn}>
+    <IndexRoute component={ PostsIndex } onEnter={_ensureLoggedIn} />
+    <Route path="login" component={SessionForm}/>
     <Route path="posts/new" component={PostsForm}/>
     <Route path="users/:userId" component={UserProfile}/>
   </Route>
+  </Router>
 );
 
-document.addEventListener("DOMContentLoaded", function () {
-  ReactDOM.render(<Router>{routes}</Router>, document.getElementById('root')
-  );
+
+function _ensureLoggedIn(nextState, replace, callback) {
+  if (CurrentUserStore.userHasBeenFetched() === true) {
+    _redirectIfNotLoggedIn();
+  }
+  else {
+    SessionsApiUtil.fetchCurrentUser(_redirectIfNotLoggedIn);
+  }
+
+  function _redirectIfNotLoggedIn() {
+    if (!CurrentUserStore.isLoggedIn()) {
+      replace({}, "/login");
+    }
+    callback();
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
+  ReactDOM.render(router, document.getElementById('root'));
 });

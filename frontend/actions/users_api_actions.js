@@ -8,6 +8,13 @@ var UserApiActions = {
       users: users
     });
   },
+
+  receiveUser: function (user) {
+    AppDispatcher.dispatch({
+      actionType: UserConstants.RECEIVE_USER,
+      user: user
+    });
+  }
 };
 
 module.exports = UserApiActions;

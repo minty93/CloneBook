@@ -1,0 +1,9 @@
+
+var CommentConstants = {
+  RECEIVE_COMMENTS: "RECEIVE_COMMENTS",
+  RECEIVE_COMMENT: "RECEIVE_COMMENT",
+  DELETE_COMMENT: "DELETE_COMMENT",
+  CREATE_COMMENT: "CREATE_COMMENT"
+};
+
+module.exports = CommentConstants;

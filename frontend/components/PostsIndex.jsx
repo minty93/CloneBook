@@ -3,6 +3,7 @@ var PostStore = require("../stores/PostStore");
 var PostsIndexItem = require('./PostsIndexItem');
 var PostsApiUtil = require('../util/posts_api_util');
 var PostsForm = require('./PostsForm');
+var CommentsForm = require('./CommentsForm');
 
 
 
@@ -27,6 +28,7 @@ var PostsIndex = React.createClass({
     return (
       <div className="newsfeed">
         <ul className="posts-index">
+        <li><CommentsForm/></li>
         <li><PostsForm params={this.props.params}/></li>
           <li>
             {

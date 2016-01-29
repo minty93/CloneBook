@@ -4,28 +4,28 @@ var AppDispatcher = require('../dispatcher/dispatcher');
 var CommentApiActions = {
   receiveComments: function (comments) {
     AppDispatcher.dispatch({
-      actionType: CommentConstants.RECEIVE_POSTS,
+      actionType: CommentConstants.RECEIVE_COMMENTS,
       comments: comments
     });
   },
 
   receiveComment: function (comment) {
     AppDispatcher.dispatch({
-      actionType: CommentConstants.RECEIVE_POST,
+      actionType: CommentConstants.RECEIVE_COMMENT,
       comment: comment
     });
   },
 
   deleteComment: function (comment) {
     AppDispatcher.dispatch({
-      actionType: CommentConstants.DELETE_POST,
+      actionType: CommentConstants.DELETE_COMMENT,
       comment: comment
     });
   },
 
   createComment: function (comment) {
     AppDispatcher.dispatch({
-      actionType: CommentConstants.CREATE_POST,
+      actionType: CommentConstants.CREATE_COMMENT,
       comment: comment
     });
   },

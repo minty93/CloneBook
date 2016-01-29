@@ -41,6 +41,7 @@ var PostsIndexItems = React.createClass({
           <h1 className="title">{this.props.post.author_name} posted</h1>
           <li className="actual-post">{this.props.post.body}</li>
           <button onClick={this.handleDelete}>Delete Post</button>
+          <CommentsIndex/>
         </ul>
       </div>
     );

@@ -31132,7 +31132,8 @@
 	          "button",
 	          { onClick: this.handleDelete },
 	          "Delete Post"
-	        )
+	        ),
+	        React.createElement(CommentsIndex, null)
 	      )
 	    );
 	  },

@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     resources :posts do
       resources :comments, except: [:destroy]
     end
-    resources :users, only: [:show, :index, :create, :new]
+    resources :users, only: [:show, :index, :create, :new, :update]
     resource :session, only: [:create, :destroy, :show, :new]
     resources :comments, only: [:destroy]
     get "search", to: "utils#search"

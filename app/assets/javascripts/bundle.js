@@ -31248,6 +31248,21 @@
 	  // },
 	
 	  render: function () {
+	    var comments;
+	
+	    if (this.props.post.comments) {
+	      React.createElement(
+	        "li",
+	        null,
+	        comments = this.props.post.comments.map(function (comment) {
+	          return React.createElement(
+	            "div",
+	            null,
+	            React.createElement(CommentsIndexItem, { key: comment.id, comment: comment })
+	          );
+	        })
+	      );
+	    }
 	    return React.createElement(
 	      "div",
 	      null,
@@ -31274,18 +31289,8 @@
 	      React.createElement(
 	        "ul",
 	        null,
-	        React.createElement(CommentsForm, { commentableId: this.props.post.id, commentableType: "Post" }),
-	        React.createElement(
-	          "li",
-	          null,
-	          this.props.post.comments.map(function (comment) {
-	            return React.createElement(
-	              "div",
-	              null,
-	              React.createElement(CommentsIndexItem, { key: comment.id, comment: comment })
-	            );
-	          })
-	        )
+	        comments,
+	        React.createElement(CommentsForm, { commentableId: this.props.post.id, commentableType: "Post" })
 	      )
 	    );
 	  },
@@ -31511,8 +31516,12 @@
 	var PostsApiUtil = __webpack_require__(207);
 	var UserStore = __webpack_require__(246);
 	var PostStore = __webpack_require__(214);
+	var CommentStore = __webpack_require__(233);
 	var PostsForm = __webpack_require__(206);
-	var UserPostsIndex = __webpack_require__(247);
+	var PostIndexItem = __webpack_require__(235);
+	var PostsForm = __webpack_require__(206);
+	var CoverForm = __webpack_require__(247);
+	var ProfileForm = __webpack_require__(260);
 	
 	function _getRelevantPosts(userId) {
 	  return PostStore.getByUserId(userId);
@@ -31532,20 +31541,19 @@
 	  },
 	
 	  getInitialState: function () {
-	    // PostsApiUtil.fetchAllPosts();
 	    var userId = this.props.params.userId;
 	    var user = this._findUserById(userId);
-	    var posts = _getRelevantPosts(userId);
-	    return { user: user, posts: posts };
+	    return { user: user };
 	  },
 	
 	  componentDidMount: function () {
 	    this.listener = UserStore.addListener(this._onChange);
+	    this.listener = PostStore.addListener(this._onChange);
+	    this.listener = CommentStore.addListener(this._onChange);
 	    UserApiUtil.fetchUser(parseInt(this.props.params.userId));
 	  },
 	
 	  componentWillReceiveProps: function (newProps) {
-	    PostsApiUtil.fetchAllPosts();
 	    UserApiUtil.fetchUser(parseInt(newProps.params.userId));
 	  },
 	
@@ -31556,31 +31564,44 @@
 	  _onChange: function () {
 	    var userId = this.props.params.userId;
 	    var user = this._findUserById(userId);
-	    var posts = _getRelevantPosts(userId);
-	    debugger;
-	    this.setState({ user: user, posts: posts });
+	    this.setState({ user: user });
 	  },
 	
 	  render: function () {
-	    debugger;
-	    if (typeof this.state.user !== "undefined") {
-	      return React.createElement(
-	        'div',
-	        { className: 'user-profile' },
-	        React.createElement(
-	          'h1',
-	          null,
-	          this.state.user.fname
-	        ),
-	        React.createElement(UserPostsIndex, { posts: this.state.posts })
-	      );
-	    } else {
-	      return React.createElement(
-	        'div',
-	        null,
-	        'NO USER'
-	      );
+	    var fname;
+	    var received_posts;
+	    var cover_pic;
+	    var profile_pic;
+	
+	    if (this.state.user) {
+	      received_posts = this.state.user.received_posts;
+	      fname = this.state.user.fname;
+	      received_posts = received_posts.reverse().map(function (post) {
+	        return React.createElement(PostIndexItem, { post: post });
+	      });
+	      cover_pic = React.createElement('img', { className: 'cover-image', src: this.state.user.cover_pic });
+	      profile_pic = React.createElement('img', { className: 'profile-image', src: this.state.user.profile_pic });
 	    }
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'div',
+	        { className: 'photo-form' },
+	        React.createElement(CoverForm, { params: this.props.params }),
+	        React.createElement(ProfileForm, { params: this.props.params })
+	      ),
+	      React.createElement(
+	        'h3',
+	        null,
+	        fname
+	      ),
+	      cover_pic,
+	      profile_pic,
+	      React.createElement(PostsForm, { params: this.props.params }),
+	      received_posts
+	    );
 	  }
 	
 	});
@@ -31630,6 +31651,21 @@
 	      success: function (user) {
 	        UserActions.receiveUser(user);
 	        CurrentUserActions.receiveCurrentUser(user);
+	        callback && callback();
+	      }
+	    });
+	  },
+	
+	  updateUser: function (formData, profile_id, callback) {
+	    $.ajax({
+	      url: 'api/users/' + profile_id,
+	      type: 'PATCH',
+	      processData: false,
+	      contentType: false,
+	      dataType: 'json',
+	      data: formData,
+	      success: function (user) {
+	        UserActions.receiveUser(user);
 	        callback && callback();
 	      }
 	    });
@@ -31762,67 +31798,65 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var PostStore = __webpack_require__(214);
-	var CommentStore = __webpack_require__(233);
-	var UserStore = __webpack_require__(246);
-	var PostsIndexItem = __webpack_require__(235);
-	var PostsApiUtil = __webpack_require__(207);
-	var PostsForm = __webpack_require__(206);
-	var CommentsForm = __webpack_require__(236);
-	var CommentsIndexItem = __webpack_require__(239);
+	var UsersApiUtil = __webpack_require__(241);
 	
-	var PostsIndex = React.createClass({
-	  displayName: "PostsIndex",
+	var UserCoverForm = React.createClass({
+	  displayName: 'UserCoverForm',
 	
 	  getInitialState: function () {
-	    return { posts: this.props.posts };
-	  },
-	
-	  componentDidMount: function () {
-	    this.listener = PostStore.addListener(this._onChange);
-	    this.listener = UserStore.addListener(this._onChange);
-	    this.listener = CommentStore.addListener(this._onChange);
-	    PostsApiUtil.fetchAllPosts();
-	  },
-	
-	  componentWillUnmount: function () {
-	    this.listener.remove();
+	    return { imageFile: null, imageUrl: "" };
 	  },
 	
 	  render: function () {
 	    return React.createElement(
-	      "div",
-	      { className: "newsfeed" },
+	      'div',
+	      null,
 	      React.createElement(
-	        "ul",
-	        { className: "posts-index" },
+	        'form',
+	        { onSubmit: this.handleSubmit },
 	        React.createElement(
-	          "li",
+	          'label',
 	          null,
-	          React.createElement(PostsForm, { params: this.props.params })
+	          React.createElement('input', { type: 'file', onChange: this.changeFile })
 	        ),
+	        React.createElement('img', { className: 'preview-image', src: this.state.imageUrl }),
 	        React.createElement(
-	          "li",
+	          'button',
 	          null,
-	          this.state.posts.map(function (post) {
-	            return React.createElement(
-	              "div",
-	              null,
-	              React.createElement(PostsIndexItem, { key: post.id, post: post })
-	            );
-	          })
+	          'Upload Cover Photo'
 	        )
 	      )
 	    );
 	  },
 	
-	  _onChange: function () {
-	    this.setState({ posts: this.params.posts });
-	  }
+	  changeFile: function (e) {
+	    var reader = new FileReader();
+	    var file = e.currentTarget.files[0];
 	
+	    reader.onloadend = function () {
+	      this.setState({ imageFile: file, imageUrl: reader.result });
+	    }.bind(this);
+	
+	    if (file) {
+	      reader.readAsDataURL(file); // will trigger a load end event when it completes, and invoke reader.onloadend
+	    } else {
+	        this.setState({ imageFile: null, imageUrl: "" });
+	      }
+	  },
+	
+	  handleSubmit: function (e) {
+	    e.preventDefault();
+	    var formData = new FormData();
+	    formData.append("user[cover_pic]", this.state.imageFile);
+	    UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
+	  },
+	
+	  resetForm: function () {
+	    this.setState({ imageFile: null, imageUrl: "" });
+	  }
 	});
 	
-	module.exports = PostsIndex;
+	module.exports = UserCoverForm;
 
 /***/ },
 /* 248 */
@@ -32636,6 +32670,71 @@
 	});
 	
 	module.exports = UsersIndex;
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var UsersApiUtil = __webpack_require__(241);
+	
+	var UserProfileForm = React.createClass({
+	  displayName: 'UserProfileForm',
+	
+	  getInitialState: function () {
+	    return { imageFile: null, imageUrl: "" };
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'form',
+	        { onSubmit: this.handleSubmit },
+	        React.createElement(
+	          'label',
+	          null,
+	          React.createElement('input', { type: 'file', onChange: this.changeFile })
+	        ),
+	        React.createElement('img', { className: 'preview-image', src: this.state.imageUrl }),
+	        React.createElement(
+	          'button',
+	          null,
+	          'Upload Profile Photo'
+	        )
+	      )
+	    );
+	  },
+	
+	  changeFile: function (e) {
+	    var reader = new FileReader();
+	    var file = e.currentTarget.files[0];
+	
+	    reader.onloadend = function () {
+	      this.setState({ imageFile: file, imageUrl: reader.result });
+	    }.bind(this);
+	
+	    if (file) {
+	      reader.readAsDataURL(file); // will trigger a load end event when it completes, and invoke reader.onloadend
+	    } else {
+	        this.setState({ imageFile: null, imageUrl: "" });
+	      }
+	  },
+	
+	  handleSubmit: function (e) {
+	    e.preventDefault();
+	    var formData = new FormData();
+	    formData.append("user[profile_pic]", this.state.imageFile);
+	    UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
+	  },
+	
+	  resetForm: function () {
+	    this.setState({ imageFile: null, imageUrl: "" });
+	  }
+	});
+	
+	module.exports = UserProfileForm;
 
 /***/ }
 /******/ ]);

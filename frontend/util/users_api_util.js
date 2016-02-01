@@ -41,7 +41,22 @@ fetchUser: function (id) {
        callback && callback();
      }
    });
- }
+ },
+
+ updateUser: function (formData, profile_id, callback) {
+   $.ajax({
+     url: 'api/users/' + profile_id,
+     type: 'PATCH',
+     processData: false,
+     contentType: false,
+     dataType: 'json',
+     data: formData,
+     success: function (user) {
+       UserActions.receiveUser(user);
+       callback && callback();
+     }
+   });
+  }
 
 };
 

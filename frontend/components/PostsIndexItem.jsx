@@ -37,7 +37,21 @@ var PostsIndexItems = React.createClass({
  // },
 
 
+
   render: function() {
+    var comments;
+
+    if(this.props.post.comments){
+      <li>
+        {
+          comments = this.props.post.comments.map(function(comment) {
+            return(
+              <div>
+                <CommentsIndexItem key={comment.id} comment={comment}/>
+              </div>);
+            })
+          }</li>;
+        }
     return (
       <div >
         <ul className="post-index-items">
@@ -46,17 +60,8 @@ var PostsIndexItems = React.createClass({
           <button onClick={this.handleDelete}>Delete Post</button>
         </ul>
         <ul>
-        <CommentsForm commentableId={this.props.post.id} commentableType={"Post"}/>
-        <li>
-          {
-            this.props.post.comments.map(function(comment) {
-            return(
-            <div>
-              <CommentsIndexItem key={comment.id} comment={comment}/>
-            </div>);
-          })
-        }</li>
-
+        {comments}
+        <CommentsForm commentableId={this.props.post.id} commentableType={"Post"} />
         </ul>
 
       </div>

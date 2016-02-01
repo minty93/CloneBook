@@ -1,0 +1,88 @@
+<div classNameName="wrapper">
+  <header className="header group">
+
+  <label>CloneBook</label>
+
+
+  <form action="<%= session_url %>" method="post" className="login-form group">
+    <div className="login">
+
+    <label className="email">
+      Email
+      <input type="text" name="user[email]" value=""/>
+    </label>
+
+    <label className=password>
+      Password
+      <input type="password" name="user[password]" value="">
+    </label>
+
+    <form action="<%= session_url %>" method="post" className="guest-login">
+      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"/>
+      <input type="hidden" name="user[email]" value="guest"/>
+      <input type="hidden" name="user[password]" value="password"/>
+      <button className="guest">Guest Login</button>
+    </form>
+
+    <button className="login-button">Log In</button>
+    </div>
+  </form>
+
+  </header>
+
+
+  <div className="main group">
+
+    <section className="sidebar group">
+      <h2>Connect with friends all around the Universe on CloneBook</h2>
+      <ul>
+        <li>See photos and updates</li>
+        <li>Share what's new</li>
+        <li>Discover more</li>
+      </ul>
+    </section>
+
+
+    <section className="main-content group">
+    <h3>Sign Up</h3>
+
+    <form action="<%= users_url %>" method="post" className="signup group">
+
+      <label>
+        First Name
+        <input type="text" name="user[fname]" value=""/>
+      </label>
+
+      <label>
+        Last Name
+        <input type="text" name="user[lname]" value=""/>
+      </label>
+
+      <br>
+
+      <label>
+        Email
+        <input type="text" name="user[email]" value=""/>
+      </label>
+
+      <label>
+        Password
+        <input type="password" name="user[password]" value=""/>
+      </label>
+
+      <br/>
+
+      <label>Birthday<input type="date" name="user[birthday]"></label>
+      <br/>
+      <label>
+        Gender
+        <input type="radio" name="user[gender]" value="male" checked/> Male
+        <input type="radio" name="user[gender]" value="female"/> Female<br/>
+      </label>
+
+      <input type="submit" value="Sign Up"/>
+    </form>
+    </section>
+
+  </div>
+</div>

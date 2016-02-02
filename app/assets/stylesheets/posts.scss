@@ -54,15 +54,27 @@
 .post-index-items {
   width: 494px;
   height: 200px;
-  margin-bottom: 15px;
   background: white;
   border: 1px solid black;
 
 }
 
+
 .actual-post{
   margin: auto;
   padding: 50px;
+}
+
+.post-index-items > li > button {
+  width: auto;
+  height: 22px;
+  background: #4C67A1;
+  float: right;
+  margin: 4px;
+  margin-right: 10px;
+  color: white;
+  padding: 3px;
+  border-radius: 3px;
 
 }
 

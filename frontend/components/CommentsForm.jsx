@@ -41,7 +41,6 @@ var CommentForm = React.createClass({
       that.setState({description: "" });};
     CommentsApiUtil.createComment(comment, that.props.commentableId, callback);
     UserApiUtil.fetchAllUsers();
-    PostsApiUtil.fetchAllPosts();
 
   },
 

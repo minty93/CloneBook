@@ -3,7 +3,7 @@ var CommentStore = require("../stores/CommentStore");
 var PostStore = require("../stores/PostStore");
 var CommentsApiUtil = require('../util/comments_api_util');
 var PostsApiUtil = require('../util/posts_api_util');
-
+var UserApiUtil = require('../util/users_api_util');
 var CommentsIndexItem = React.createClass({
 
 
@@ -12,7 +12,8 @@ var CommentsIndexItem = React.createClass({
     e.preventDefault();
     var that = this;
     CommentsApiUtil.destroyComment(this.props.comment.id);
-    PostsApiUtil.fetchAllPosts();
+    CommentsApiUtil.fetchAllComments();
+    UserApiUtil.fetchAllUsers();
   },
 
 

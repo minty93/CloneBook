@@ -31281,7 +31281,16 @@
 	      null,
 	      React.createElement(
 	        "ul",
-	        { className: "post-index-items" },
+	        { className: "post-index-items group" },
+	        React.createElement(
+	          "li",
+	          null,
+	          React.createElement(
+	            "button",
+	            { onClick: this.handleDelete },
+	            "Delete Post"
+	          )
+	        ),
 	        React.createElement("img", { className: "small-image", src: profile_pic }),
 	        React.createElement(
 	          "h1",
@@ -31293,11 +31302,6 @@
 	          "li",
 	          { className: "actual-post" },
 	          this.props.post.body
-	        ),
-	        React.createElement(
-	          "button",
-	          { onClick: this.handleDelete },
-	          "Delete Post"
 	        )
 	      ),
 	      React.createElement(
@@ -31313,6 +31317,7 @@
 	    e.preventDefault();
 	    var that = this;
 	    PostsApiUtil.destroyPost(this.props.post.id);
+	    PostsApiUtil.fetchAllPosts();
 	    UserApiUtil.fetchAllUsers();
 	  }
 	
@@ -31373,7 +31378,6 @@
 	    };
 	    CommentsApiUtil.createComment(comment, that.props.commentableId, callback);
 	    UserApiUtil.fetchAllUsers();
-	    PostsApiUtil.fetchAllPosts();
 	  }
 	
 	});
@@ -31486,7 +31490,7 @@
 	var PostStore = __webpack_require__(214);
 	var CommentsApiUtil = __webpack_require__(237);
 	var PostsApiUtil = __webpack_require__(207);
-	
+	var UserApiUtil = __webpack_require__(241);
 	var CommentsIndexItem = React.createClass({
 	  displayName: "CommentsIndexItem",
 	
@@ -31494,7 +31498,8 @@
 	    e.preventDefault();
 	    var that = this;
 	    CommentsApiUtil.destroyComment(this.props.comment.id);
-	    PostsApiUtil.fetchAllPosts();
+	    CommentsApiUtil.fetchAllComments();
+	    UserApiUtil.fetchAllUsers();
 	  },
 	
 	  render: function () {

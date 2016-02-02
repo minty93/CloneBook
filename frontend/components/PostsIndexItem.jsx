@@ -66,11 +66,11 @@ var PostsIndexItems = React.createClass({
 
     return (
       <div >
-        <ul className="post-index-items">
+        <ul className="post-index-items group">
+        <li><button onClick={this.handleDelete}>Delete Post</button></li>
           <img className="small-image" src={profile_pic} />
           <h1 className="title">{this.props.post.author_name} posted</h1>
           <li className="actual-post">{this.props.post.body}</li>
-          <button onClick={this.handleDelete}>Delete Post</button>
         </ul>
         <ul>
         {comments}
@@ -85,6 +85,7 @@ var PostsIndexItems = React.createClass({
     e.preventDefault();
     var that = this;
     PostsApiUtil.destroyPost(this.props.post.id);
+    PostsApiUtil.fetchAllPosts();
     UserApiUtil.fetchAllUsers();
 
   },

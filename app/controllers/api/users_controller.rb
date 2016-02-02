@@ -1,7 +1,7 @@
 class Api::UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   def index
-    @users = User.all
+    @users = User.all.includes(:received_posts)
   end
 
   def show
@@ -18,7 +18,7 @@ class Api::UsersController < ApplicationController
       render json: @user
     else
       render json: @user.errors.full_messages, status: 422
-    end 
+    end
   end
 
 

@@ -2,6 +2,7 @@
 var _posts = [],
     Store = require ("flux/utils").Store,
     PostConstants = require("../constants/post_constants"),
+    CommentConstants = require("../constants/comment_constants"),
     AppDispatcher = require('../dispatcher/dispatcher'),
     PostStore = new Store(AppDispatcher);
 
@@ -10,7 +11,7 @@ PostStore.all = function () {
 };
 
 PostStore.resetPosts = function(posts){
-  _posts = posts.reverse();
+  _posts = posts;
   this.__emitChange();
 };
 
@@ -21,7 +22,7 @@ PostStore._addPost = function (post) {
   }
   var idx = _postsIds.indexOf(post.id);
   if (idx == -1) {
-    _posts.unshift(post);
+    _posts.push(post);
   }
   this.__emitChange();
 };
@@ -55,6 +56,36 @@ PostStore._removePost = function (post) {
   }
 };
 
+PostStore._findPostById = function(id) {
+  id = parseInt(id);
+  posts = PostStore.all();
+  for (var i = 0; i < posts.length; i++) {
+    if (posts[i].id == id) {
+      return posts[i];
+    }
+  }
+};
+
+PostStore._addComment = function(comment) {
+  var post = this._findPostById(comment.commentable_id);
+  post.comments.push(comment);
+  this.__emitChange();
+};
+//
+PostStore._removeComment = function (comment) {
+  var _commentsIds = [];
+  debugger
+  var post = this._findPostById(comment.commentable_id);
+  for (var i = 0; i < post.comments.length; i++) {
+    _commentsIds.push(post.comments[i].id);
+  }
+  var idx = _commentsIds.indexOf(comment.id);
+  if (idx != -1) {
+    post.comments.splice(idx, 1);
+    this.__emitChange();
+  }
+};
+
 PostStore.__onDispatch = function (payload) {
   switch(payload.actionType) {
   case PostConstants.RECEIVE_POSTS:
@@ -65,6 +96,14 @@ PostStore.__onDispatch = function (payload) {
     break;
   case PostConstants.CREATE_POST:
     PostStore._addPost(payload.post);
+    break;
+  case CommentConstants.DELETE_COMMENT:
+    PostStore._removeComment(payload.comment);
+    this.__emitChange();
+    break;
+  case CommentConstants.CREATE_COMMENT:
+    PostStore._addComment(payload.comment);
+    this.__emitChange();
     break;
   }
 };

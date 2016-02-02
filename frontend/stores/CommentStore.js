@@ -10,7 +10,7 @@ CommentStore.all = function () {
 };
 
 CommentStore.resetComments = function(comments){
-  _comments = comments.reverse();
+  _comments = comments;
   this.__emitChange();
 };
 
@@ -21,7 +21,7 @@ CommentStore._addComment = function (comment) {
   }
   var idx = _commentsIds.indexOf(comment.id);
   if (idx == -1) {
-    _comments.unshift(comment);
+    _comments.push(comment);
   }
 };
 

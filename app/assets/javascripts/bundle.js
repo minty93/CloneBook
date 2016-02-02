@@ -24691,6 +24691,7 @@
 	var _posts = [],
 	    Store = __webpack_require__(220).Store,
 	    PostConstants = __webpack_require__(209),
+	    CommentConstants = __webpack_require__(239),
 	    AppDispatcher = __webpack_require__(210),
 	    PostStore = new Store(AppDispatcher);
 	
@@ -24699,7 +24700,7 @@
 	};
 	
 	PostStore.resetPosts = function (posts) {
-	  _posts = posts.reverse();
+	  _posts = posts;
 	  this.__emitChange();
 	};
 	
@@ -24710,7 +24711,7 @@
 	  }
 	  var idx = _postsIds.indexOf(post.id);
 	  if (idx == -1) {
-	    _posts.unshift(post);
+	    _posts.push(post);
 	  }
 	  this.__emitChange();
 	};
@@ -24741,6 +24742,36 @@
 	  }
 	};
 	
+	PostStore._findPostById = function (id) {
+	  id = parseInt(id);
+	  posts = PostStore.all();
+	  for (var i = 0; i < posts.length; i++) {
+	    if (posts[i].id == id) {
+	      return posts[i];
+	    }
+	  }
+	};
+	
+	PostStore._addComment = function (comment) {
+	  var post = this._findPostById(comment.commentable_id);
+	  post.comments.push(comment);
+	  this.__emitChange();
+	};
+	//
+	PostStore._removeComment = function (comment) {
+	  var _commentsIds = [];
+	  debugger;
+	  var post = this._findPostById(comment.commentable_id);
+	  for (var i = 0; i < post.comments.length; i++) {
+	    _commentsIds.push(post.comments[i].id);
+	  }
+	  var idx = _commentsIds.indexOf(comment.id);
+	  if (idx != -1) {
+	    post.comments.splice(idx, 1);
+	    this.__emitChange();
+	  }
+	};
+	
 	PostStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case PostConstants.RECEIVE_POSTS:
@@ -24751,6 +24782,14 @@
 	      break;
 	    case PostConstants.CREATE_POST:
 	      PostStore._addPost(payload.post);
+	      break;
+	    case CommentConstants.DELETE_COMMENT:
+	      PostStore._removeComment(payload.comment);
+	      this.__emitChange();
+	      break;
+	    case CommentConstants.CREATE_COMMENT:
+	      PostStore._addComment(payload.comment);
+	      this.__emitChange();
 	      break;
 	  }
 	};
@@ -31249,7 +31288,7 @@
 	        React.createElement(
 	          "li",
 	          null,
-	          this.state.posts.map(function (post, index) {
+	          this.state.posts.slice(0).reverse().map(function (post, index) {
 	            return React.createElement(
 	              "div",
 	              { className: "post-box" },
@@ -31287,7 +31326,7 @@
 	};
 	
 	CommentStore.resetComments = function (comments) {
-	  _comments = comments.reverse();
+	  _comments = comments;
 	  this.__emitChange();
 	};
 	
@@ -31298,7 +31337,7 @@
 	  }
 	  var idx = _commentsIds.indexOf(comment.id);
 	  if (idx == -1) {
-	    _comments.unshift(comment);
+	    _comments.push(comment);
 	  }
 	};
 	
@@ -31409,7 +31448,7 @@
 	    }
 	
 	    if (this.props.post.author && this.props.post.author.profile_pic) {
-	      profile_pic = this.props.post.author.profile_pic;
+	      profile_pic = this.props.post.author.profile_pic.url;
 	    } else {
 	      profile_pic = "http://s29.postimg.org/mt68s3j5z/star_wars_profile_pic.jpg";
 	    }
@@ -31513,7 +31552,6 @@
 	      that.setState({ description: "" });
 	    };
 	    CommentsApiUtil.createComment(comment, that.props.commentableId, callback);
-	    UserApiUtil.fetchAllUsers();
 	  }
 	
 	});
@@ -31708,8 +31746,8 @@
 	
 	  componentDidMount: function () {
 	    this.listener = UserStore.addListener(this._onChange);
-	    this.listener = PostStore.addListener(this._onChange);
-	    this.listener = CommentStore.addListener(this._onChange);
+	    // this.listener = PostStore.addListener(this._onChange);
+	    // this.listener = CommentStore.addListener(this._onChange);
 	    UserApiUtil.fetchUser(parseInt(this.props.params.userId));
 	  },
 	
@@ -31724,7 +31762,6 @@
 	  _onChange: function () {
 	    var userId = this.props.params.userId;
 	    var user = this._findUserById(userId);
-	
 	    if (this.isMounted()) {
 	      this.setState({ user: user });
 	    }
@@ -31737,7 +31774,7 @@
 	    var profile_pic;
 	
 	    if (this.state.user) {
-	      received_posts = this.state.user.received_posts;
+	      received_posts = this.state.user.received_posts.slice(0);
 	      fname = this.state.user.fname;
 	      received_posts = received_posts.reverse().map(function (post) {
 	        return React.createElement(PostIndexItem, { post: post, key: post.id });
@@ -31782,6 +31819,7 @@
 	var _users = [],
 	    Store = __webpack_require__(220).Store,
 	    UserConstants = __webpack_require__(216),
+	    CurrentUserConstants = __webpack_require__(218),
 	    PostConstants = __webpack_require__(209),
 	    AppDispatcher = __webpack_require__(210),
 	    UserStore = new Store(AppDispatcher);
@@ -31796,7 +31834,14 @@
 	};
 	
 	UserStore._addUser = function (user) {
-	  _users.push(user);
+	  var _usersIds = [];
+	  for (var i = 0; i < _users.length; i++) {
+	    _usersIds.push(_users[i].id);
+	  }
+	  var idx = _usersIds.indexOf(user.id);
+	  if (idx == -1) {
+	    _users.push(user);
+	  }
 	  this.__emitChange();
 	};
 	
@@ -31838,6 +31883,38 @@
 	//   }
 	// };
 	
+	UserStore._findPostById = function (id) {
+	  id = parseInt(id);
+	  posts = PostStore.all();
+	  for (var i = 0; i < posts.length; i++) {
+	    if (posts[i].id == id) {
+	      return posts[i];
+	    }
+	  }
+	};
+	
+	UserStore._addComment = function (comment) {
+	  var post = this._findPostById(comment.commentable_id);
+	  var user = this.__findUserById(post.id);
+	  post.comments.push(comment);
+	  this.__emitChange();
+	};
+	//
+	UserStore._removeComment = function (comment) {
+	  var _commentsIds = [];
+	  var post = this._findPostById(comment.commentable_id);
+	  var user = this.__findUserById(post.id);
+	  debugger;
+	  for (var i = 0; i < user.received_posts.comments.length; i++) {
+	    _commentsIds.push(post.comments[i].id);
+	  }
+	  var idx = _commentsIds.indexOf(comment.id);
+	  if (idx != -1) {
+	    post.comments.splice(idx, 1);
+	    this.__emitChange();
+	  }
+	};
+	
 	UserStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case UserConstants.RECEIVE_USERS:
@@ -31851,6 +31928,17 @@
 	      break;
 	    case PostConstants.DELETE_POST:
 	      UserStore._removePost(payload.post);
+	      break;
+	    case CurrentUserConstants.RECEIVE_CURRENT_USER:
+	      UserStore._addUser(payload.currentUser);
+	      break;
+	    case CommentConstants.DELETE_COMMENT:
+	      UserStore._removeComment(payload.comment);
+	      this.__emitChange();
+	      break;
+	    case CommentConstants.CREATE_COMMENT:
+	      UserStore._addComment(payload.comment);
+	      this.__emitChange();
 	      break;
 	  }
 	};

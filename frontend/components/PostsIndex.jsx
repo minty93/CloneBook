@@ -35,7 +35,7 @@ var PostsIndex = React.createClass({
         <li><PostsForm params={this.props.params}/></li>
           <li>
             {
-              this.state.posts.map(function(post,index) {
+              this.state.posts.slice(0).reverse().map(function(post,index) {
               return(
               <div className="post-box">
                 <PostsIndexItem key={index} post={post}/>

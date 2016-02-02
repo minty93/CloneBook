@@ -33,7 +33,7 @@ var CommentsIndex = React.createClass({
         <ul className="comments-index">
           <li>
             {
-              this.state.comments.reverse().map(function(comment) {
+              this.state.comments.map(function(comment) {
               return(
               <div>
                 <CommentsIndexItem key={comment.id} comment={comment} />

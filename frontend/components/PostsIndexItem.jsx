@@ -56,10 +56,10 @@ var PostsIndexItems = React.createClass({
         }
 
       if(this.props.post.author && this.props.post.author.profile_pic){
-        profile_pic = this.props.post.author.profile_pic
+        profile_pic = this.props.post.author.profile_pic.url;
       }
       else {
-        profile_pic = "http://s29.postimg.org/mt68s3j5z/star_wars_profile_pic.jpg"
+        profile_pic = "http://s29.postimg.org/mt68s3j5z/star_wars_profile_pic.jpg";
       }
 
 

@@ -38,8 +38,8 @@ var UserProfile = React.createClass({
 
   componentDidMount: function () {
     this.listener = UserStore.addListener(this._onChange);
-    this.listener = PostStore.addListener(this._onChange);
-    this.listener = CommentStore.addListener(this._onChange);
+    // this.listener = PostStore.addListener(this._onChange);
+    // this.listener = CommentStore.addListener(this._onChange);
     UserApiUtil.fetchUser(parseInt(this.props.params.userId));
   },
 
@@ -54,7 +54,6 @@ var UserProfile = React.createClass({
   _onChange: function () {
     var userId = this.props.params.userId;
     var user = this._findUserById(userId);
-
     if (this.isMounted()) {
     this.setState({ user: user});
     }
@@ -67,7 +66,7 @@ var UserProfile = React.createClass({
     var profile_pic;
 
     if (this.state.user) {
-      received_posts = this.state.user.received_posts;
+      received_posts = this.state.user.received_posts.slice(0);
       fname = this.state.user.fname;
       received_posts = received_posts.reverse().map(function(post) {
         return (<PostIndexItem post={post} key={post.id}/>);

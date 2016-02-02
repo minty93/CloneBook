@@ -74,7 +74,6 @@ PostStore._addComment = function(comment) {
 //
 PostStore._removeComment = function (comment) {
   var _commentsIds = [];
-  debugger
   var post = this._findPostById(comment.commentable_id);
   for (var i = 0; i < post.comments.length; i++) {
     _commentsIds.push(post.comments[i].id);
@@ -99,11 +98,9 @@ PostStore.__onDispatch = function (payload) {
     break;
   case CommentConstants.DELETE_COMMENT:
     PostStore._removeComment(payload.comment);
-    this.__emitChange();
     break;
   case CommentConstants.CREATE_COMMENT:
     PostStore._addComment(payload.comment);
-    this.__emitChange();
     break;
   }
 };

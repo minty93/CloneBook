@@ -2,8 +2,10 @@
 var _users = [],
     Store = require ("flux/utils").Store,
     UserConstants = require("../constants/user_constants"),
+    CommentConstants = require("../constants/comment_constants"),
     CurrentUserConstants = require("../constants/current_user_constants"),
     PostConstants = require("../constants/post_constants"),
+    PostStore = require("../stores/PostStore"),
     AppDispatcher = require('../dispatcher/dispatcher'),
     UserStore = new Store(AppDispatcher);
 
@@ -77,23 +79,38 @@ UserStore._findPostById = function(id) {
 };
 
 UserStore._addComment = function(comment) {
+  var postInd;
   var post = this._findPostById(comment.commentable_id);
-  var user = this.__findUserById(post.id);
-  post.comments.push(comment);
+  var user = this._findUserById(post.profile_id);
+
+  for (var i = 0; i < user.received_posts.length; i++) {
+    if (user.received_posts[i].id == post.id){
+      postInd = i;
+    }
+  }
+
+  user.received_posts[postInd].comments.push(comment);
   this.__emitChange();
 };
 //
 UserStore._removeComment = function (comment) {
-  var _commentsIds = [];
+  var _commentsIds = [],
+      postind;
   var post = this._findPostById(comment.commentable_id);
-  var user = this.__findUserById(post.id);
-  debugger
-  for (var i = 0; i < user.received_posts.comments.length; i++) {
-    _commentsIds.push(post.comments[i].id);
+  var user = this._findUserById(post.profile_id);
+
+  for (var i = 0; i < user.received_posts.length; i++) {
+    if (user.received_posts[i].id == post.id){
+      postind = i;
+    }
+  }
+
+  for (var x = 0; x < user.received_posts[postind].comments.length; x++) {
+    _commentsIds.push(user.received_posts[postind].comments[x].id);
   }
   var idx = _commentsIds.indexOf(comment.id);
   if (idx != -1) {
-    post.comments.splice(idx, 1);
+    user.received_posts[postind].comments.splice(idx, 1);
     this.__emitChange();
   }
 };
@@ -117,11 +134,9 @@ UserStore.__onDispatch = function (payload) {
     break;
   case CommentConstants.DELETE_COMMENT:
     UserStore._removeComment(payload.comment);
-    this.__emitChange();
     break;
   case CommentConstants.CREATE_COMMENT:
     UserStore._addComment(payload.comment);
-    this.__emitChange();
     break;
   }
 };

@@ -11,6 +11,8 @@ var CommentsIndexItem = React.createClass({
   handleDelete: function(e){
     e.preventDefault();
     var that = this;
+    PostsApiUtil.fetchAllPosts();
+    UserApiUtil.fetchAllUsers();
     CommentsApiUtil.destroyComment(this.props.comment.id);
   },
 

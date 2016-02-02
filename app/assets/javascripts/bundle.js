@@ -24760,7 +24760,6 @@
 	//
 	PostStore._removeComment = function (comment) {
 	  var _commentsIds = [];
-	  debugger;
 	  var post = this._findPostById(comment.commentable_id);
 	  for (var i = 0; i < post.comments.length; i++) {
 	    _commentsIds.push(post.comments[i].id);
@@ -24785,11 +24784,9 @@
 	      break;
 	    case CommentConstants.DELETE_COMMENT:
 	      PostStore._removeComment(payload.comment);
-	      this.__emitChange();
 	      break;
 	    case CommentConstants.CREATE_COMMENT:
 	      PostStore._addComment(payload.comment);
-	      this.__emitChange();
 	      break;
 	  }
 	};
@@ -31551,6 +31548,8 @@
 	    var callback = function () {
 	      that.setState({ description: "" });
 	    };
+	    PostsApiUtil.fetchAllPosts();
+	    UserApiUtil.fetchAllUsers();
 	    CommentsApiUtil.createComment(comment, that.props.commentableId, callback);
 	  }
 	
@@ -31671,6 +31670,8 @@
 	  handleDelete: function (e) {
 	    e.preventDefault();
 	    var that = this;
+	    PostsApiUtil.fetchAllPosts();
+	    UserApiUtil.fetchAllUsers();
 	    CommentsApiUtil.destroyComment(this.props.comment.id);
 	  },
 	
@@ -31819,8 +31820,10 @@
 	var _users = [],
 	    Store = __webpack_require__(220).Store,
 	    UserConstants = __webpack_require__(216),
+	    CommentConstants = __webpack_require__(239),
 	    CurrentUserConstants = __webpack_require__(218),
 	    PostConstants = __webpack_require__(209),
+	    PostStore = __webpack_require__(219),
 	    AppDispatcher = __webpack_require__(210),
 	    UserStore = new Store(AppDispatcher);
 	
@@ -31894,23 +31897,38 @@
 	};
 	
 	UserStore._addComment = function (comment) {
+	  var postInd;
 	  var post = this._findPostById(comment.commentable_id);
-	  var user = this.__findUserById(post.id);
-	  post.comments.push(comment);
+	  var user = this._findUserById(post.profile_id);
+	
+	  for (var i = 0; i < user.received_posts.length; i++) {
+	    if (user.received_posts[i].id == post.id) {
+	      postInd = i;
+	    }
+	  }
+	
+	  user.received_posts[postInd].comments.push(comment);
 	  this.__emitChange();
 	};
 	//
 	UserStore._removeComment = function (comment) {
-	  var _commentsIds = [];
+	  var _commentsIds = [],
+	      postind;
 	  var post = this._findPostById(comment.commentable_id);
-	  var user = this.__findUserById(post.id);
-	  debugger;
-	  for (var i = 0; i < user.received_posts.comments.length; i++) {
-	    _commentsIds.push(post.comments[i].id);
+	  var user = this._findUserById(post.profile_id);
+	
+	  for (var i = 0; i < user.received_posts.length; i++) {
+	    if (user.received_posts[i].id == post.id) {
+	      postind = i;
+	    }
+	  }
+	
+	  for (var x = 0; x < user.received_posts[postind].comments.length; x++) {
+	    _commentsIds.push(user.received_posts[postind].comments[x].id);
 	  }
 	  var idx = _commentsIds.indexOf(comment.id);
 	  if (idx != -1) {
-	    post.comments.splice(idx, 1);
+	    user.received_posts[postind].comments.splice(idx, 1);
 	    this.__emitChange();
 	  }
 	};
@@ -31934,11 +31952,9 @@
 	      break;
 	    case CommentConstants.DELETE_COMMENT:
 	      UserStore._removeComment(payload.comment);
-	      this.__emitChange();
 	      break;
 	    case CommentConstants.CREATE_COMMENT:
 	      UserStore._addComment(payload.comment);
-	      this.__emitChange();
 	      break;
 	  }
 	};

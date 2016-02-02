@@ -39,6 +39,8 @@ var CommentForm = React.createClass({
     var comment = {description: that.state.description, commentable_id: this.props.commentableId, commentable_type: this.props.commentableType };
     var callback = function(){
       that.setState({description: "" });};
+    PostsApiUtil.fetchAllPosts();
+    UserApiUtil.fetchAllUsers();
     CommentsApiUtil.createComment(comment, that.props.commentableId, callback);
   },
 

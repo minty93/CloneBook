@@ -31740,16 +31740,17 @@
 	  },
 	
 	  getInitialState: function () {
-	    var userId = this.props.params.userId;
+	    var userId = this.props.userId || this.props.params.userId;
 	    var user = this._findUserById(userId);
 	    return { user: user };
 	  },
 	
 	  componentDidMount: function () {
+	    var userId = this.props.userId || this.props.params.userId;
 	    this.listener = UserStore.addListener(this._onChange);
 	    // this.listener = PostStore.addListener(this._onChange);
 	    // this.listener = CommentStore.addListener(this._onChange);
-	    UserApiUtil.fetchUser(parseInt(this.props.params.userId));
+	    UserApiUtil.fetchUser(parseInt(userId));
 	  },
 	
 	  componentWillReceiveProps: function (newProps) {
@@ -32325,6 +32326,7 @@
 	var UserProfile = __webpack_require__(245);
 	var PostIndexItem = __webpack_require__(240);
 	var CommentIndexItem = __webpack_require__(244);
+	var Link = __webpack_require__(159).Link;
 	
 	var Search = React.createClass({
 	  displayName: 'Search',
@@ -32339,6 +32341,10 @@
 	
 	  _onChange: function () {
 	    this.forceUpdate();
+	  },
+	
+	  reset: function () {
+	    this.setState({ page: 1, query: "" });
 	  },
 	
 	  search: function (e) {
@@ -32363,14 +32369,32 @@
 	
 	    var searchResults = SearchResultsStore.all().map(function (searchResult) {
 	      if (searchResult._type === "User") {
-	        return React.createElement(UserProfile, { user: searchResult });
+	        return React.createElement(
+	          'li',
+	          null,
+	          React.createElement(
+	            Link,
+	            { to: `users/${ searchResult.id }` },
+	            searchResult.fname
+	          )
+	        );
 	      } else if (searchResult._type === "Post") {
-	        return React.createElement(PostIndexItem, { post: searchResult });
+	        return React.createElement(
+	          'li',
+	          null,
+	          React.createElement(PostIndexItem, { post: searchResult })
+	        );
 	      } else {
-	        return React.createElement(CommentIndexItem, { comment: searchResult });
+	        return React.createElement(
+	          'li',
+	          null,
+	          React.createElement(CommentIndexItem, { comment: searchResult })
+	        );
 	      }
 	    });
 	
+	    // Displaying {SearchResultsStore.all().length} of
+	    // {SearchResultsStore.meta().totalCount}
 	    return React.createElement(
 	      'div',
 	      null,
@@ -32380,10 +32404,6 @@
 	        'Search!'
 	      ),
 	      React.createElement('input', { type: 'text', placeholder: 'Search', onKeyUp: this.search }),
-	      'Displaying ',
-	      SearchResultsStore.all().length,
-	      ' of',
-	      SearchResultsStore.meta().totalCount,
 	      React.createElement(
 	        'button',
 	        { onClick: this.nextPage },

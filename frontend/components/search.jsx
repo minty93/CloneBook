@@ -4,6 +4,7 @@ var SearchApiUtil = require('../util/search_api_util');
 var UserProfile = require('./UserProfile');
 var PostIndexItem = require('./PostsIndexItem');
 var CommentIndexItem = require('./CommentsIndexItem');
+var Link = require('react-router').Link;
 
 var Search = React.createClass({
 
@@ -17,6 +18,10 @@ var Search = React.createClass({
 
   _onChange: function() {
     this.forceUpdate();
+  },
+
+  reset: function(){
+    this.setState({page: 1, query: ""});
   },
 
   search: function (e) {
@@ -41,23 +46,23 @@ var Search = React.createClass({
 
     var searchResults = SearchResultsStore.all().map(function (searchResult) {
       if (searchResult._type === "User") {
-        return <UserProfile user={searchResult} />
+        return (<li><Link to={`users/${searchResult.id}`}>{searchResult.fname}</Link></li>)
+
       } else if (searchResult._type === "Post") {
-        return <PostIndexItem post={searchResult} />
+        return <li><PostIndexItem post={searchResult} /></li>;
       }
       else {
-        return <CommentIndexItem comment={searchResult}/>
+        return <li><CommentIndexItem comment={searchResult}/></li>;
       }
     });
 
+    // Displaying {SearchResultsStore.all().length} of
+    // {SearchResultsStore.meta().totalCount}
     return (
       <div>
         <h1 className="title">Search!</h1>
         <input type="text" placeholder="Search" onKeyUp={ this.search } />
-        Displaying {SearchResultsStore.all().length} of
-        {SearchResultsStore.meta().totalCount}
         <button onClick={this.nextPage}>Next ></button>
-
         <ul className="users-index">{ searchResults }</ul>
       </div>
     );

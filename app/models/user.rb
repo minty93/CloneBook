@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   multisearchable :against => [:email, :fname, :lname]
 
   PgSearch.multisearch_options = {
-  :using => [:tsearch, :trigram]
+  :using => [:tsearch]
   }
 
   validates :session_token, :fname, :lname, :email, :password_digest, presence: true

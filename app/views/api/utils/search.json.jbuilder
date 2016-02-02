@@ -3,11 +3,11 @@ json.results do
     result = result.searchable
 
     if result.class == User
-      json.extract! result, :id, :fname, :lname, :email
+      json.partial!("api/users/user", user: result)
     elsif result.class == Post
-      json.extract! result, :id, :body, :author_id, :profile_id, :author_name
+      json.partial!("api/posts/post", post: result)
     else
-      json.extract! result, :id, :description, :author_id, :author_name, :commentable_id, :commentable_type
+      json.partial!("api/comments/comments", comment: result)
     end
 
     json._type result.class.to_s

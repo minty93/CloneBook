@@ -5,7 +5,7 @@ class Comment < ActiveRecord::Base
   multisearchable :against => [:description]
 
   PgSearch.multisearch_options = {
-  :using => [:tsearch, :trigram]
+  :using => [:tsearch]
   }
 
   validates :description, :author_id, :author_name, presence: true

@@ -31,16 +31,17 @@ var UserProfile = React.createClass({
   },
 
   getInitialState: function(){
-    var userId = this.props.params.userId;
+    var userId = this.props.userId || this.props.params.userId;
     var user = this._findUserById(userId);
     return { user: user};
   },
 
   componentDidMount: function () {
+    var userId = (this.props.userId || this.props.params.userId);
     this.listener = UserStore.addListener(this._onChange);
     // this.listener = PostStore.addListener(this._onChange);
     // this.listener = CommentStore.addListener(this._onChange);
-    UserApiUtil.fetchUser(parseInt(this.props.params.userId));
+    UserApiUtil.fetchUser(parseInt(userId));
   },
 
   componentWillReceiveProps: function(newProps){

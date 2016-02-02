@@ -4,7 +4,7 @@ class Post < ActiveRecord::Base
   multisearchable :against => [:body]
 
   PgSearch.multisearch_options = {
-  :using => [:tsearch, :trigram]
+  :using => [:tsearch]
   }
 
 

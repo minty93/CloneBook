@@ -39,7 +39,6 @@ var PostForm = React.createClass({
       that.setState({body: "" });
     };
     PostsApiUtil.createPost(post, callback);
-    UserApiUtil.fetchAllUsers();
   },
 
 

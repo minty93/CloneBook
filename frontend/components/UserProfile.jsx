@@ -54,6 +54,7 @@ var UserProfile = React.createClass({
   _onChange: function () {
     var userId = this.props.params.userId;
     var user = this._findUserById(userId);
+
     if (this.isMounted()) {
     this.setState({ user: user});
     }
@@ -69,7 +70,7 @@ var UserProfile = React.createClass({
       received_posts = this.state.user.received_posts;
       fname = this.state.user.fname;
       received_posts = received_posts.reverse().map(function(post) {
-        return (<PostIndexItem post={post}/>);
+        return (<PostIndexItem post={post} key={post.id}/>);
       });
       cover_pic =   <img className="cover-image" src={this.state.user.cover_pic} />;
       profile_pic =   <img className="profile-image" src={this.state.user.profile_pic} />;

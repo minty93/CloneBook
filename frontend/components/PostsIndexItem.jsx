@@ -85,9 +85,6 @@ var PostsIndexItems = React.createClass({
     e.preventDefault();
     var that = this;
     PostsApiUtil.destroyPost(this.props.post.id);
-    PostsApiUtil.fetchAllPosts();
-    UserApiUtil.fetchAllUsers();
-
   },
 
 

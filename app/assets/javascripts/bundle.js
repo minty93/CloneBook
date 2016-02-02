@@ -51,9 +51,9 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var PostsForm = __webpack_require__(206);
-	var PostsIndex = __webpack_require__(232);
-	var UserProfile = __webpack_require__(240);
-	var CommentsForm = __webpack_require__(236);
+	var PostsIndex = __webpack_require__(237);
+	var UserProfile = __webpack_require__(245);
+	var CommentsForm = __webpack_require__(241);
 	var App = __webpack_require__(249);
 	var SessionForm = __webpack_require__(258);
 	var UserForm = __webpack_require__(259);
@@ -24064,8 +24064,8 @@
 
 	var React = __webpack_require__(1);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserApiUtil = __webpack_require__(241);
-	var PostStore = __webpack_require__(214);
+	var UserApiUtil = __webpack_require__(214);
+	var PostStore = __webpack_require__(219);
 	
 	var PostForm = React.createClass({
 	  displayName: 'PostForm',
@@ -24109,7 +24109,6 @@
 	      that.setState({ body: "" });
 	    };
 	    PostsApiUtil.createPost(post, callback);
-	    UserApiUtil.fetchAllUsers();
 	  }
 	
 	});
@@ -24203,6 +24202,7 @@
 	  },
 	
 	  createPost: function (post) {
+	
 	    AppDispatcher.dispatch({
 	      actionType: PostConstants.CREATE_POST,
 	      post: post
@@ -24548,9 +24548,148 @@
 /* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var UserApiActions = __webpack_require__(215);
+	var CurrentUserActions = __webpack_require__(217);
+	var UserActions = __webpack_require__(215);
+	
+	var UsersApiUtil = {
+	  fetchAllUsers: function () {
+	    $.ajax({
+	      url: "api/users",
+	      type: "GET",
+	      dataType: "json",
+	      success: function (data) {
+	        UserApiActions.receiveUsers(data);
+	      },
+	      error: function () {
+	        alert("You have failed me");
+	      }
+	
+	    });
+	  },
+	
+	  fetchUser: function (id) {
+	    $.ajax({
+	      url: '/api/users/' + id,
+	      type: 'GET',
+	      dataType: 'json',
+	      success: function (user) {
+	        UserApiActions.receiveUser(user);
+	      }
+	    });
+	  },
+	
+	  createUser: function (attrs, callback) {
+	    $.ajax({
+	      url: 'api/users',
+	      type: 'POST',
+	      dataType: 'json',
+	      data: { user: attrs },
+	      success: function (user) {
+	        UserActions.receiveUser(user);
+	        CurrentUserActions.receiveCurrentUser(user);
+	        callback && callback();
+	      }
+	    });
+	  },
+	
+	  updateUser: function (formData, profile_id, callback) {
+	    $.ajax({
+	      url: 'api/users/' + profile_id,
+	      type: 'PATCH',
+	      processData: false,
+	      contentType: false,
+	      dataType: 'json',
+	      data: formData,
+	      success: function (user) {
+	        UserActions.receiveUser(user);
+	        callback && callback();
+	      }
+	    });
+	  }
+	
+	};
+	
+	module.exports = UsersApiUtil;
+
+/***/ },
+/* 215 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var UserConstants = __webpack_require__(216);
+	var AppDispatcher = __webpack_require__(210);
+	
+	var UserApiActions = {
+	  receiveUsers: function (users) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_USERS,
+	      users: users
+	    });
+	  },
+	
+	  receiveUser: function (user) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_USER,
+	      user: user
+	    });
+	  }
+	};
+	
+	module.exports = UserApiActions;
+
+/***/ },
+/* 216 */
+/***/ function(module, exports) {
+
+	
+	var UserConstants = {
+	  RECEIVE_USERS: "RECEIVE_USERS",
+	  RECEIVE_USER: "RECEIVE_USER"
+	};
+	
+	module.exports = UserConstants;
+
+/***/ },
+/* 217 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(210);
+	var CurrentUserConstants = __webpack_require__(218);
+	
+	var CurrentUserActions = {
+	  receiveCurrentUser: function (currentUser) {
+	    AppDispatcher.dispatch({
+	      actionType: CurrentUserConstants.RECEIVE_CURRENT_USER,
+	      currentUser: currentUser
+	    });
+	  },
+	  logOut: function () {
+	    AppDispatcher.dispatch({
+	      actionType: CurrentUserConstants.LOG_OUT
+	    });
+	  }
+	};
+	
+	module.exports = CurrentUserActions;
+
+/***/ },
+/* 218 */
+/***/ function(module, exports) {
+
+	var CurrentUserConstants = {
+	  RECEIVE_CURRENT_USER: "RECEIVE_CURRENT_USER",
+	  LOG_OUT: "LOG_OUT"
+	};
+	
+	module.exports = CurrentUserConstants;
+
+/***/ },
+/* 219 */
+/***/ function(module, exports, __webpack_require__) {
+
 	
 	var _posts = [],
-	    Store = __webpack_require__(215).Store,
+	    Store = __webpack_require__(220).Store,
 	    PostConstants = __webpack_require__(209),
 	    AppDispatcher = __webpack_require__(210),
 	    PostStore = new Store(AppDispatcher);
@@ -24619,7 +24758,7 @@
 	module.exports = PostStore;
 
 /***/ },
-/* 215 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24631,15 +24770,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Container = __webpack_require__(216);
-	module.exports.MapStore = __webpack_require__(219);
-	module.exports.Mixin = __webpack_require__(231);
-	module.exports.ReduceStore = __webpack_require__(220);
-	module.exports.Store = __webpack_require__(221);
+	module.exports.Container = __webpack_require__(221);
+	module.exports.MapStore = __webpack_require__(224);
+	module.exports.Mixin = __webpack_require__(236);
+	module.exports.ReduceStore = __webpack_require__(225);
+	module.exports.Store = __webpack_require__(226);
 
 
 /***/ },
-/* 216 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24661,10 +24800,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStoreGroup = __webpack_require__(217);
+	var FluxStoreGroup = __webpack_require__(222);
 	
 	var invariant = __webpack_require__(213);
-	var shallowEqual = __webpack_require__(218);
+	var shallowEqual = __webpack_require__(223);
 	
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -24822,7 +24961,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 217 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24903,7 +25042,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 218 */
+/* 223 */
 /***/ function(module, exports) {
 
 	/**
@@ -24958,7 +25097,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 219 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24979,8 +25118,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxReduceStore = __webpack_require__(220);
-	var Immutable = __webpack_require__(230);
+	var FluxReduceStore = __webpack_require__(225);
+	var Immutable = __webpack_require__(235);
 	
 	var invariant = __webpack_require__(213);
 	
@@ -25108,7 +25247,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 220 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25129,9 +25268,9 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStore = __webpack_require__(221);
+	var FluxStore = __webpack_require__(226);
 	
-	var abstractMethod = __webpack_require__(229);
+	var abstractMethod = __webpack_require__(234);
 	var invariant = __webpack_require__(213);
 	
 	var FluxReduceStore = (function (_FluxStore) {
@@ -25215,7 +25354,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 221 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25234,7 +25373,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _require = __webpack_require__(222);
+	var _require = __webpack_require__(227);
 	
 	var EventEmitter = _require.EventEmitter;
 	
@@ -25398,7 +25537,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 222 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25411,14 +25550,14 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(223)
+	  EventEmitter: __webpack_require__(228)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 223 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25437,11 +25576,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(224);
-	var EventSubscriptionVendor = __webpack_require__(226);
+	var EmitterSubscription = __webpack_require__(229);
+	var EventSubscriptionVendor = __webpack_require__(231);
 	
-	var emptyFunction = __webpack_require__(228);
-	var invariant = __webpack_require__(227);
+	var emptyFunction = __webpack_require__(233);
+	var invariant = __webpack_require__(232);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -25615,7 +25754,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 224 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25636,7 +25775,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(225);
+	var EventSubscription = __webpack_require__(230);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -25668,7 +25807,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 225 */
+/* 230 */
 /***/ function(module, exports) {
 
 	/**
@@ -25722,7 +25861,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 226 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25741,7 +25880,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(227);
+	var invariant = __webpack_require__(232);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -25831,7 +25970,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 227 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25887,7 +26026,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 228 */
+/* 233 */
 /***/ function(module, exports) {
 
 	/**
@@ -25930,7 +26069,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 229 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25957,7 +26096,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 230 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -30944,7 +31083,7 @@
 	}));
 
 /***/ },
-/* 231 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -30961,7 +31100,7 @@
 	
 	'use strict';
 	
-	var FluxStoreGroup = __webpack_require__(217);
+	var FluxStoreGroup = __webpack_require__(222);
 	
 	var invariant = __webpack_require__(213);
 	
@@ -31067,17 +31206,17 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 232 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var PostStore = __webpack_require__(214);
-	var CommentStore = __webpack_require__(233);
-	var PostsIndexItem = __webpack_require__(235);
+	var PostStore = __webpack_require__(219);
+	var CommentStore = __webpack_require__(238);
+	var PostsIndexItem = __webpack_require__(240);
 	var PostsApiUtil = __webpack_require__(207);
 	var PostsForm = __webpack_require__(206);
-	var CommentsForm = __webpack_require__(236);
-	var CommentsIndexItem = __webpack_require__(239);
+	var CommentsForm = __webpack_require__(241);
+	var CommentsIndexItem = __webpack_require__(244);
 	
 	var PostsIndex = React.createClass({
 	  displayName: "PostsIndex",
@@ -31088,7 +31227,6 @@
 	
 	  componentWillMount: function () {
 	    this.listener = PostStore.addListener(this._onChange);
-	    this.listener = CommentStore.addListener(this._onChange);
 	    PostsApiUtil.fetchAllPosts();
 	  },
 	
@@ -31111,11 +31249,11 @@
 	        React.createElement(
 	          "li",
 	          null,
-	          this.state.posts.map(function (post) {
+	          this.state.posts.map(function (post, index) {
 	            return React.createElement(
 	              "div",
 	              { className: "post-box" },
-	              React.createElement(PostsIndexItem, { key: post.id, post: post })
+	              React.createElement(PostsIndexItem, { key: index, post: post })
 	            );
 	          })
 	        )
@@ -31134,13 +31272,13 @@
 	module.exports = PostsIndex;
 
 /***/ },
-/* 233 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
 	var _comments = [],
-	    Store = __webpack_require__(215).Store,
-	    CommentConstants = __webpack_require__(234),
+	    Store = __webpack_require__(220).Store,
+	    CommentConstants = __webpack_require__(239),
 	    AppDispatcher = __webpack_require__(210),
 	    CommentStore = new Store(AppDispatcher);
 	
@@ -31195,7 +31333,7 @@
 	module.exports = CommentStore;
 
 /***/ },
-/* 234 */
+/* 239 */
 /***/ function(module, exports) {
 
 	
@@ -31209,15 +31347,15 @@
 	module.exports = CommentConstants;
 
 /***/ },
-/* 235 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var PostStore = __webpack_require__(214);
+	var PostStore = __webpack_require__(219);
 	var PostsApiUtil = __webpack_require__(207);
-	var CommentsForm = __webpack_require__(236);
-	var CommentsIndexItem = __webpack_require__(239);
-	var UserApiUtil = __webpack_require__(241);
+	var CommentsForm = __webpack_require__(241);
+	var CommentsIndexItem = __webpack_require__(244);
+	var UserApiUtil = __webpack_require__(214);
 	
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
@@ -31317,8 +31455,6 @@
 	    e.preventDefault();
 	    var that = this;
 	    PostsApiUtil.destroyPost(this.props.post.id);
-	    PostsApiUtil.fetchAllPosts();
-	    UserApiUtil.fetchAllUsers();
 	  }
 	
 	});
@@ -31326,14 +31462,14 @@
 	module.exports = PostsIndexItems;
 
 /***/ },
-/* 236 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CommentsApiUtil = __webpack_require__(237);
+	var CommentsApiUtil = __webpack_require__(242);
 	var PostsApiUtil = __webpack_require__(207);
-	var CommentStore = __webpack_require__(233);
-	var UserApiUtil = __webpack_require__(241);
+	var CommentStore = __webpack_require__(238);
+	var UserApiUtil = __webpack_require__(214);
 	
 	var CommentForm = React.createClass({
 	  displayName: 'CommentForm',
@@ -31385,10 +31521,10 @@
 	module.exports = CommentForm;
 
 /***/ },
-/* 237 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CommentApiActions = __webpack_require__(238);
+	var CommentApiActions = __webpack_require__(243);
 	
 	var CommentApiUtil = {
 	  fetchSingleComment: function (id) {
@@ -31442,10 +31578,10 @@
 	module.exports = CommentApiUtil;
 
 /***/ },
-/* 238 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CommentConstants = __webpack_require__(234);
+	var CommentConstants = __webpack_require__(239);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var CommentApiActions = {
@@ -31482,15 +31618,15 @@
 	module.exports = CommentApiActions;
 
 /***/ },
-/* 239 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CommentStore = __webpack_require__(233);
-	var PostStore = __webpack_require__(214);
-	var CommentsApiUtil = __webpack_require__(237);
+	var CommentStore = __webpack_require__(238);
+	var PostStore = __webpack_require__(219);
+	var CommentsApiUtil = __webpack_require__(242);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserApiUtil = __webpack_require__(241);
+	var UserApiUtil = __webpack_require__(214);
 	var CommentsIndexItem = React.createClass({
 	  displayName: "CommentsIndexItem",
 	
@@ -31498,8 +31634,6 @@
 	    e.preventDefault();
 	    var that = this;
 	    CommentsApiUtil.destroyComment(this.props.comment.id);
-	    CommentsApiUtil.fetchAllComments();
-	    UserApiUtil.fetchAllUsers();
 	  },
 	
 	  render: function () {
@@ -31534,17 +31668,17 @@
 	module.exports = CommentsIndexItem;
 
 /***/ },
-/* 240 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var UserApiUtil = __webpack_require__(241);
+	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
 	var UserStore = __webpack_require__(246);
-	var PostStore = __webpack_require__(214);
-	var CommentStore = __webpack_require__(233);
+	var PostStore = __webpack_require__(219);
+	var CommentStore = __webpack_require__(238);
 	var PostsForm = __webpack_require__(206);
-	var PostIndexItem = __webpack_require__(235);
+	var PostIndexItem = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
 	var CoverForm = __webpack_require__(247);
 	var ProfileForm = __webpack_require__(248);
@@ -31590,6 +31724,7 @@
 	  _onChange: function () {
 	    var userId = this.props.params.userId;
 	    var user = this._findUserById(userId);
+	
 	    if (this.isMounted()) {
 	      this.setState({ user: user });
 	    }
@@ -31605,7 +31740,7 @@
 	      received_posts = this.state.user.received_posts;
 	      fname = this.state.user.fname;
 	      received_posts = received_posts.reverse().map(function (post) {
-	        return React.createElement(PostIndexItem, { post: post });
+	        return React.createElement(PostIndexItem, { post: post, key: post.id });
 	      });
 	      cover_pic = React.createElement('img', { className: 'cover-image', src: this.state.user.cover_pic });
 	      profile_pic = React.createElement('img', { className: 'profile-image', src: this.state.user.profile_pic });
@@ -31640,152 +31775,14 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 241 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var UserApiActions = __webpack_require__(242);
-	var CurrentUserActions = __webpack_require__(244);
-	var UserActions = __webpack_require__(242);
-	
-	var UsersApiUtil = {
-	  fetchAllUsers: function () {
-	    $.ajax({
-	      url: "api/users",
-	      type: "GET",
-	      dataType: "json",
-	      success: function (data) {
-	        UserApiActions.receiveUsers(data);
-	      },
-	      error: function () {
-	        alert("You have failed me");
-	      }
-	
-	    });
-	  },
-	
-	  fetchUser: function (id) {
-	    $.ajax({
-	      url: '/api/users/' + id,
-	      type: 'GET',
-	      dataType: 'json',
-	      success: function (user) {
-	        UserApiActions.receiveUser(user);
-	      }
-	    });
-	  },
-	
-	  createUser: function (attrs, callback) {
-	    $.ajax({
-	      url: 'api/users',
-	      type: 'POST',
-	      dataType: 'json',
-	      data: { user: attrs },
-	      success: function (user) {
-	        UserActions.receiveUser(user);
-	        CurrentUserActions.receiveCurrentUser(user);
-	        callback && callback();
-	      }
-	    });
-	  },
-	
-	  updateUser: function (formData, profile_id, callback) {
-	    $.ajax({
-	      url: 'api/users/' + profile_id,
-	      type: 'PATCH',
-	      processData: false,
-	      contentType: false,
-	      dataType: 'json',
-	      data: formData,
-	      success: function (user) {
-	        UserActions.receiveUser(user);
-	        callback && callback();
-	      }
-	    });
-	  }
-	
-	};
-	
-	module.exports = UsersApiUtil;
-
-/***/ },
-/* 242 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var UserConstants = __webpack_require__(243);
-	var AppDispatcher = __webpack_require__(210);
-	
-	var UserApiActions = {
-	  receiveUsers: function (users) {
-	    AppDispatcher.dispatch({
-	      actionType: UserConstants.RECEIVE_USERS,
-	      users: users
-	    });
-	  },
-	
-	  receiveUser: function (user) {
-	    AppDispatcher.dispatch({
-	      actionType: UserConstants.RECEIVE_USER,
-	      user: user
-	    });
-	  }
-	};
-	
-	module.exports = UserApiActions;
-
-/***/ },
-/* 243 */
-/***/ function(module, exports) {
-
-	
-	var UserConstants = {
-	  RECEIVE_USERS: "RECEIVE_USERS",
-	  RECEIVE_USER: "RECEIVE_USER"
-	};
-	
-	module.exports = UserConstants;
-
-/***/ },
-/* 244 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(210);
-	var CurrentUserConstants = __webpack_require__(245);
-	
-	var CurrentUserActions = {
-	  receiveCurrentUser: function (currentUser) {
-	    AppDispatcher.dispatch({
-	      actionType: CurrentUserConstants.RECEIVE_CURRENT_USER,
-	      currentUser: currentUser
-	    });
-	  },
-	  logOut: function () {
-	    AppDispatcher.dispatch({
-	      actionType: CurrentUserConstants.LOG_OUT
-	    });
-	  }
-	};
-	
-	module.exports = CurrentUserActions;
-
-/***/ },
-/* 245 */
-/***/ function(module, exports) {
-
-	var CurrentUserConstants = {
-	  RECEIVE_CURRENT_USER: "RECEIVE_CURRENT_USER",
-	  LOG_OUT: "LOG_OUT"
-	};
-	
-	module.exports = CurrentUserConstants;
-
-/***/ },
 /* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
 	var _users = [],
-	    Store = __webpack_require__(215).Store,
-	    UserConstants = __webpack_require__(243),
+	    Store = __webpack_require__(220).Store,
+	    UserConstants = __webpack_require__(216),
+	    PostConstants = __webpack_require__(209),
 	    AppDispatcher = __webpack_require__(210),
 	    UserStore = new Store(AppDispatcher);
 	
@@ -31802,6 +31799,36 @@
 	  _users.push(user);
 	  this.__emitChange();
 	};
+	
+	UserStore._findUserById = function (id) {
+	  id = parseInt(id);
+	  users = UserStore.all();
+	  for (var i = 0; i < users.length; i++) {
+	    if (users[i].id == id) {
+	      return users[i];
+	    }
+	  }
+	};
+	
+	UserStore._addPost = function (post) {
+	  var user = this._findUserById(post.profile_id);
+	  user.received_posts.push(post);
+	  this.__emitChange();
+	};
+	
+	UserStore._removePost = function (post) {
+	  var _postsIds = [];
+	  var user = this._findUserById(post.profile_id);
+	  for (var i = 0; i < user.received_posts.length; i++) {
+	    _postsIds.push(user.received_posts[i].id);
+	  }
+	  var idx = _postsIds.indexOf(post.id);
+	  if (idx != -1) {
+	    user.received_posts.splice(idx, 1);
+	    this.__emitChange();
+	  }
+	};
+	
 	//
 	// UserStore._removeUser = function (user) {
 	//   var idx = _users.indexOf(user);
@@ -31819,7 +31846,12 @@
 	    case UserConstants.RECEIVE_USER:
 	      UserStore._addUser(payload.user);
 	      break;
-	
+	    case PostConstants.CREATE_POST:
+	      UserStore._addPost(payload.post);
+	      break;
+	    case PostConstants.DELETE_POST:
+	      UserStore._removePost(payload.post);
+	      break;
 	  }
 	};
 	
@@ -31830,7 +31862,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var UsersApiUtil = __webpack_require__(241);
+	var UsersApiUtil = __webpack_require__(214);
 	
 	var UserCoverForm = React.createClass({
 	  displayName: 'UserCoverForm',
@@ -31895,7 +31927,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var UsersApiUtil = __webpack_require__(241);
+	var UsersApiUtil = __webpack_require__(214);
 	
 	var UserProfileForm = React.createClass({
 	  displayName: 'UserProfileForm',
@@ -32085,9 +32117,9 @@
 /* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Store = __webpack_require__(215).Store;
+	var Store = __webpack_require__(220).Store;
 	var AppDispatcher = __webpack_require__(210);
-	var CurrentUserConstants = __webpack_require__(245);
+	var CurrentUserConstants = __webpack_require__(218);
 	
 	var _currentUser = {};
 	var _currentUserHasBeenFetched = false;
@@ -32133,7 +32165,7 @@
 /* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CurrentUserActions = __webpack_require__(244);
+	var CurrentUserActions = __webpack_require__(217);
 	var SessionsApiUtil = {
 	  login: function (credentials, success) {
 	
@@ -32186,9 +32218,9 @@
 	var React = __webpack_require__(1);
 	var SearchResultsStore = __webpack_require__(254);
 	var SearchApiUtil = __webpack_require__(256);
-	var UserProfile = __webpack_require__(240);
-	var PostIndexItem = __webpack_require__(235);
-	var CommentIndexItem = __webpack_require__(239);
+	var UserProfile = __webpack_require__(245);
+	var PostIndexItem = __webpack_require__(240);
+	var CommentIndexItem = __webpack_require__(244);
 	
 	var Search = React.createClass({
 	  displayName: 'Search',
@@ -32269,7 +32301,7 @@
 /* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Store = __webpack_require__(215).Store;
+	var Store = __webpack_require__(220).Store;
 	var AppDispatcher = __webpack_require__(210);
 	var SearchConstants = __webpack_require__(255);
 	
@@ -32361,7 +32393,7 @@
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
 	var SessionsApiUtil = __webpack_require__(252);
-	var UsersApiUtil = __webpack_require__(241);
+	var UsersApiUtil = __webpack_require__(214);
 	
 	var SessionForm = React.createClass({
 	  displayName: 'SessionForm',
@@ -32538,7 +32570,7 @@
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
 	var SessionsApiUtil = __webpack_require__(252);
-	var UsersApiUtil = __webpack_require__(241);
+	var UsersApiUtil = __webpack_require__(214);
 	
 	var UserForm = React.createClass({
 	  displayName: 'UserForm',
@@ -32714,7 +32746,7 @@
 
 	var React = __webpack_require__(1);
 	var UsersStore = __webpack_require__(246);
-	var UsersApiUtil = __webpack_require__(241);
+	var UsersApiUtil = __webpack_require__(214);
 	
 	var UsersIndex = React.createClass({
 	  displayName: 'UsersIndex',

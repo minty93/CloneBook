@@ -24,6 +24,7 @@ var PostApiActions = {
   },
 
   createPost: function (post) {
+    
     AppDispatcher.dispatch({
       actionType: PostConstants.CREATE_POST,
       post: post

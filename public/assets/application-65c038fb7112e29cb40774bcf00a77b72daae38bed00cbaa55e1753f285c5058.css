@@ -1,0 +1,461 @@
+/* line 5, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/comments.scss */
+.comment-form > form > input {
+  background: white;
+  width: 200px;
+  height: 50px;
+  color: black;
+  margin-bottom: 5px;
+}
+
+/* line 14, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/comments.scss */
+.comment-form {
+  border: 1px solid black;
+  width: 494px;
+  height: 70px;
+  background: white;
+}
+
+/* line 24, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/comments.scss */
+.comment-index-items {
+  border: 1px solid black;
+  width: 494px;
+  height: 70px;
+  color: black;
+}
+/* line 5, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/posts.scss */
+.post-form > form > input {
+  background: white;
+  width: 400px;
+  height: 200px;
+  color: black;
+}
+
+/* line 12, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/posts.scss */
+.newsfeed {
+  background: #E9EAED;
+}
+
+/* line 16, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/posts.scss */
+.posts-index {
+  margin: auto;
+  width: 450px;
+}
+
+/* line 21, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/posts.scss */
+.post-form {
+  border: 1px solid black;
+  width: 494px;
+  height: 200px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+  background: white;
+}
+
+/* line 31, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/posts.scss */
+.post-form > form > input {
+  background: white;
+  border-top: 1px solid #E5E5E5;
+  border-bottom: 1px solid black;
+  height: 169px;
+  width: 492px;
+  margin: auto;
+  padding: 50px;
+}
+
+/* line 41, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/posts.scss */
+.post-form > form > button {
+  width: auto;
+  height: 22px;
+  background: #4C67A1;
+  float: right;
+  margin: 4px;
+  margin-right: 10px;
+  color: white;
+  padding: 3px;
+  border-radius: 3px;
+}
+
+/* line 54, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/posts.scss */
+.post-index-items {
+  width: 494px;
+  height: 200px;
+  background: white;
+  border: 1px solid black;
+}
+
+/* line 63, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/posts.scss */
+.actual-post {
+  margin: auto;
+  padding: 50px;
+}
+
+/* line 68, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/posts.scss */
+.post-index-items > li > button {
+  width: auto;
+  height: 22px;
+  background: #4C67A1;
+  float: right;
+  margin: 4px;
+  margin-right: 10px;
+  color: white;
+  padding: 3px;
+  border-radius: 3px;
+}
+
+/* line 81, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/posts.scss */
+.small-image {
+  width: 50px;
+  height: 50px;
+  display: inline;
+}
+/* line 1, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+body {
+  background-color: #fff;
+  color: #333;
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+/* line 9, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+p, ol, ul, td {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+/* line 15, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+pre {
+  background-color: #eee;
+  padding: 10px;
+  font-size: 11px;
+}
+
+/* line 21, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+a {
+  color: #000;
+}
+/* line 24, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+a:visited {
+  color: #666;
+}
+/* line 28, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+a:hover {
+  color: #fff;
+  background-color: #000;
+}
+
+/* line 35, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+div.field, div.actions {
+  margin-bottom: 10px;
+}
+
+/* line 40, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+#notice {
+  color: green;
+}
+
+/* line 44, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+.field_with_errors {
+  padding: 2px;
+  background-color: red;
+  display: table;
+}
+
+/* line 50, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+#error_explanation {
+  width: 450px;
+  border: 2px solid red;
+  padding: 7px;
+  padding-bottom: 0;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+/* line 58, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+#error_explanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px;
+  margin-bottom: 0px;
+  background-color: #c00;
+  color: #fff;
+}
+/* line 69, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/scaffolds.scss */
+#error_explanation ul li {
+  font-size: 12px;
+  list-style: square;
+}
+/* line 5, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.group:after {
+  clear: both;
+  content: "";
+  display: block;
+}
+
+/* line 12, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.header {
+  width: auto;
+  height: 100px;
+  background: #3b5998;
+  margin: 0 auto;
+  padding: 15px 0px 9px 0;
+}
+
+/* line 20, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.header > label {
+  font-weight: normal;
+  font-size: 35px;
+  font-family: montserrat;
+  color: white;
+  padding-top: 17px;
+  float: left;
+  padding-bottom: 15px;
+  margin-left: 60px;
+  height: auto;
+}
+
+/* line 32, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.login-form {
+  float: right;
+  margin: 0 auto;
+}
+
+/* line 38, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.login {
+  float: left;
+  display: block;
+  color: white;
+  margin: 0 auto;
+}
+
+/* line 46, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.login > label {
+  position: relative;
+  display: block;
+  margin-left: 105px;
+  margin-right: 20px;
+  float: left;
+}
+
+/* line 56, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.login > label > input {
+  position: absolute;
+  top: 20px;
+  width: 144px;
+  height: 21px;
+  background: white;
+  display: block;
+  border: 1px solid black;
+  color: black;
+}
+
+/* line 67, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.guest {
+  float: left;
+  width: 70px;
+  height: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  background: #627aac;
+  text-align: center;
+  box-shadow: 1px;
+  margin-top: 20px;
+  margin-right: 10px;
+  margin-left: 10px;
+  float: right;
+  border: 1px solid black;
+}
+
+/* line 86, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.login-button {
+  width: 50px;
+  height: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  background: #627aac;
+  text-align: center;
+  box-shadow: 1px;
+  margin-top: 20px;
+  margin-left: 70px;
+  float: right;
+  border: 1px solid black;
+}
+
+/* line 102, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.main {
+  margin: 0 auto;
+  width: 100%;
+  height: 595px;
+  background: -webkit-linear-gradient(top, #FCFCFD, #ECEEF5, #D6DAE9);
+  background: linear-gradient(to bottom, #FCFCFD, #ECEEF5, #D6DAE9);
+}
+
+/* line 109, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.sidebar {
+  width: 40%;
+  height: 516px;
+  float: left;
+  margin-left: 70px;
+}
+
+/* line 117, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.sidebar > h2 {
+  font-size: 30px;
+  width: 409px;
+  padding: 30px 0px;
+  display: block;
+}
+
+/* line 124, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.sidebar > ul > li {
+  padding: 20px 0px;
+  font-size: 20px;
+  width: 409px;
+}
+
+/* line 129, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.main-content {
+  float: left;
+  display: block;
+  width: 50%;
+}
+
+/* line 136, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.main-content > h3 {
+  font-size: 40px;
+  font-weight: lighter;
+  margin-bottom: 70px;
+}
+
+/* line 142, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.signup > label {
+  padding: 10px 0 0px 0px;
+  display: block;
+  margin: 5px;
+}
+
+/* line 149, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.signup > label > input {
+  width: 150px;
+  height: 20px;
+  background: white;
+  color: black;
+  border: 1px solid black;
+}
+
+/* line 158, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.profile {
+  width: 1000px;
+  margin: 0 auto;
+  -webkit-align-content: center;
+      -ms-flex-line-pack: center;
+          align-content: center;
+  margin-top: 30px;
+  position: relative;
+}
+
+/* line 167, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.profile-image {
+  width: 150px;
+  height: 150px;
+  position: absolute;
+}
+
+/* line 173, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.cover-image {
+  width: 900px;
+  height: 250px;
+  position: absolute;
+  top: 25px;
+}
+
+/* line 180, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/users.scss */
+.profilefeed {
+  margin-top: 150px;
+  -webkit-align-content: center;
+      -ms-flex-line-pack: center;
+          align-content: center;
+}
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+
+
+ */
+/* line 21, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/application.css.scss */
+html, body, header, nav, h1, a, ul, li,
+strong, main, section, img, div, h2, p,
+form, fieldset, label, input, textarea,
+button, article, footer, small {
+  margin: 0;
+  outline: 0;
+  padding: 0;
+  border: 0;
+  text-align: inherit;
+  text-decoration: inherit;
+  vertical-align: inherit;
+  font: inherit;
+  background: transparent;
+  color: inherit;
+  box-sizing: inherit;
+}
+
+/* --- ELEMENTS --- */
+/* line 41, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/application.css.scss */
+body {
+  box-sizing: border-box;
+  line-height: 1.166666666;
+  font-size: 16px;
+  background: #eee;
+  font-family: montserrat;
+}
+
+/* line 50, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/application.css.scss */
+ul {
+  list-style: none;
+}
+
+/* line 55, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/application.css.scss */
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #000;
+}
+
+/* --- CLEARFIX --- */
+/* line 66, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/application.css.scss */
+.group:after {
+  clear: both;
+  content: "";
+  display: block;
+}
+
+/* line 72, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/application.css.scss */
+.header-bar {
+  width: auto;
+  margin: 0 auto;
+  height: 45px;
+  background: #4c67a1;
+}
+
+/* line 79, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/application.css.scss */
+.main-header {
+  width: auto;
+  margin: 0 auto;
+  height: 45px;
+  background: #43609C;
+}

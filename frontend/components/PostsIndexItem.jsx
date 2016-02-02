@@ -3,6 +3,7 @@ var PostStore = require("../stores/PostStore");
 var PostsApiUtil = require('../util/posts_api_util');
 var CommentsForm = require('./CommentsForm');
 var CommentsIndexItem = require('./CommentsIndexItem');
+var UserApiUtil = require('../util/users_api_util');
 
 var PostsIndexItems = React.createClass({
 
@@ -40,6 +41,7 @@ var PostsIndexItems = React.createClass({
 
   render: function() {
     var comments;
+    var profile_pic;
 
     if(this.props.post.comments){
       <li>
@@ -52,9 +54,20 @@ var PostsIndexItems = React.createClass({
             })
           }</li>;
         }
+
+      if(this.props.post.author && this.props.post.author.profile_pic){
+        profile_pic = this.props.post.author.profile_pic
+      }
+      else {
+        profile_pic = "http://s29.postimg.org/mt68s3j5z/star_wars_profile_pic.jpg"
+      }
+
+
+
     return (
       <div >
         <ul className="post-index-items">
+          <img className="small-image" src={profile_pic} />
           <h1 className="title">{this.props.post.author_name} posted</h1>
           <li className="actual-post">{this.props.post.body}</li>
           <button onClick={this.handleDelete}>Delete Post</button>
@@ -72,6 +85,8 @@ var PostsIndexItems = React.createClass({
     e.preventDefault();
     var that = this;
     PostsApiUtil.destroyPost(this.props.post.id);
+    UserApiUtil.fetchAllUsers();
+
   },
 
 

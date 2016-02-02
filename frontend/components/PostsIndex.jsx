@@ -38,7 +38,7 @@ var PostsIndex = React.createClass({
             {
               this.state.posts.map(function(post) {
               return(
-              <div>
+              <div className="post-box">
                 <PostsIndexItem key={post.id} post={post}/>
               </div>);
             })
@@ -49,7 +49,9 @@ var PostsIndex = React.createClass({
   },
 
   _onChange: function() {
-    this.setState({ posts: PostStore.all() });
+    if (this.isMounted()) {
+    this.setState({posts: PostStore.all()});
+    }
   }
 
 });

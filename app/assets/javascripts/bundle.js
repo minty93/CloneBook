@@ -54,12 +54,12 @@
 	var PostsIndex = __webpack_require__(232);
 	var UserProfile = __webpack_require__(240);
 	var CommentsForm = __webpack_require__(236);
-	var App = __webpack_require__(248);
-	var SessionForm = __webpack_require__(257);
-	var UserForm = __webpack_require__(258);
-	var CurrentUserStore = __webpack_require__(250);
-	var SessionsApiUtil = __webpack_require__(251);
-	var UsersIndex = __webpack_require__(259);
+	var App = __webpack_require__(249);
+	var SessionForm = __webpack_require__(258);
+	var UserForm = __webpack_require__(259);
+	var CurrentUserStore = __webpack_require__(251);
+	var SessionsApiUtil = __webpack_require__(252);
+	var UsersIndex = __webpack_require__(260);
 	
 	// var App = React.createClass({
 	//   render: function(){
@@ -24064,10 +24064,11 @@
 
 	var React = __webpack_require__(1);
 	var PostsApiUtil = __webpack_require__(207);
+	var UserApiUtil = __webpack_require__(241);
 	var PostStore = __webpack_require__(214);
 	
 	var PostForm = React.createClass({
-	  displayName: "PostForm",
+	  displayName: 'PostForm',
 	
 	  getInitialState: function () {
 	    return { body: "" };
@@ -24075,16 +24076,16 @@
 	
 	  render: function () {
 	    return React.createElement(
-	      "div",
-	      { className: "post-form" },
+	      'div',
+	      { className: 'post-form' },
 	      React.createElement(
-	        "form",
+	        'form',
 	        { onSubmit: this.handleSubmit },
-	        React.createElement("input", { type: "text", onChange: this.changeBody, value: this.state.body }),
+	        React.createElement('input', { type: 'text', onChange: this.changeBody, value: this.state.body }),
 	        React.createElement(
-	          "button",
+	          'button',
 	          null,
-	          "Post"
+	          'Post'
 	        )
 	      )
 	    );
@@ -24108,6 +24109,7 @@
 	      that.setState({ body: "" });
 	    };
 	    PostsApiUtil.createPost(post, callback);
+	    UserApiUtil.fetchAllUsers();
 	  }
 	
 	});
@@ -31112,7 +31114,7 @@
 	          this.state.posts.map(function (post) {
 	            return React.createElement(
 	              "div",
-	              null,
+	              { className: "post-box" },
 	              React.createElement(PostsIndexItem, { key: post.id, post: post })
 	            );
 	          })
@@ -31122,7 +31124,9 @@
 	  },
 	
 	  _onChange: function () {
-	    this.setState({ posts: PostStore.all() });
+	    if (this.isMounted()) {
+	      this.setState({ posts: PostStore.all() });
+	    }
 	  }
 	
 	});
@@ -31213,6 +31217,7 @@
 	var PostsApiUtil = __webpack_require__(207);
 	var CommentsForm = __webpack_require__(236);
 	var CommentsIndexItem = __webpack_require__(239);
+	var UserApiUtil = __webpack_require__(241);
 	
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
@@ -31249,6 +31254,7 @@
 	
 	  render: function () {
 	    var comments;
+	    var profile_pic;
 	
 	    if (this.props.post.comments) {
 	      React.createElement(
@@ -31263,12 +31269,20 @@
 	        })
 	      );
 	    }
+	
+	    if (this.props.post.author && this.props.post.author.profile_pic) {
+	      profile_pic = this.props.post.author.profile_pic;
+	    } else {
+	      profile_pic = "http://s29.postimg.org/mt68s3j5z/star_wars_profile_pic.jpg";
+	    }
+	
 	    return React.createElement(
 	      "div",
 	      null,
 	      React.createElement(
 	        "ul",
 	        { className: "post-index-items" },
+	        React.createElement("img", { className: "small-image", src: profile_pic }),
 	        React.createElement(
 	          "h1",
 	          { className: "title" },
@@ -31299,6 +31313,7 @@
 	    e.preventDefault();
 	    var that = this;
 	    PostsApiUtil.destroyPost(this.props.post.id);
+	    UserApiUtil.fetchAllUsers();
 	  }
 	
 	});
@@ -31311,10 +31326,12 @@
 
 	var React = __webpack_require__(1);
 	var CommentsApiUtil = __webpack_require__(237);
+	var PostsApiUtil = __webpack_require__(207);
 	var CommentStore = __webpack_require__(233);
+	var UserApiUtil = __webpack_require__(241);
 	
 	var CommentForm = React.createClass({
-	  displayName: "CommentForm",
+	  displayName: 'CommentForm',
 	
 	  getInitialState: function () {
 	    return { description: "" };
@@ -31322,16 +31339,16 @@
 	
 	  render: function () {
 	    return React.createElement(
-	      "div",
-	      { className: "comment-form" },
+	      'div',
+	      { className: 'comment-form' },
 	      React.createElement(
-	        "form",
+	        'form',
 	        { onSubmit: this.handleSubmit },
-	        React.createElement("input", { type: "text", onChange: this.changeBody, value: this.state.description }),
+	        React.createElement('input', { type: 'text', onChange: this.changeBody, value: this.state.description }),
 	        React.createElement(
-	          "button",
+	          'button',
 	          null,
-	          "Comment"
+	          'Comment'
 	        )
 	      )
 	    );
@@ -31355,6 +31372,8 @@
 	      that.setState({ description: "" });
 	    };
 	    CommentsApiUtil.createComment(comment, that.props.commentableId, callback);
+	    UserApiUtil.fetchAllUsers();
+	    PostsApiUtil.fetchAllPosts();
 	  }
 	
 	});
@@ -31466,6 +31485,7 @@
 	var CommentStore = __webpack_require__(233);
 	var PostStore = __webpack_require__(214);
 	var CommentsApiUtil = __webpack_require__(237);
+	var PostsApiUtil = __webpack_require__(207);
 	
 	var CommentsIndexItem = React.createClass({
 	  displayName: "CommentsIndexItem",
@@ -31474,6 +31494,7 @@
 	    e.preventDefault();
 	    var that = this;
 	    CommentsApiUtil.destroyComment(this.props.comment.id);
+	    PostsApiUtil.fetchAllPosts();
 	  },
 	
 	  render: function () {
@@ -31521,7 +31542,7 @@
 	var PostIndexItem = __webpack_require__(235);
 	var PostsForm = __webpack_require__(206);
 	var CoverForm = __webpack_require__(247);
-	var ProfileForm = __webpack_require__(260);
+	var ProfileForm = __webpack_require__(248);
 	
 	function _getRelevantPosts(userId) {
 	  return PostStore.getByUserId(userId);
@@ -31564,7 +31585,9 @@
 	  _onChange: function () {
 	    var userId = this.props.params.userId;
 	    var user = this._findUserById(userId);
-	    this.setState({ user: user });
+	    if (this.isMounted()) {
+	      this.setState({ user: user });
+	    }
 	  },
 	
 	  render: function () {
@@ -31585,22 +31608,26 @@
 	
 	    return React.createElement(
 	      'div',
-	      null,
+	      { className: 'profile' },
 	      React.createElement(
 	        'div',
 	        { className: 'photo-form' },
+	        React.createElement(
+	          'h3',
+	          null,
+	          fname
+	        ),
 	        React.createElement(CoverForm, { params: this.props.params }),
 	        React.createElement(ProfileForm, { params: this.props.params })
 	      ),
-	      React.createElement(
-	        'h3',
-	        null,
-	        fname
-	      ),
 	      cover_pic,
 	      profile_pic,
-	      React.createElement(PostsForm, { params: this.props.params }),
-	      received_posts
+	      React.createElement(
+	        'div',
+	        { className: 'posts-index profilefeed' },
+	        React.createElement(PostsForm, { params: this.props.params }),
+	        received_posts
+	      )
 	    );
 	  }
 	
@@ -31862,10 +31889,75 @@
 /* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var React = __webpack_require__(1);
+	var UsersApiUtil = __webpack_require__(241);
+	
+	var UserProfileForm = React.createClass({
+	  displayName: 'UserProfileForm',
+	
+	  getInitialState: function () {
+	    return { imageFile: null, imageUrl: "" };
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'form',
+	        { onSubmit: this.handleSubmit },
+	        React.createElement(
+	          'label',
+	          null,
+	          React.createElement('input', { type: 'file', onChange: this.changeFile })
+	        ),
+	        React.createElement('img', { className: 'preview-image', src: this.state.imageUrl }),
+	        React.createElement(
+	          'button',
+	          null,
+	          'Upload Profile Photo'
+	        )
+	      )
+	    );
+	  },
+	
+	  changeFile: function (e) {
+	    var reader = new FileReader();
+	    var file = e.currentTarget.files[0];
+	
+	    reader.onloadend = function () {
+	      this.setState({ imageFile: file, imageUrl: reader.result });
+	    }.bind(this);
+	
+	    if (file) {
+	      reader.readAsDataURL(file); // will trigger a load end event when it completes, and invoke reader.onloadend
+	    } else {
+	        this.setState({ imageFile: null, imageUrl: "" });
+	      }
+	  },
+	
+	  handleSubmit: function (e) {
+	    e.preventDefault();
+	    var formData = new FormData();
+	    formData.append("user[profile_pic]", this.state.imageFile);
+	    UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
+	  },
+	
+	  resetForm: function () {
+	    this.setState({ imageFile: null, imageUrl: "" });
+	  }
+	});
+	
+	module.exports = UserProfileForm;
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1),
-	    Header = __webpack_require__(249),
-	    SessionsApiUtil = __webpack_require__(251),
-	    CurrentUserStore = __webpack_require__(250);
+	    Header = __webpack_require__(250),
+	    SessionsApiUtil = __webpack_require__(252),
+	    CurrentUserStore = __webpack_require__(251);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -31901,13 +31993,13 @@
 	module.exports = App;
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(250);
-	var SessionsApiUtil = __webpack_require__(251);
-	var Search = __webpack_require__(252);
+	var CurrentUserStore = __webpack_require__(251);
+	var SessionsApiUtil = __webpack_require__(252);
+	var Search = __webpack_require__(253);
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
 	
@@ -31985,7 +32077,7 @@
 	module.exports = Header;
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(215).Store;
@@ -32033,7 +32125,7 @@
 	module.exports = CurrentUserStore;
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var CurrentUserActions = __webpack_require__(244);
@@ -32083,12 +32175,12 @@
 	module.exports = SessionsApiUtil;
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SearchResultsStore = __webpack_require__(253);
-	var SearchApiUtil = __webpack_require__(255);
+	var SearchResultsStore = __webpack_require__(254);
+	var SearchApiUtil = __webpack_require__(256);
 	var UserProfile = __webpack_require__(240);
 	var PostIndexItem = __webpack_require__(235);
 	var CommentIndexItem = __webpack_require__(239);
@@ -32169,12 +32261,12 @@
 	module.exports = Search;
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(215).Store;
 	var AppDispatcher = __webpack_require__(210);
-	var SearchConstants = __webpack_require__(254);
+	var SearchConstants = __webpack_require__(255);
 	
 	var _searchResults = [];
 	var _meta = {};
@@ -32204,7 +32296,7 @@
 	module.exports = SearchResultsStore;
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports) {
 
 	var SearchConstants = {
@@ -32214,10 +32306,10 @@
 	module.exports = SearchConstants;
 
 /***/ },
-/* 255 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SearchActions = __webpack_require__(256);
+	var SearchActions = __webpack_require__(257);
 	
 	var SearchApiUtil = {
 	
@@ -32238,10 +32330,10 @@
 	module.exports = SearchApiUtil;
 
 /***/ },
-/* 256 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SearchConstants = __webpack_require__(254);
+	var SearchConstants = __webpack_require__(255);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var SearchActions = {
@@ -32258,12 +32350,12 @@
 	module.exports = SearchActions;
 
 /***/ },
-/* 257 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(251);
+	var SessionsApiUtil = __webpack_require__(252);
 	var UsersApiUtil = __webpack_require__(241);
 	
 	var SessionForm = React.createClass({
@@ -32435,12 +32527,12 @@
 	module.exports = SessionForm;
 
 /***/ },
-/* 258 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(251);
+	var SessionsApiUtil = __webpack_require__(252);
 	var UsersApiUtil = __webpack_require__(241);
 	
 	var UserForm = React.createClass({
@@ -32612,7 +32704,7 @@
 	module.exports = UserForm;
 
 /***/ },
-/* 259 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32670,71 +32762,6 @@
 	});
 	
 	module.exports = UsersIndex;
-
-/***/ },
-/* 260 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var UsersApiUtil = __webpack_require__(241);
-	
-	var UserProfileForm = React.createClass({
-	  displayName: 'UserProfileForm',
-	
-	  getInitialState: function () {
-	    return { imageFile: null, imageUrl: "" };
-	  },
-	
-	  render: function () {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'form',
-	        { onSubmit: this.handleSubmit },
-	        React.createElement(
-	          'label',
-	          null,
-	          React.createElement('input', { type: 'file', onChange: this.changeFile })
-	        ),
-	        React.createElement('img', { className: 'preview-image', src: this.state.imageUrl }),
-	        React.createElement(
-	          'button',
-	          null,
-	          'Upload Profile Photo'
-	        )
-	      )
-	    );
-	  },
-	
-	  changeFile: function (e) {
-	    var reader = new FileReader();
-	    var file = e.currentTarget.files[0];
-	
-	    reader.onloadend = function () {
-	      this.setState({ imageFile: file, imageUrl: reader.result });
-	    }.bind(this);
-	
-	    if (file) {
-	      reader.readAsDataURL(file); // will trigger a load end event when it completes, and invoke reader.onloadend
-	    } else {
-	        this.setState({ imageFile: null, imageUrl: "" });
-	      }
-	  },
-	
-	  handleSubmit: function (e) {
-	    e.preventDefault();
-	    var formData = new FormData();
-	    formData.append("user[profile_pic]", this.state.imageFile);
-	    UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
-	  },
-	
-	  resetForm: function () {
-	    this.setState({ imageFile: null, imageUrl: "" });
-	  }
-	});
-	
-	module.exports = UserProfileForm;
 
 /***/ }
 /******/ ]);

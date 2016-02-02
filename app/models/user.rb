@@ -12,10 +12,10 @@ class User < ActiveRecord::Base
   validates :email, uniqueness: true
   validates :password, length: {minimum: 6, allow_nil: true}
 
-  has_attached_file :profile_pic, default_url: "assets/images/missing-profile-pic.jpeg"
+  has_attached_file :profile_pic, default_url: "http://s29.postimg.org/mt68s3j5z/star_wars_profile_pic.jpg"
   validates_attachment_content_type :profile_pic, content_type: /\Aimage\/.*\Z/
 
-  has_attached_file :cover_pic, default_url: "assets/images/missing.jpg"
+  has_attached_file :cover_pic, default_url: "http://s12.postimg.org/5jv8metod/star_wars_cover.jpg"
   validates_attachment_content_type :cover_pic, content_type: /\Aimage\/.*\Z/
 
   after_initialize :ensure_session_token

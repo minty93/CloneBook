@@ -1,6 +1,9 @@
 var React = require("react");
 var CommentsApiUtil = require('../util/comments_api_util');
+var PostsApiUtil = require('../util/posts_api_util');
 var CommentStore = require("../stores/CommentStore");
+var UserApiUtil = require('../util/users_api_util');
+
 
 
 
@@ -37,6 +40,9 @@ var CommentForm = React.createClass({
     var callback = function(){
       that.setState({description: "" });};
     CommentsApiUtil.createComment(comment, that.props.commentableId, callback);
+    UserApiUtil.fetchAllUsers();
+    PostsApiUtil.fetchAllPosts();
+
   },
 
 

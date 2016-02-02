@@ -1,5 +1,6 @@
 var React = require("react");
 var PostsApiUtil = require('../util/posts_api_util');
+var UserApiUtil = require('../util/users_api_util');
 var PostStore = require("../stores/PostStore");
 
 
@@ -38,6 +39,7 @@ var PostForm = React.createClass({
       that.setState({body: "" });
     };
     PostsApiUtil.createPost(post, callback);
+    UserApiUtil.fetchAllUsers();
   },
 
 

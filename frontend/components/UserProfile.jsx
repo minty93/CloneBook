@@ -54,7 +54,9 @@ var UserProfile = React.createClass({
   _onChange: function () {
     var userId = this.props.params.userId;
     var user = this._findUserById(userId);
+    if (this.isMounted()) {
     this.setState({ user: user});
+    }
  },
 
   render: function() {
@@ -67,7 +69,7 @@ var UserProfile = React.createClass({
       received_posts = this.state.user.received_posts;
       fname = this.state.user.fname;
       received_posts = received_posts.reverse().map(function(post) {
-        return (<PostIndexItem post={post} ></PostIndexItem>);
+        return (<PostIndexItem post={post}/>);
       });
       cover_pic =   <img className="cover-image" src={this.state.user.cover_pic} />;
       profile_pic =   <img className="profile-image" src={this.state.user.profile_pic} />;
@@ -75,16 +77,18 @@ var UserProfile = React.createClass({
 
 
     return (
-      <div>
+      <div className="profile">
         <div className="photo-form">
+        <h3>{fname}</h3>
         <CoverForm params={this.props.params}/>
         <ProfileForm params={this.props.params}/>
         </div>
-      <h3>{fname}</h3>
       {cover_pic}
       {profile_pic}
+      <div className="posts-index profilefeed">
       <PostsForm params={this.props.params}/>
       {received_posts}
+      </div>
       </div>
     );
 

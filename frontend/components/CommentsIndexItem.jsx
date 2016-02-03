@@ -20,8 +20,8 @@ var CommentsIndexItem = React.createClass({
 
   render: function() {
     return (
-      <div >
-        <ul className="comment-index-items">
+      <div className="comment-index-items" >
+        <ul className="comment-index-items-input">
           <h1 className="title">{this.props.comment.author_name} commented</h1>
           <li className="actual-comment">{this.props.comment.description}</li>
           <button onClick={this.handleDelete}>Delete</button>

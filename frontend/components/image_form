@@ -1,0 +1,65 @@
+var React = require("react");
+var ImagesApiUtil = require('../../util/images_api_util');
+
+
+var ImageForm = React.createClass({
+
+  getInitialState: function () {
+    return {url: "", file: null, description: ""};
+  },
+
+  changeFile: function(e) {
+    e.preventDefault();
+    var reader = new FileReader();
+    var file = e.currentTarget.files[0];
+
+    reader.onloadend = function() {
+      this.setState({url: reader.result, file: file});
+    }.bind(this);
+
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      this.setState({url: "", file: null});
+    }
+  },
+
+  clearFields: function() {
+    this.setState({url: "", file: null, description: ""});
+  },
+
+
+  changeDes: function(e){
+    this.setState({description: e.currentTarget.value });
+  },
+
+  handleSubmit: function (e) {
+    e.preventDefault();
+    var file = this.state.file;
+    var formData = new FormData();
+    formData.append("image[image]", file);
+    formData.append("image[description]", this.state.description);
+
+    ImageApiUtil.createImage(formData, this.clearFields);
+  },
+
+
+  render: function() {
+    return (
+      <div className="photo-upload">
+        <img className="photo-preview-image" src={this.state.url}/>
+        <form onSubmit={this.handleSubmit}>
+          <input className="file-upload" onChange={this.changeFile} type="file"/>
+          <input className="file-des" onChange={this.changeDes} type="text"/>
+          <label>
+            <button className="upload-button">Upload Photo</button>
+          </label>
+        </form>
+      </div>
+    );
+  }
+
+});
+
+
+module.exports = ImageForm

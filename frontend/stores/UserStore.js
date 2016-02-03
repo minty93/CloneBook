@@ -115,6 +115,28 @@ UserStore._removeComment = function (comment) {
   }
 };
 
+
+UserStore._addImage = function(image) {
+  var user = this._findUserById(image.user_id);
+  user.images.push(image);
+  this.__emitChange();
+};
+
+UserStore._removeImage = function (image) {
+  var _imagesIds = [];
+  var user = this._findUserById(image.user_id);
+  for (var i = 0; i < user.images.length; i++) {
+    _imagesIds.push(user.images[i].id);
+  }
+  var idx = _imagesIds.indexOf(image.id);
+  if (idx != -1) {
+    user.images.splice(idx, 1);
+    this.__emitChange();
+  }
+};
+
+
+
 UserStore.__onDispatch = function (payload) {
   switch(payload.actionType) {
   case UserConstants.RECEIVE_USERS:
@@ -138,6 +160,13 @@ UserStore.__onDispatch = function (payload) {
   case CommentConstants.CREATE_COMMENT:
     UserStore._addComment(payload.comment);
     break;
+  case 'CREATE_IMAGE':
+    UserStore._addImage(payload.image);
+    break;
+  // case ImageConstants.DELETE_IMAGE:
+  //   UserStore._removeImage(payload.image);
+  //   break;
+
   }
 };
 

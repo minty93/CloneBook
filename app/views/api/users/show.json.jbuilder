@@ -13,3 +13,8 @@ json.received_posts @user.received_posts do |post|
     json.extract! comment, :id, :description, :author_id, :author_name, :commentable_id, :commentable_type
   end
 end
+
+json.images @user.images do |image|
+    json.extract! image, :id, :user_id
+    json.image_url asset_path(@image.image.url)
+end 

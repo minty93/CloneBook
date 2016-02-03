@@ -34,7 +34,7 @@ column name | data type | details
 ------------|-----------|-----------------------
 id          | integer   | not null, primary key
 photo       | img       | not null
-name        | string    |
+description        | string    |
 imageable_type| string  |
 imageable_id| integer   | not null, foreign key (references imageable), indexed
 

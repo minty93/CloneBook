@@ -7,8 +7,11 @@ var CommentStore = require("../stores/CommentStore");
 var PostsForm = require('./PostsForm');
 var PostIndexItem = require('./PostsIndexItem');
 var PostsForm = require('./PostsForm');
+var PhotoForm = require('./image_form');
+var PhotoIndex = require('./photo_index');
 var CoverForm = require('./user_cover_form');
 var ProfileForm = require('./user_profile_form');
+var Navbar = require('./navbar');
 
 
 function _getRelevantPosts(userId) {
@@ -61,10 +64,7 @@ var UserProfile = React.createClass({
  },
 
   render: function() {
-    var fname;
     var received_posts;
-    var cover_pic;
-    var profile_pic;
 
     if (this.state.user) {
       received_posts = this.state.user.received_posts.slice(0);
@@ -78,16 +78,12 @@ var UserProfile = React.createClass({
 
 
     return (
-      <div className="profile">
-        <div className="photo-form">
-        <h3>{fname}</h3>
-        <CoverForm params={this.props.params}/>
-        <ProfileForm params={this.props.params}/>
-        </div>
-      {cover_pic}
-      {profile_pic}
-      <div className="posts-index profilefeed">
-      <PostsForm params={this.props.params}/>
+      <div>
+      <Navbar params={this.props.params} user={this.state.user}/>
+      <PhotoForm />
+      <PhotoIndex user={this.state.user}/>
+      <div className="posts-index-profilefeed">
+      <PostsForm params={this.props.params} placeholder="Post Something"/>
       {received_posts}
       </div>
       </div>

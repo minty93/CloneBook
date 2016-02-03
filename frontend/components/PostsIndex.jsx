@@ -32,7 +32,7 @@ var PostsIndex = React.createClass({
     return (
       <div className="newsfeed">
         <ul className="posts-index">
-        <li><PostsForm params={this.props.params}/></li>
+        <li><PostsForm params={this.props.params} placeholder="What's on your mind?"/></li>
           <li>
             {
               this.state.posts.slice(0).reverse().map(function(post,index) {

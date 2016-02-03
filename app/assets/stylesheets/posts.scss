@@ -2,67 +2,87 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.post-form > form > input {
-  background: white;
-  width: 400px;
-  height: 200px;
-  color: black;
-}
+
 
 .newsfeed {
   background: #E9EAED;
 }
 
 .posts-index {
-  margin: auto;
-  width: 450px;
-}
-
-.post-form {
+  align-self: center;
+  margin: 0 auto;
   border: 1px solid black;
   width: 494px;
-  height: 200px;
+  height: 150px;
   margin-bottom: 15px;
   margin-top: 15px;
+  border: 1px solid lightgrey;
+  background: #FFFFFF;
 
+}
+
+.post-form > form {
+  padding-top: 5px;
+  align-self: center;
+  margin: 0 auto;
+  border: 1px solid black;
+  width: 494px;
+  height: 150px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+  border: 1px solid lightgrey;
   background: white;
+  position: relative;
 }
 
 .post-form > form > input {
-  background: white;
-  border-top: 1px solid #E5E5E5;
-  border-bottom: 1px solid black;
-  height: 169px;
-  width: 492px;
-  margin: auto;
-  padding: 50px;
+    resize: none;
+    float: right;
+    width: 494px;
+    height: 100px;
+    padding: 10px;
+    display: inline;
+    margin: 0 auto;
+    align-self: center;
+    margin-top: 15px;
+    border-bottom: 1px solid lightgrey;
+    border-top: 1px solid lightgrey;
+
 }
 
 .post-form > form > button {
   width: auto;
   height: 22px;
   background: #4C67A1;
-  float: right;
+  float: left;
   margin: 4px;
   margin-right: 10px;
   color: white;
   padding: 3px;
   border-radius: 3px;
+  position: absolute;
+  right:    0;
+  bottom:   0;
 
 }
 
 .post-index-items {
-  width: 494px;
-  height: 200px;
-  background: white;
-  border: 1px solid black;
+   align-self: center;
+   margin: 0 auto;
+   border: 1px solid black;
+   width: 494px;
+   height: 150px;
+   margin-bottom: 15px;
+   margin-top: 15px;
+   border: 1px solid lightgrey;
+   background: white;
 
 }
 
 
 .actual-post{
   margin: auto;
-  padding: 50px;
+
 }
 
 .post-index-items > li > button {
@@ -70,7 +90,6 @@
   height: 22px;
   background: #4C67A1;
   float: right;
-  margin: 4px;
   margin-right: 10px;
   color: white;
   padding: 3px;
@@ -82,4 +101,12 @@
   width: 50px;
   height: 50px;
   display: inline;
+}
+
+.post-index-items.group {
+  margin-bottom: 0;
+}
+
+.posts-index-profilefeed{
+  margin-top: 250px;
 }

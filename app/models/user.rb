@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
   attr_reader :password
 
   has_many(:authored_posts, foreign_key: :author_id, primary_key: :id, class_name: "Post")
+  has_many(:images, foreign_key: :user_id, primary_key: :id, class_name: "Image")
 
   has_many(:received_posts, foreign_key: :profile_id, primary_key: :id, class_name: "Post")
 

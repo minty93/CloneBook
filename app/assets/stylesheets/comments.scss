@@ -4,29 +4,63 @@
 
 .comment-form > form > input {
   background: white;
-  width: 200px;
+  width: 450px;
   height: 50px;
   color: black;
   margin-bottom: 5px;
+  border: 1px solid lightgrey;
+  font-size: 12px;
+  margin-top: 10px;
+  margin-left: 10px;
+
 }
 
 
-.comment-form {
-  border: 1px solid black;
+.comment-form > form{
+  margin: 0 auto;
+  border: 1px solid lightgrey;
   width: 494px;
-  height: 70px;
-  // margin-bottom: 5px;
-  // margin-top: 5px;
+  height: 75px;
+  background: #F6F7F8;
+  position: relative;
+}
 
-  background: white;
+.comment-form > form > button {
+  display: none;
 }
 
 .comment-index-items {
-  border: 1px solid black;
+  align-self: center;
+  margin: 0 auto;
   width: 494px;
-  height: 70px;
-  // margin-top: 5px;
-  color: black;
+  height: 75px;
+  background: #F6F7F8;
+  position: relative;
+  border-left: 1px solid lightgrey;
+  border-right: 1px solid lightgrey;
+  font-size: 12px;
+  color: darkgrey;
+  position: relative;
+  text-align:left;
+  border-bottom: 1px solid lightgrey;
 
+}
+
+.comment-index-items > button {
+  font-weight: bold;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin: 5px;
+  margin-right: 50px;
+}
+
+.comment-index-items > h1 {
+
+  margin-left: 30px;
+}
+
+.actual-comment{
+  margin-left: 40px;
 
 }

@@ -51,15 +51,15 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var PostsForm = __webpack_require__(206);
-	var PostsIndex = __webpack_require__(237);
+	var PostsIndex = __webpack_require__(238);
 	var UserProfile = __webpack_require__(245);
 	var CommentsForm = __webpack_require__(241);
-	var App = __webpack_require__(249);
-	var SessionForm = __webpack_require__(258);
-	var UserForm = __webpack_require__(259);
-	var CurrentUserStore = __webpack_require__(251);
-	var SessionsApiUtil = __webpack_require__(252);
-	var UsersIndex = __webpack_require__(260);
+	var App = __webpack_require__(261);
+	var SessionForm = __webpack_require__(263);
+	var UserForm = __webpack_require__(264);
+	var CurrentUserStore = __webpack_require__(254);
+	var SessionsApiUtil = __webpack_require__(255);
+	var UsersIndex = __webpack_require__(265);
 	
 	// var App = React.createClass({
 	//   render: function(){
@@ -24081,7 +24081,7 @@
 	      React.createElement(
 	        'form',
 	        { onSubmit: this.handleSubmit },
-	        React.createElement('input', { type: 'text', onChange: this.changeBody, value: this.state.body }),
+	        React.createElement('input', { type: 'text', onChange: this.changeBody, value: this.state.body, placeholder: this.props.placeholder }),
 	        React.createElement(
 	          'button',
 	          null,
@@ -24691,7 +24691,7 @@
 	var _posts = [],
 	    Store = __webpack_require__(220).Store,
 	    PostConstants = __webpack_require__(209),
-	    CommentConstants = __webpack_require__(239),
+	    CommentConstants = __webpack_require__(237),
 	    AppDispatcher = __webpack_require__(210),
 	    PostStore = new Store(AppDispatcher);
 	
@@ -31243,11 +31243,25 @@
 
 /***/ },
 /* 237 */
+/***/ function(module, exports) {
+
+	
+	var CommentConstants = {
+	  RECEIVE_COMMENTS: "RECEIVE_COMMENTS",
+	  RECEIVE_COMMENT: "RECEIVE_COMMENT",
+	  DELETE_COMMENT: "DELETE_COMMENT",
+	  CREATE_COMMENT: "CREATE_COMMENT"
+	};
+	
+	module.exports = CommentConstants;
+
+/***/ },
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var PostStore = __webpack_require__(219);
-	var CommentStore = __webpack_require__(238);
+	var CommentStore = __webpack_require__(239);
 	var PostsIndexItem = __webpack_require__(240);
 	var PostsApiUtil = __webpack_require__(207);
 	var PostsForm = __webpack_require__(206);
@@ -31280,7 +31294,7 @@
 	        React.createElement(
 	          "li",
 	          null,
-	          React.createElement(PostsForm, { params: this.props.params })
+	          React.createElement(PostsForm, { params: this.props.params, placeholder: "What's on your mind?" })
 	        ),
 	        React.createElement(
 	          "li",
@@ -31308,13 +31322,13 @@
 	module.exports = PostsIndex;
 
 /***/ },
-/* 238 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
 	var _comments = [],
 	    Store = __webpack_require__(220).Store,
-	    CommentConstants = __webpack_require__(239),
+	    CommentConstants = __webpack_require__(237),
 	    AppDispatcher = __webpack_require__(210),
 	    CommentStore = new Store(AppDispatcher);
 	
@@ -31367,20 +31381,6 @@
 	};
 	
 	module.exports = CommentStore;
-
-/***/ },
-/* 239 */
-/***/ function(module, exports) {
-
-	
-	var CommentConstants = {
-	  RECEIVE_COMMENTS: "RECEIVE_COMMENTS",
-	  RECEIVE_COMMENT: "RECEIVE_COMMENT",
-	  DELETE_COMMENT: "DELETE_COMMENT",
-	  CREATE_COMMENT: "CREATE_COMMENT"
-	};
-	
-	module.exports = CommentConstants;
 
 /***/ },
 /* 240 */
@@ -31504,7 +31504,7 @@
 	var React = __webpack_require__(1);
 	var CommentsApiUtil = __webpack_require__(242);
 	var PostsApiUtil = __webpack_require__(207);
-	var CommentStore = __webpack_require__(238);
+	var CommentStore = __webpack_require__(239);
 	var UserApiUtil = __webpack_require__(214);
 	
 	var CommentForm = React.createClass({
@@ -31521,12 +31521,8 @@
 	      React.createElement(
 	        'form',
 	        { onSubmit: this.handleSubmit },
-	        React.createElement('input', { type: 'text', onChange: this.changeBody, value: this.state.description }),
-	        React.createElement(
-	          'button',
-	          null,
-	          'Comment'
-	        )
+	        React.createElement('input', { type: 'text', onChange: this.changeBody, value: this.state.description, placeholder: 'Add Comment' }),
+	        React.createElement('button', null)
 	      )
 	    );
 	  },
@@ -31618,7 +31614,7 @@
 /* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CommentConstants = __webpack_require__(239);
+	var CommentConstants = __webpack_require__(237);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var CommentApiActions = {
@@ -31659,7 +31655,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CommentStore = __webpack_require__(238);
+	var CommentStore = __webpack_require__(239);
 	var PostStore = __webpack_require__(219);
 	var CommentsApiUtil = __webpack_require__(242);
 	var PostsApiUtil = __webpack_require__(207);
@@ -31678,10 +31674,10 @@
 	  render: function () {
 	    return React.createElement(
 	      "div",
-	      null,
+	      { className: "comment-index-items" },
 	      React.createElement(
 	        "ul",
-	        { className: "comment-index-items" },
+	        { className: "comment-index-items-input" },
 	        React.createElement(
 	          "h1",
 	          { className: "title" },
@@ -31715,12 +31711,15 @@
 	var PostsApiUtil = __webpack_require__(207);
 	var UserStore = __webpack_require__(246);
 	var PostStore = __webpack_require__(219);
-	var CommentStore = __webpack_require__(238);
+	var CommentStore = __webpack_require__(239);
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var CoverForm = __webpack_require__(247);
-	var ProfileForm = __webpack_require__(248);
+	var PhotoForm = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./image_form\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var PhotoIndex = __webpack_require__(248);
+	var CoverForm = __webpack_require__(251);
+	var ProfileForm = __webpack_require__(252);
+	var Navbar = __webpack_require__(253);
 	
 	function _getRelevantPosts(userId) {
 	  return PostStore.getByUserId(userId);
@@ -31770,10 +31769,7 @@
 	  },
 	
 	  render: function () {
-	    var fname;
 	    var received_posts;
-	    var cover_pic;
-	    var profile_pic;
 	
 	    if (this.state.user) {
 	      received_posts = this.state.user.received_posts.slice(0);
@@ -31787,24 +31783,14 @@
 	
 	    return React.createElement(
 	      'div',
-	      { className: 'profile' },
+	      null,
+	      React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
+	      React.createElement(PhotoForm, null),
+	      React.createElement(PhotoIndex, { user: this.state.user }),
 	      React.createElement(
 	        'div',
-	        { className: 'photo-form' },
-	        React.createElement(
-	          'h3',
-	          null,
-	          fname
-	        ),
-	        React.createElement(CoverForm, { params: this.props.params }),
-	        React.createElement(ProfileForm, { params: this.props.params })
-	      ),
-	      cover_pic,
-	      profile_pic,
-	      React.createElement(
-	        'div',
-	        { className: 'posts-index profilefeed' },
-	        React.createElement(PostsForm, { params: this.props.params }),
+	        { className: 'posts-index-profilefeed' },
+	        React.createElement(PostsForm, { params: this.props.params, placeholder: 'Post Something' }),
 	        received_posts
 	      )
 	    );
@@ -31821,7 +31807,7 @@
 	var _users = [],
 	    Store = __webpack_require__(220).Store,
 	    UserConstants = __webpack_require__(216),
-	    CommentConstants = __webpack_require__(239),
+	    CommentConstants = __webpack_require__(237),
 	    CurrentUserConstants = __webpack_require__(218),
 	    PostConstants = __webpack_require__(209),
 	    PostStore = __webpack_require__(219),
@@ -31934,6 +31920,25 @@
 	  }
 	};
 	
+	UserStore._addImage = function (image) {
+	  var user = this._findUserById(image.user_id);
+	  user.images.push(image);
+	  this.__emitChange();
+	};
+	
+	UserStore._removeImage = function (image) {
+	  var _imagesIds = [];
+	  var user = this._findUserById(image.user_id);
+	  for (var i = 0; i < user.images.length; i++) {
+	    _imagesIds.push(user.images[i].id);
+	  }
+	  var idx = _imagesIds.indexOf(image.id);
+	  if (idx != -1) {
+	    user.images.splice(idx, 1);
+	    this.__emitChange();
+	  }
+	};
+	
 	UserStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case UserConstants.RECEIVE_USERS:
@@ -31957,13 +31962,81 @@
 	    case CommentConstants.CREATE_COMMENT:
 	      UserStore._addComment(payload.comment);
 	      break;
+	    case 'CREATE_IMAGE':
+	      UserStore._addImage(payload.image);
+	      break;
+	    // case ImageConstants.DELETE_IMAGE:
+	    //   UserStore._removeImage(payload.image);
+	    //   break;
+	
 	  }
 	};
 	
 	module.exports = UserStore;
 
 /***/ },
-/* 247 */
+/* 247 */,
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ImagesApiUtil = __webpack_require__(249);
+	var PhotoItem = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./photos/photo_index_item\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	
+	var PhotoIndex = React.createClass({
+	  displayName: 'PhotoIndex',
+	
+	  componentWillReceiveProps: function (newProps) {
+	    this.forceUpdate();
+	  },
+	
+	  render: function () {
+	    var photoIndex = this.props.user.images.map(function (image) {
+	      return React.createElement(PhotoItem, { key: photo.id, photo: photo });
+	    });
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'ul',
+	        { className: 'photo-index' },
+	        photoIndex
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = PhotoIndex;
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ImageApiActions = __webpack_require__(266);
+	
+	var ImagesApiUtil = {
+	
+	  createImage: function (formData, callback) {
+	    $.ajax({
+	      url: "api/photos/",
+	      type: 'POST',
+	      data: formData,
+	      processData: false,
+	      contentType: false,
+	      success: function (photo) {
+	        callback && callback(photo);
+	      }
+	    });
+	  }
+	};
+	
+	module.exports = ImagesApiUtil;
+
+/***/ },
+/* 250 */,
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32028,7 +32101,7 @@
 	module.exports = UserCoverForm;
 
 /***/ },
-/* 248 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32093,133 +32166,65 @@
 	module.exports = UserProfileForm;
 
 /***/ },
-/* 249 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1),
-	    Header = __webpack_require__(250),
-	    SessionsApiUtil = __webpack_require__(252),
-	    CurrentUserStore = __webpack_require__(251);
+	var React = __webpack_require__(1);
+	var CurrentUserStore = __webpack_require__(254);
+	var SessionsApiUtil = __webpack_require__(255);
+	var Search = __webpack_require__(256);
+	var History = __webpack_require__(159).History;
+	var Link = __webpack_require__(159).Link;
+	var CoverForm = __webpack_require__(251);
+	var ProfileForm = __webpack_require__(252);
 	
-	var App = React.createClass({
-	  displayName: 'App',
+	var Navbar = React.createClass({
+	  displayName: 'Navbar',
 	
-	  componentDidMount: function () {
-	    this.Listener = CurrentUserStore.addListener(this.forceUpdate.bind(this));
-	    SessionsApiUtil.fetchCurrentUser();
+	  componentWillReceiveProps: function (newProps) {
+	    this.forceUpdate();
 	  },
 	
-	  componentWillUnmount: function () {
-	    this.Listener.remove();
+	  _onChange: function () {
+	    this.forceUpdate();
 	  },
 	
 	  render: function () {
-	    if (!CurrentUserStore.userHasBeenFetched()) {
-	      return React.createElement(
-	        'p',
-	        null,
-	        'PLEASE WAIT'
-	      );
+	    var fname;
+	    var cover_pic;
+	    var profile_pic;
+	
+	    if (this.props.user) {
+	      fname = this.props.user.fname;
+	      cover_pic = React.createElement('img', { className: 'cover-image', src: this.props.user.cover_pic });
+	      profile_pic = React.createElement('img', { className: 'profile-image', src: this.props.user.profile_pic });
 	    }
 	
 	    return React.createElement(
 	      'div',
-	      null,
-	      React.createElement(Header, null),
-	      this.props.children
+	      { className: 'profile' },
+	      React.createElement(
+	        'div',
+	        { className: 'photo-form' },
+	        React.createElement(
+	          'h3',
+	          null,
+	          fname
+	        ),
+	        React.createElement(CoverForm, { params: this.props.params }),
+	        cover_pic,
+	        React.createElement(ProfileForm, { params: this.props.params }),
+	        profile_pic
+	      )
 	    );
 	  }
 	
 	});
 	
-	module.exports = App;
+	module.exports = Navbar;
 
 /***/ },
-/* 250 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(251);
-	var SessionsApiUtil = __webpack_require__(252);
-	var Search = __webpack_require__(253);
-	var History = __webpack_require__(159).History;
-	var Link = __webpack_require__(159).Link;
-	
-	var Header = React.createClass({
-	  displayName: 'Header',
-	
-	  mixins: [History],
-	
-	  getInitialState: function () {
-	    return {
-	      currentUser: CurrentUserStore.currentUser()
-	    };
-	  },
-	
-	  componentDidMount: function () {
-	    this.listener = CurrentUserStore.addListener(this._onChange);
-	  },
-	
-	  componentWillUnmount: function () {
-	    this.listener.remove();
-	  },
-	
-	  _onChange: function () {
-	    this.setState({ currentUser: CurrentUserStore.currentUser() });
-	  },
-	
-	  logout: function (e) {
-	    e.preventDefault();
-	    SessionsApiUtil.logout(function () {
-	      this.history.pushState({}, "/login");
-	    }.bind(this));
-	  },
-	
-	  render: function () {
-	
-	    if (CurrentUserStore.isLoggedIn()) {
-	      currentUser = CurrentUserStore.user();
-	      return React.createElement(
-	        'div',
-	        { className: 'main-header' },
-	        'Logged in as ',
-	        this.state.currentUser.email,
-	        React.createElement(
-	          'button',
-	          { onClick: this.logout },
-	          ' LOG OUT'
-	        ),
-	        React.createElement(
-	          Link,
-	          { to: `/` },
-	          'Home'
-	        ),
-	        React.createElement(
-	          Link,
-	          { to: `users/${ currentUser.id }` },
-	          currentUser.fname
-	        ),
-	        React.createElement(Search, null)
-	      );
-	    } else {
-	      return React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          'a',
-	          { href: '#/login' },
-	          'Login'
-	        )
-	      );
-	    }
-	  }
-	
-	});
-	
-	module.exports = Header;
-
-/***/ },
-/* 251 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
@@ -32267,7 +32272,7 @@
 	module.exports = CurrentUserStore;
 
 /***/ },
-/* 252 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var CurrentUserActions = __webpack_require__(217);
@@ -32317,12 +32322,12 @@
 	module.exports = SessionsApiUtil;
 
 /***/ },
-/* 253 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SearchResultsStore = __webpack_require__(254);
-	var SearchApiUtil = __webpack_require__(256);
+	var SearchResultsStore = __webpack_require__(257);
+	var SearchApiUtil = __webpack_require__(259);
 	var UserProfile = __webpack_require__(245);
 	var PostIndexItem = __webpack_require__(240);
 	var CommentIndexItem = __webpack_require__(244);
@@ -32422,12 +32427,12 @@
 	module.exports = Search;
 
 /***/ },
-/* 254 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
 	var AppDispatcher = __webpack_require__(210);
-	var SearchConstants = __webpack_require__(255);
+	var SearchConstants = __webpack_require__(258);
 	
 	var _searchResults = [];
 	var _meta = {};
@@ -32457,7 +32462,7 @@
 	module.exports = SearchResultsStore;
 
 /***/ },
-/* 255 */
+/* 258 */
 /***/ function(module, exports) {
 
 	var SearchConstants = {
@@ -32467,10 +32472,10 @@
 	module.exports = SearchConstants;
 
 /***/ },
-/* 256 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SearchActions = __webpack_require__(257);
+	var SearchActions = __webpack_require__(260);
 	
 	var SearchApiUtil = {
 	
@@ -32491,10 +32496,10 @@
 	module.exports = SearchApiUtil;
 
 /***/ },
-/* 257 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SearchConstants = __webpack_require__(255);
+	var SearchConstants = __webpack_require__(258);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var SearchActions = {
@@ -32511,12 +32516,139 @@
 	module.exports = SearchActions;
 
 /***/ },
-/* 258 */
+/* 261 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1),
+	    Header = __webpack_require__(262),
+	    SessionsApiUtil = __webpack_require__(255),
+	    CurrentUserStore = __webpack_require__(254);
+	
+	var App = React.createClass({
+	  displayName: 'App',
+	
+	  componentDidMount: function () {
+	    this.Listener = CurrentUserStore.addListener(this.forceUpdate.bind(this));
+	    SessionsApiUtil.fetchCurrentUser();
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.Listener.remove();
+	  },
+	
+	  render: function () {
+	    if (!CurrentUserStore.userHasBeenFetched()) {
+	      return React.createElement(
+	        'p',
+	        null,
+	        'PLEASE WAIT'
+	      );
+	    }
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(Header, null),
+	      this.props.children
+	    );
+	  }
+	
+	});
+	
+	module.exports = App;
+
+/***/ },
+/* 262 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var CurrentUserStore = __webpack_require__(254);
+	var SessionsApiUtil = __webpack_require__(255);
+	var Search = __webpack_require__(256);
+	var History = __webpack_require__(159).History;
+	var Link = __webpack_require__(159).Link;
+	
+	var Header = React.createClass({
+	  displayName: 'Header',
+	
+	  mixins: [History],
+	
+	  getInitialState: function () {
+	    return {
+	      currentUser: CurrentUserStore.currentUser()
+	    };
+	  },
+	
+	  componentDidMount: function () {
+	    this.listener = CurrentUserStore.addListener(this._onChange);
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.listener.remove();
+	  },
+	
+	  _onChange: function () {
+	    this.setState({ currentUser: CurrentUserStore.currentUser() });
+	  },
+	
+	  logout: function (e) {
+	    e.preventDefault();
+	    SessionsApiUtil.logout(function () {
+	      this.history.pushState({}, "/login");
+	    }.bind(this));
+	  },
+	
+	  render: function () {
+	
+	    if (CurrentUserStore.isLoggedIn()) {
+	      currentUser = CurrentUserStore.user();
+	      return React.createElement(
+	        'div',
+	        { className: 'main-header' },
+	        React.createElement('img', { src: 'http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png', className: 'side-logo' }),
+	        'Logged in as ',
+	        this.state.currentUser.email,
+	        React.createElement(
+	          'button',
+	          { onClick: this.logout },
+	          ' LOG OUT'
+	        ),
+	        React.createElement(
+	          Link,
+	          { to: `/` },
+	          'Home'
+	        ),
+	        React.createElement(
+	          Link,
+	          { to: `users/${ currentUser.id }` },
+	          currentUser.fname
+	        ),
+	        React.createElement(Search, null)
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'a',
+	          { href: '#/login' },
+	          'Login'
+	        )
+	      );
+	    }
+	  }
+	
+	});
+	
+	module.exports = Header;
+
+/***/ },
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(252);
+	var SessionsApiUtil = __webpack_require__(255);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var SessionForm = React.createClass({
@@ -32688,12 +32820,12 @@
 	module.exports = SessionForm;
 
 /***/ },
-/* 259 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(252);
+	var SessionsApiUtil = __webpack_require__(255);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var UserForm = React.createClass({
@@ -32865,7 +32997,7 @@
 	module.exports = UserForm;
 
 /***/ },
-/* 260 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32923,6 +33055,25 @@
 	});
 	
 	module.exports = UsersIndex;
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(210);
+	
+	var ImageActions = {
+	
+	  receiveImage: function (photo) {
+	    AppDispatcher.dispatch({
+	      actionType: 'CREATE_IMAGE',
+	      photo: photo
+	    });
+	  }
+	
+	};
+	
+	module.exports = ImageActions;
 
 /***/ }
 /******/ ]);

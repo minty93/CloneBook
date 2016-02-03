@@ -43,8 +43,9 @@ var Header = React.createClass({
       currentUser = CurrentUserStore.user()
       return (
         <div className="main-header">
+          <img src="http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png" className="side-logo"/>
           Logged in as { this.state.currentUser.email }
-          
+
           <button onClick={ this.logout }> LOG OUT</button>
           <Link to={`/`}>Home</Link>
           <Link to={`users/${currentUser.id}`}>{currentUser.fname}</Link>

@@ -165,14 +165,18 @@
 
 
 .profile-image{
-  width: 150px;
-  height: 150px;
+  width: 160px;
+  height: 160px;
   position: absolute;
+  border: 2px solid white;
+  left: 10px;
+  top: 240px;
+
 }
 
 .cover-image {
-  width: 900px;
-  height: 250px;
+  width: 849px;
+  height: 313px;
   position: absolute;
   top: 25px;
 }

@@ -15,7 +15,7 @@ json.array!(@users) do |user|
   end
 
   json.photos user.photos do |photo|
-    json.photo_url asset_path(user.photo.url)
-  end 
+    json.photo_url asset_path(photo.photo.url)
+  end
 
 end

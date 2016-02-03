@@ -1,4 +1,5 @@
 var AppDispatcher = require('../dispatcher/dispatcher');
+var UserConstants = require('../constants/user_constants');
 
 
 
@@ -6,7 +7,7 @@ var PhotoActions = {
 
   receivePhoto: function (photo) {
     AppDispatcher.dispatch({
-        actionType: 'CREATE_PHOTO',
+        actionType: UserConstants.RECEIVE_PHOTO,
         photo: photo
     });
   },

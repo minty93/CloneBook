@@ -134,9 +134,9 @@
  }
 
  .about-feed{
-   width: 849px;
-   margin: auto;
-   margin-right: 283px;
+   width: 1000px;
+   margin: 0 auto;
+
  }
 
  .about-feed > div {
@@ -180,4 +180,24 @@
    border-left: 1px solid lightgrey;
    border-right: 1px solid lightgrey;
 
+ }
+
+
+ .photoIndex {
+   height: 700px;
+ }
+
+
+
+ .photo-index {
+   width: 849px;
+   margin: auto;
+ }
+
+
+ .image-view {
+   height: 200px;
+   width: 200px;
+   margin: 10px;
+   float: left;
  }

@@ -117,7 +117,7 @@ UserStore._removeComment = function (comment) {
 
 
 UserStore._addImage = function(photo) {
-  var user = this._findUserById(image.user_id);
+  var user = this._findUserById(photo.user_id);
   user.photos.push(photo);
   this.__emitChange();
 };
@@ -160,7 +160,7 @@ UserStore.__onDispatch = function (payload) {
   case CommentConstants.CREATE_COMMENT:
     UserStore._addComment(payload.comment);
     break;
-  case 'CREATE_IMAGE':
+  case UserConstants.RECEIVE_PHOTO:
     UserStore._addImage(payload.photo);
     break;
   // case ImageConstants.DELETE_IMAGE:

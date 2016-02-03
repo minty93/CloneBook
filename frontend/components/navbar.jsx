@@ -35,11 +35,11 @@ var Navbar = React.createClass({
 
     return (
       <div className="profile">
+        <CoverForm params={this.props.params}/>
+        <ProfileForm params={this.props.params}/>
         <div className="photo-form">
         <h3>{fname}</h3>
-        <CoverForm params={this.props.params}/>
         {cover_pic}
-        <ProfileForm params={this.props.params}/>
         {profile_pic}
         </div>
         <ul className="profile-nav group">

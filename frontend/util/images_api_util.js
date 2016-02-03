@@ -11,8 +11,8 @@ createImage: function(formData, callback) {
      processData: false,
      contentType: false,
      success: function(photo) {
-       PhotoApiActions.receivePhoto(photo);
-       callback && callback(photo);
+      PhotoApiActions.receivePhoto(photo);
+       callback && callback();
      }
    });
  }

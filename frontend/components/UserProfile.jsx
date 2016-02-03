@@ -9,15 +9,9 @@ var PostIndexItem = require('./PostsIndexItem');
 var PostsForm = require('./PostsForm');
 var CoverForm = require('./user_cover_form');
 var ProfileForm = require('./user_profile_form');
-// var PhotoIndex = require('./photos/photo_index');
-// var ImageForm = require('./photos/image_form');
+var PhotoIndex = require('./photos/photo_index');
+var ImageForm = require('./photos/image_form');
 var Navbar = require('./navbar');
-
-
-function _getRelevantPosts(userId) {
-  return PostStore.getByUserId(userId);
-}
-
 
 
 

@@ -1,5 +1,6 @@
 var React = require("react");
-var ImagesApiUtil = require('../../util/images_api_util');
+var ImageApiUtil = require('../../util/images_api_util');
+var UserApiUtil = require('../../util/users_api_util');
 
 
 var ImageForm = React.createClass({
@@ -39,8 +40,11 @@ var ImageForm = React.createClass({
     var formData = new FormData();
     formData.append("photo[photo]", file);
     formData.append("photo[description]", this.state.description);
-
     ImageApiUtil.createImage(formData, this.clearFields);
+    UserApiUtil.fetchAllUsers();
+    this.clearFields();
+
+
   },
 
 

@@ -1,27 +1,68 @@
 var React = require("react");
 var ImagesApiUtil = require('../../util/images_api_util');
-var PhotoItem = require('./photo_index_item');
+var PhotoIndexItem = require('./photo_index_item.jsx');
+var ImageForm = require('./image_form.jsx');
+var Navbar = require('./../navbar');
+var UserStore = require("../../stores/UserStore");
+var UserApiUtil = require('../../util/users_api_util');
+
+
 
 
 var PhotoIndex = React.createClass({
 
-  componentWillReceiveProps: function (newProps) {
-    this.forceUpdate();
+  _findUserById: function(id) {
+    id = parseInt(id);
+    users = UserStore.all();
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].id == id) {
+        return users[i];
+      }
+    }
   },
 
+  getInitialState: function(){
+    var userId = this.props.userId || this.props.params.userId;
+    var user = this._findUserById(userId);
+    return { user: user};
+  },
+
+  componentDidMount: function () {
+    var userId = (this.props.userId || this.props.params.userId);
+    this.listener = UserStore.addListener(this._onChange);
+    // this.listener = PostStore.addListener(this._onChange);
+    // this.listener = CommentStore.addListener(this._onChange);
+    UserApiUtil.fetchUser(parseInt(userId));
+  },
+
+  componentWillUnmount: function () {
+    this.listener.remove();
+  },
+
+  _onChange: function () {
+    var userId = this.props.params.userId;
+    var user = this._findUserById(userId);
+    if (this.isMounted()) {
+    this.setState({ user: user});
+    }
+ },
   render: function () {
-    var photoIndex = this.props.user.photos.map(function(photo) {
+    var photoIndex;
+    if(this.state.user){
+    photoIndex = this.state.user.photos.map(function(photo) {
       return (
-        <PhotoItem key={photo.id} photo={photo}/>
+        <PhotoIndexItem key={photo.id} photo={photo}/>
       );
     });
-
+  }
 
     return (
       <div>
-        <ul className="photo-index">
+        <Navbar params={this.props.params} user={this.state.user}/>
+        <ul className="photo-index group">
           {photoIndex}
         </ul>
+        <ImageForm user={this.state.user}></ImageForm>
       </div>
     );
   },

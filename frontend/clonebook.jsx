@@ -14,6 +14,7 @@ var UserForm = require('./components/user_form');
 var CurrentUserStore = require('./stores/current_user_store');
 var SessionsApiUtil = require('./util/sessions_api_util');
 var UsersIndex = require('./components/users_index');
+var About = require('./components/about');
 
 
 
@@ -47,6 +48,7 @@ var UsersIndex = require('./components/users_index');
 };
 
 
+
 function _ensureLoggedIn(nextState, replace, callback) {
   if (CurrentUserStore.userHasBeenFetched() === true) {
     _redirectIfNotLoggedIn();
@@ -70,6 +72,8 @@ var router = (
   <Route path="users/new" component={ UserForm } />
   <Route path="posts/new" component={PostsForm}/>
   <Route path="users/:userId" component={UserProfile}/>
+  <Route path="users/:userId/timeline" component={UserProfile}/>
+  <Route path="users/:userId/about" component={About}/>
   </Route>
   <Route path="login" component={SessionForm} onEnter={_ensureLoggedOut}/>
   </Router>

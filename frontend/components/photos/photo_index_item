@@ -1,21 +1,19 @@
-var React = require("react");
-var ImagesApiUtil = require('../../util/images_api_util');
+// var React = require("react");
+// var ImagesApiUtil = require('../../util/images_api_util');
+//
+//
+// var PhotoIndexItem = React.createClass({
+//
 
-
-var PhotoIndexItem = React.createClass({
-
-  // openModal: function () {
-  //   ImageApiUtil.getImage(this.props.image.id, ModalActions.showModal());
-  // }, onClick={this.openModal}
-
-  render: function () {
-    return (
-      <li key={this.props.image.id} image={this.props.image}>
-        <img className="image-view" src={this.props.image.image_url}/>
-      </li>
-    );
-  }
-
-});
-
-module.exports = PhotoIndexItem
+//
+//   render: function () {
+//     return (
+//       <li>
+//         <img className="image-view" src={this.props.image.url}/>
+//       </li>
+//     );
+//   }
+//
+// });
+//
+// module.exports = PhotoIndexItem

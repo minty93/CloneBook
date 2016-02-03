@@ -32,6 +32,7 @@ var Navbar = React.createClass({
       profile_pic =   <img className="profile-image" src={this.props.user.profile_pic} />;
     }
 
+
     return (
       <div className="profile">
         <div className="photo-form">
@@ -41,6 +42,12 @@ var Navbar = React.createClass({
         <ProfileForm params={this.props.params}/>
         {profile_pic}
         </div>
+        <ul className="profile-nav group">
+        <li> <Link to={`users/${this.props.params.userId }/timeline`}>Timeline</Link>, </li>
+            <li> <Link to={`users/${this.props.params.userId }/about`}>About</Link></li>
+            <li><Link to={`users/${this.props.params.userId }/friends`}>Friends</Link></li>
+            <li><Link to={`users/${this.props.params.userId }/photos`}>Photos</Link></li>
+        </ul>
       </div>
     );
   },

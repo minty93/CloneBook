@@ -12,14 +12,8 @@ var ProfileForm = require('./user_profile_form');
 var Navbar = require('./navbar');
 
 
-function _getRelevantPosts(userId) {
-  return PostStore.getByUserId(userId);
-}
 
-
-
-
-var UserProfile = React.createClass({
+var About = React.createClass({
 
   _findUserById: function(id) {
     id = parseInt(id);
@@ -65,24 +59,25 @@ var UserProfile = React.createClass({
     var received_posts;
 
     if (this.state.user) {
-      received_posts = this.state.user.received_posts.slice(0);
+      birthday = this.state.user.birthday;
+      gender = this.state.user.gender;
       fname = this.state.user.fname;
-      received_posts = received_posts.reverse().map(function(post) {
-        return (<PostIndexItem post={post} key={post.id}/>);
-      });
-      cover_pic =   <img className="cover-image" src={this.state.user.cover_pic} />;
-      profile_pic =   <img className="profile-image" src={this.state.user.profile_pic} />;
+      lname = this.state.user.lname;
+      email = this.state.user.email;
+
+
     }
 
 
     return (
       <div>
       <Navbar params={this.props.params} user={this.state.user}/>
-
-      <div className="posts-index-profilefeed">
-      <PostsForm params={this.props.params} placeholder="Post Something"/>
-      {received_posts}
-      </div>
+      <ul className="about-feed">
+      <li>Name: {fname} {lname}</li>
+      <li>Birthday: {birthday}</li>
+      <li>Email: {email}</li>
+      <li>Gender: {gender}</li>
+      </ul>
       </div>
     );
 
@@ -90,4 +85,4 @@ var UserProfile = React.createClass({
   },
 
 });
-module.exports = UserProfile;
+module.exports = About;

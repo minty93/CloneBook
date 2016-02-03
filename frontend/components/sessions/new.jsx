@@ -21,6 +21,7 @@ var SessionForm = React.createClass({
     UsersApiUtil.createUser(credentials, function () {
       this.history.pushState({}, "/");
     }.bind(this));
+    UsersApiUtil.fetchAllUsers();
   },
 
 

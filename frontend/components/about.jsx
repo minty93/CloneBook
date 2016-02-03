@@ -73,10 +73,14 @@ var About = React.createClass({
       <div>
       <Navbar params={this.props.params} user={this.state.user}/>
       <ul className="about-feed">
-      <li>Name: {fname} {lname}</li>
-      <li>Birthday: {birthday}</li>
-      <li>Email: {email}</li>
-      <li>Gender: {gender}</li>
+
+        <div className="group"><i className="fa fa-user fa-3x"></i><h2>About</h2></div>
+        <div className="about-list">
+        <li>Name: {fname} {lname}</li>
+        <li>Birthday: {birthday}</li>
+        <li>Email: {email}</li>
+        <li>Gender: {gender}</li>
+      </div>
       </ul>
       </div>
     );

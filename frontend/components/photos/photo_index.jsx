@@ -1,6 +1,6 @@
 var React = require("react");
-var ImagesApiUtil = require('../util/images_api_util');
-var PhotoItem = require('./photos/photo_index_item');
+var ImagesApiUtil = require('../../util/images_api_util');
+var PhotoItem = require('./photo_index_item');
 
 
 var PhotoIndex = React.createClass({
@@ -10,7 +10,7 @@ var PhotoIndex = React.createClass({
   },
 
   render: function () {
-    var photoIndex = this.props.user.images.map(function(image) {
+    var photoIndex = this.props.user.photos.map(function(photo) {
       return (
         <PhotoItem key={photo.id} photo={photo}/>
       );

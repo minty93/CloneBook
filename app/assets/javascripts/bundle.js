@@ -54,13 +54,13 @@
 	var PostsIndex = __webpack_require__(238);
 	var UserProfile = __webpack_require__(245);
 	var CommentsForm = __webpack_require__(241);
-	var App = __webpack_require__(262);
-	var SessionForm = __webpack_require__(264);
-	var UserForm = __webpack_require__(265);
-	var CurrentUserStore = __webpack_require__(255);
-	var SessionsApiUtil = __webpack_require__(256);
-	var UsersIndex = __webpack_require__(266);
-	var About = __webpack_require__(267);
+	var App = __webpack_require__(257);
+	var SessionForm = __webpack_require__(259);
+	var UserForm = __webpack_require__(260);
+	var CurrentUserStore = __webpack_require__(250);
+	var SessionsApiUtil = __webpack_require__(251);
+	var UsersIndex = __webpack_require__(261);
+	var About = __webpack_require__(262);
 	
 	// var App = React.createClass({
 	//   render: function(){
@@ -31718,9 +31718,11 @@
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var CoverForm = __webpack_require__(252);
-	var ProfileForm = __webpack_require__(253);
-	var Navbar = __webpack_require__(254);
+	var CoverForm = __webpack_require__(247);
+	var ProfileForm = __webpack_require__(248);
+	// var PhotoIndex = require('./photos/photo_index');
+	// var ImageForm = require('./photos/image_form');
+	var Navbar = __webpack_require__(249);
 	
 	function _getRelevantPosts(userId) {
 	  return PostStore.getByUserId(userId);
@@ -31773,11 +31775,13 @@
 	    var received_posts;
 	
 	    if (this.state.user) {
-	      received_posts = this.state.user.received_posts.slice(0);
-	      fname = this.state.user.fname;
-	      received_posts = received_posts.reverse().map(function (post) {
-	        return React.createElement(PostIndexItem, { post: post, key: post.id });
-	      });
+	      if (this.state.user.received_posts) {
+	        received_posts = this.state.user.received_posts.slice(0);
+	        fname = this.state.user.fname;
+	        received_posts = received_posts.reverse().map(function (post) {
+	          return React.createElement(PostIndexItem, { post: post, key: post.id });
+	        });
+	      }
 	      cover_pic = React.createElement('img', { className: 'cover-image', src: this.state.user.cover_pic });
 	      profile_pic = React.createElement('img', { className: 'profile-image', src: this.state.user.profile_pic });
 	    }
@@ -31919,9 +31923,9 @@
 	  }
 	};
 	
-	UserStore._addImage = function (image) {
+	UserStore._addImage = function (photo) {
 	  var user = this._findUserById(image.user_id);
-	  user.images.push(image);
+	  user.photos.push(photo);
 	  this.__emitChange();
 	};
 	
@@ -31962,7 +31966,7 @@
 	      UserStore._addComment(payload.comment);
 	      break;
 	    case 'CREATE_IMAGE':
-	      UserStore._addImage(payload.image);
+	      UserStore._addImage(payload.photo);
 	      break;
 	    // case ImageConstants.DELETE_IMAGE:
 	    //   UserStore._removeImage(payload.image);
@@ -31974,12 +31978,7 @@
 	module.exports = UserStore;
 
 /***/ },
-/* 247 */,
-/* 248 */,
-/* 249 */,
-/* 250 */,
-/* 251 */,
-/* 252 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -31998,7 +31997,7 @@
 	      null,
 	      React.createElement(
 	        'form',
-	        { onSubmit: this.handleSubmit },
+	        { onSubmit: this.handleSubmit, className: 'image-form' },
 	        React.createElement(
 	          'label',
 	          null,
@@ -32044,7 +32043,7 @@
 	module.exports = UserCoverForm;
 
 /***/ },
-/* 253 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32063,7 +32062,7 @@
 	      null,
 	      React.createElement(
 	        'form',
-	        { onSubmit: this.handleSubmit },
+	        { onSubmit: this.handleSubmit, className: 'image-form' },
 	        React.createElement(
 	          'label',
 	          null,
@@ -32109,17 +32108,17 @@
 	module.exports = UserProfileForm;
 
 /***/ },
-/* 254 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(255);
-	var SessionsApiUtil = __webpack_require__(256);
-	var Search = __webpack_require__(257);
+	var CurrentUserStore = __webpack_require__(250);
+	var SessionsApiUtil = __webpack_require__(251);
+	var Search = __webpack_require__(252);
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
-	var CoverForm = __webpack_require__(252);
-	var ProfileForm = __webpack_require__(253);
+	var CoverForm = __webpack_require__(247);
+	var ProfileForm = __webpack_require__(248);
 	
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
@@ -32163,54 +32162,34 @@
 	        'ul',
 	        { className: 'profile-nav group' },
 	        React.createElement(
-	          'li',
-	          null,
-	          ' ',
-	          React.createElement(
-	            Link,
-	            { to: `users/${ this.props.params.userId }/timeline` },
-	            'Timeline'
-	          ),
-	          ', '
+	          Link,
+	          { to: `users/${ this.props.params.userId }/timeline` },
+	          'Timeline'
 	        ),
 	        React.createElement(
-	          'li',
-	          null,
-	          ' ',
-	          React.createElement(
-	            Link,
-	            { to: `users/${ this.props.params.userId }/about` },
-	            'About'
-	          )
+	          Link,
+	          { to: `users/${ this.props.params.userId }/about` },
+	          'About'
 	        ),
 	        React.createElement(
-	          'li',
-	          null,
-	          React.createElement(
-	            Link,
-	            { to: `users/${ this.props.params.userId }/friends` },
-	            'Friends'
-	          )
+	          Link,
+	          { to: `users/${ this.props.params.userId }/friends` },
+	          'Friends'
 	        ),
 	        React.createElement(
-	          'li',
-	          null,
-	          React.createElement(
-	            Link,
-	            { to: `users/${ this.props.params.userId }/photos` },
-	            'Photos'
-	          )
+	          Link,
+	          { to: `users/${ this.props.params.userId }/photos` },
+	          'Photos'
 	        )
 	      )
 	    );
 	  }
-	
 	});
 	
 	module.exports = Navbar;
 
 /***/ },
-/* 255 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
@@ -32258,7 +32237,7 @@
 	module.exports = CurrentUserStore;
 
 /***/ },
-/* 256 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var CurrentUserActions = __webpack_require__(217);
@@ -32308,12 +32287,12 @@
 	module.exports = SessionsApiUtil;
 
 /***/ },
-/* 257 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SearchResultsStore = __webpack_require__(258);
-	var SearchApiUtil = __webpack_require__(260);
+	var SearchResultsStore = __webpack_require__(253);
+	var SearchApiUtil = __webpack_require__(255);
 	var UserProfile = __webpack_require__(245);
 	var PostIndexItem = __webpack_require__(240);
 	var CommentIndexItem = __webpack_require__(244);
@@ -32413,12 +32392,12 @@
 	module.exports = Search;
 
 /***/ },
-/* 258 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
 	var AppDispatcher = __webpack_require__(210);
-	var SearchConstants = __webpack_require__(259);
+	var SearchConstants = __webpack_require__(254);
 	
 	var _searchResults = [];
 	var _meta = {};
@@ -32448,7 +32427,7 @@
 	module.exports = SearchResultsStore;
 
 /***/ },
-/* 259 */
+/* 254 */
 /***/ function(module, exports) {
 
 	var SearchConstants = {
@@ -32458,10 +32437,10 @@
 	module.exports = SearchConstants;
 
 /***/ },
-/* 260 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SearchActions = __webpack_require__(261);
+	var SearchActions = __webpack_require__(256);
 	
 	var SearchApiUtil = {
 	
@@ -32482,10 +32461,10 @@
 	module.exports = SearchApiUtil;
 
 /***/ },
-/* 261 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SearchConstants = __webpack_require__(259);
+	var SearchConstants = __webpack_require__(254);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var SearchActions = {
@@ -32502,13 +32481,13 @@
 	module.exports = SearchActions;
 
 /***/ },
-/* 262 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1),
-	    Header = __webpack_require__(263),
-	    SessionsApiUtil = __webpack_require__(256),
-	    CurrentUserStore = __webpack_require__(255);
+	    Header = __webpack_require__(258),
+	    SessionsApiUtil = __webpack_require__(251),
+	    CurrentUserStore = __webpack_require__(250);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -32544,13 +32523,13 @@
 	module.exports = App;
 
 /***/ },
-/* 263 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(255);
-	var SessionsApiUtil = __webpack_require__(256);
-	var Search = __webpack_require__(257);
+	var CurrentUserStore = __webpack_require__(250);
+	var SessionsApiUtil = __webpack_require__(251);
+	var Search = __webpack_require__(252);
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
 	
@@ -32629,12 +32608,12 @@
 	module.exports = Header;
 
 /***/ },
-/* 264 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(256);
+	var SessionsApiUtil = __webpack_require__(251);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var SessionForm = React.createClass({
@@ -32657,6 +32636,7 @@
 	    UsersApiUtil.createUser(credentials, function () {
 	      this.history.pushState({}, "/");
 	    }.bind(this));
+	    UsersApiUtil.fetchAllUsers();
 	  },
 	
 	  render: function () {
@@ -32806,12 +32786,12 @@
 	module.exports = SessionForm;
 
 /***/ },
-/* 265 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(256);
+	var SessionsApiUtil = __webpack_require__(251);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var UserForm = React.createClass({
@@ -32983,7 +32963,7 @@
 	module.exports = UserForm;
 
 /***/ },
-/* 266 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33043,7 +33023,7 @@
 	module.exports = UsersIndex;
 
 /***/ },
-/* 267 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33055,9 +33035,9 @@
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var CoverForm = __webpack_require__(252);
-	var ProfileForm = __webpack_require__(253);
-	var Navbar = __webpack_require__(254);
+	var CoverForm = __webpack_require__(247);
+	var ProfileForm = __webpack_require__(248);
+	var Navbar = __webpack_require__(249);
 	
 	var About = React.createClass({
 	  displayName: 'About',
@@ -33121,30 +33101,44 @@
 	        'ul',
 	        { className: 'about-feed' },
 	        React.createElement(
-	          'li',
-	          null,
-	          'Name: ',
-	          fname,
-	          ' ',
-	          lname
+	          'div',
+	          { className: 'group' },
+	          React.createElement('i', { className: 'fa fa-user fa-3x' }),
+	          React.createElement(
+	            'h2',
+	            null,
+	            'About'
+	          )
 	        ),
 	        React.createElement(
-	          'li',
-	          null,
-	          'Birthday: ',
-	          birthday
-	        ),
-	        React.createElement(
-	          'li',
-	          null,
-	          'Email: ',
-	          email
-	        ),
-	        React.createElement(
-	          'li',
-	          null,
-	          'Gender: ',
-	          gender
+	          'div',
+	          { className: 'about-list' },
+	          React.createElement(
+	            'li',
+	            null,
+	            'Name: ',
+	            fname,
+	            ' ',
+	            lname
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            'Birthday: ',
+	            birthday
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            'Email: ',
+	            email
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            'Gender: ',
+	            gender
+	          )
 	        )
 	      )
 	    );

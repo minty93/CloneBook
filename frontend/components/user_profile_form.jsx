@@ -9,7 +9,7 @@ var UserProfileForm = React.createClass({
   render: function() {
     return (
       <div>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit} className="image-form">
           <label>
             <input type="file" onChange={this.changeFile} />
           </label>

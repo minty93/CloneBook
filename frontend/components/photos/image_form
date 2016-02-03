@@ -37,8 +37,8 @@ var ImageForm = React.createClass({
     e.preventDefault();
     var file = this.state.file;
     var formData = new FormData();
-    formData.append("image[image]", file);
-    formData.append("image[description]", this.state.description);
+    formData.append("photo[photo]", file);
+    formData.append("photo[description]", this.state.description);
 
     ImageApiUtil.createImage(formData, this.clearFields);
   },
@@ -51,9 +51,7 @@ var ImageForm = React.createClass({
         <form onSubmit={this.handleSubmit}>
           <input className="file-upload" onChange={this.changeFile} type="file"/>
           <input className="file-des" onChange={this.changeDes} type="text"/>
-          <label>
-            <button className="upload-button">Upload Photo</button>
-          </label>
+          <button className="upload-button">Upload Photo</button>
         </form>
       </div>
     );
@@ -62,4 +60,4 @@ var ImageForm = React.createClass({
 });
 
 
-module.exports = ImageForm
+module.exports = ImageForm;

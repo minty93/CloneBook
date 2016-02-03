@@ -2,15 +2,15 @@ var AppDispatcher = require('../dispatcher/dispatcher');
 
 
 
-var ImageActions = {
+var PhotoActions = {
 
-  receiveImage: function (photo) {
+  receivePhoto: function (photo) {
     AppDispatcher.dispatch({
-        actionType: 'CREATE_IMAGE',
+        actionType: 'CREATE_PHOTO',
         photo: photo
     });
   },
 
 };
 
-module.exports = ImageActions;
+module.exports = PhotoActions;

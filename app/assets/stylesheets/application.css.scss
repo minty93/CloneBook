@@ -13,7 +13,9 @@
  *
  *= require_tree .
  *= require_self
+ *= require font-awesome
  */
+
 
 
 
@@ -91,8 +93,91 @@
    border: 1px solid #425F9C;
  }
 
+ .profile-nav {
+   width: 849px;
+   background: white;
+   border: 1px solid lightgrey;
+   padding-left: 200px;
+   margin-top: 316px;
+ }
+
 
  .preview-image {
    width: 250px;
    height: 150px;
+ }
+
+ .profile-nav > a{
+   width: auto;
+   margin: 0 auto;
+   height: 45px;
+   background: white;
+   color: black;
+   float: left;
+   padding: 20px;
+   border-right: 1px solid lightgrey;
+   display: block;
+ }
+
+ .profile-nav > a:first-child {
+   border-left: 1px solid lightgrey;
+ }
+
+ .image-form {
+   display: none;
+ }
+
+ .image-form > button:hover {
+   margin: 1000px;
+   background: blue;
+   display: block;
+ }
+
+ .about-feed{
+   width: 849px;
+   margin: auto;
+   margin-right: 283px;
+ }
+
+ .about-feed > div {
+   margin-top: 6px;
+   display: block;
+   background: #e9eaed;
+   height: 50px;
+   width: 849px;
+   border: 1px solid lightgrey;
+ }
+
+ .about-feed > div > i {
+   margin-left: 10px;
+   float: left;
+   color: #ADB3BC;
+
+ }
+
+
+ .about-feed > div > h2 {
+   margin-top: 6px;
+   padding: 5px;
+   float: left;
+   font-size: 22px;
+   font-weight: bold;
+   margin-left: 20px;
+ }
+
+ .about-list {
+   width: 849px;
+   border-top: 1px solid lightgrey;
+   background: white;
+ }
+
+ .about-list > li {
+   width: 849px;
+   background: white;
+   padding: 20px;
+   font-size: 18px;
+   display: block;
+   border-left: 1px solid lightgrey;
+   border-right: 1px solid lightgrey;
+
  }

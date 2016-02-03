@@ -116,9 +116,9 @@ UserStore._removeComment = function (comment) {
 };
 
 
-UserStore._addImage = function(image) {
+UserStore._addImage = function(photo) {
   var user = this._findUserById(image.user_id);
-  user.images.push(image);
+  user.photos.push(photo);
   this.__emitChange();
 };
 
@@ -161,7 +161,7 @@ UserStore.__onDispatch = function (payload) {
     UserStore._addComment(payload.comment);
     break;
   case 'CREATE_IMAGE':
-    UserStore._addImage(payload.image);
+    UserStore._addImage(payload.photo);
     break;
   // case ImageConstants.DELETE_IMAGE:
   //   UserStore._removeImage(payload.image);

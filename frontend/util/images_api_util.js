@@ -1,4 +1,4 @@
-var ImageApiActions = require("../actions/image_actions");
+var PhotoApiActions = require("./../actions/photo_actions");
 
 
 var ImagesApiUtil = {
@@ -11,9 +11,10 @@ createImage: function(formData, callback) {
      processData: false,
      contentType: false,
      success: function(photo) {
+       PhotoApiActions.receivePhoto(photo);
        callback && callback(photo);
      }
-   })
+   });
  }
 };
 

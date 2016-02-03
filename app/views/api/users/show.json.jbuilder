@@ -12,4 +12,8 @@ json.received_posts @user.received_posts do |post|
   json.comments post.comments do |comment|
     json.extract! comment, :id, :description, :author_id, :author_name, :commentable_id, :commentable_type
   end
+
+  json.photos @user.photos do |photo|
+    json.photo_url asset_path(@user.photo.url)
+  end
 end

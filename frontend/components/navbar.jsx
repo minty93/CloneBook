@@ -43,15 +43,14 @@ var Navbar = React.createClass({
         {profile_pic}
         </div>
         <ul className="profile-nav group">
-        <li> <Link to={`users/${this.props.params.userId }/timeline`}>Timeline</Link>, </li>
-            <li> <Link to={`users/${this.props.params.userId }/about`}>About</Link></li>
-            <li><Link to={`users/${this.props.params.userId }/friends`}>Friends</Link></li>
-            <li><Link to={`users/${this.props.params.userId }/photos`}>Photos</Link></li>
+        <Link to={`users/${this.props.params.userId }/timeline`}>Timeline</Link>
+        <Link to={`users/${this.props.params.userId }/about`}>About</Link>
+        <Link to={`users/${this.props.params.userId }/friends`}>Friends</Link>
+        <Link to={`users/${this.props.params.userId }/photos`}>Photos</Link>
         </ul>
       </div>
     );
-  },
-
+  }
 });
 
 module.exports = Navbar;

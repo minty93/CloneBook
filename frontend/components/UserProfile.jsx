@@ -9,6 +9,8 @@ var PostIndexItem = require('./PostsIndexItem');
 var PostsForm = require('./PostsForm');
 var CoverForm = require('./user_cover_form');
 var ProfileForm = require('./user_profile_form');
+// var PhotoIndex = require('./photos/photo_index');
+// var ImageForm = require('./photos/image_form');
 var Navbar = require('./navbar');
 
 
@@ -65,11 +67,13 @@ var UserProfile = React.createClass({
     var received_posts;
 
     if (this.state.user) {
+      if(this.state.user.received_posts){
       received_posts = this.state.user.received_posts.slice(0);
       fname = this.state.user.fname;
       received_posts = received_posts.reverse().map(function(post) {
         return (<PostIndexItem post={post} key={post.id}/>);
       });
+    }
       cover_pic =   <img className="cover-image" src={this.state.user.cover_pic} />;
       profile_pic =   <img className="profile-image" src={this.state.user.profile_pic} />;
     }
@@ -78,7 +82,6 @@ var UserProfile = React.createClass({
     return (
       <div>
       <Navbar params={this.props.params} user={this.state.user}/>
-
       <div className="posts-index-profilefeed">
       <PostsForm params={this.props.params} placeholder="Post Something"/>
       {received_posts}

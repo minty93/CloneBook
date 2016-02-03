@@ -30,7 +30,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'react-rails', '~> 1.3.0'
 gem 'flux-rails-assets', '~> 2.1.0'
 gem 'faker'
-
+gem "font-awesome-rails"
 gem "paperclip", "~> 4.3"
 gem 'aws-sdk', '~> 1.6'
 gem 'figaro'

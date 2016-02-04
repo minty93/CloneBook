@@ -57,12 +57,14 @@ var PhotoIndex = React.createClass({
   }
 
     return (
-      <div>
+      <div className="group">
         <Navbar params={this.props.params} user={this.state.user}/>
+      <div className="cry">
+      <ImageForm className="photo-form" user={this.state.user}></ImageForm>
         <ul className="photo-index group">
           {photoIndex}
         </ul>
-        <ImageForm user={this.state.user}></ImageForm>
+      </div>
       </div>
     );
   },

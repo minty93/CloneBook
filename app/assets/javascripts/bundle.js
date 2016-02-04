@@ -32166,14 +32166,18 @@
 	
 	    return React.createElement(
 	      'div',
-	      null,
+	      { className: 'group' },
 	      React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
 	      React.createElement(
-	        'ul',
-	        { className: 'photo-index group' },
-	        photoIndex
-	      ),
-	      React.createElement(ImageForm, { user: this.state.user })
+	        'div',
+	        { className: 'cry' },
+	        React.createElement(ImageForm, { className: 'photo-form', user: this.state.user }),
+	        React.createElement(
+	          'ul',
+	          { className: 'photo-index group' },
+	          photoIndex
+	        )
+	      )
 	    );
 	  }
 	
@@ -33342,19 +33346,19 @@
 	  render: function () {
 	    return React.createElement(
 	      'div',
-	      { className: 'photo-upload' },
-	      React.createElement('img', { className: 'photo-preview-image', src: this.state.url }),
+	      { className: 'photo-upload group' },
 	      React.createElement(
 	        'form',
 	        { onSubmit: this.handleSubmit },
 	        React.createElement('input', { className: 'file-upload', onChange: this.changeFile, type: 'file' }),
-	        React.createElement('input', { className: 'file-des', onChange: this.changeDes, type: 'text' }),
+	        React.createElement('input', { placeholder: 'Add Description', className: 'file-des', onChange: this.changeDes, type: 'text' }),
 	        React.createElement(
 	          'button',
 	          { className: 'upload-button' },
 	          'Upload Photo'
 	        )
-	      )
+	      ),
+	      React.createElement('img', { className: 'photo-preview-image', src: this.state.url })
 	    );
 	  }
 	

@@ -50,13 +50,13 @@ var ImageForm = React.createClass({
 
   render: function() {
     return (
-      <div className="photo-upload">
-        <img className="photo-preview-image" src={this.state.url}/>
+      <div className="photo-upload group">
         <form onSubmit={this.handleSubmit}>
           <input className="file-upload" onChange={this.changeFile} type="file"/>
-          <input className="file-des" onChange={this.changeDes} type="text"/>
+          <input placeholder="Add Description" className="file-des" onChange={this.changeDes} type="text"/>
           <button className="upload-button">Upload Photo</button>
         </form>
+        <img className="photo-preview-image" src={this.state.url}/>
       </div>
     );
   }

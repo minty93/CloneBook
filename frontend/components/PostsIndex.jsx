@@ -3,6 +3,7 @@ var PostStore = require("../stores/PostStore");
 var CommentStore = require("../stores/CommentStore");
 var PostsIndexItem = require('./PostsIndexItem');
 var PostsApiUtil = require('../util/posts_api_util');
+var UserApiUtil = require('../util/users_api_util');
 var PostsForm = require('./PostsForm');
 var CommentsForm = require('./CommentsForm');
 var CommentsIndexItem = require('./CommentsIndexItem');
@@ -18,6 +19,7 @@ var PostsIndex = React.createClass({
   componentWillMount: function() {
     this.listener = PostStore.addListener(this._onChange);
     PostsApiUtil.fetchAllPosts();
+    UserApiUtil.fetchAllUsers();
   },
 
 

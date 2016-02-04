@@ -18,4 +18,8 @@ json.array!(@users) do |user|
     json.photo_url asset_path(photo.photo.url)
   end
 
-end
+
+  json.friends user.friends do |friend|
+    json.extract! friend, :id, :requestee_id, :requester_id
+  end
+  end

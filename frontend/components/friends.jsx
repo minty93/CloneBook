@@ -7,16 +7,15 @@ var CommentStore = require("../stores/CommentStore");
 var PostsForm = require('./PostsForm');
 var PostIndexItem = require('./PostsIndexItem');
 var PostsForm = require('./PostsForm');
-var FriendButton = require('./friend_request_item');
 var CoverForm = require('./user_cover_form');
 var ProfileForm = require('./user_profile_form');
-var PhotoIndex = require('./photos/photo_index');
-var ImageForm = require('./photos/image_form');
 var Navbar = require('./navbar');
+var Link = require('react-router').Link;
 
 
 
-var UserProfile = React.createClass({
+
+var Friends = React.createClass({
 
   _findUserById: function(id) {
     id = parseInt(id);
@@ -37,13 +36,10 @@ var UserProfile = React.createClass({
   componentDidMount: function () {
     var userId = (this.props.userId || this.props.params.userId);
     this.listener = UserStore.addListener(this._onChange);
-    // this.listener = PostStore.addListener(this._onChange);
-    // this.listener = CommentStore.addListener(this._onChange);
-    UserApiUtil.fetchUser(parseInt(userId));
   },
 
   componentWillReceiveProps: function(newProps){
-    UserApiUtil.fetchUser(parseInt(newProps.params.userId));
+    UserApiUtil.fetchAllUsers();
   },
 
   componentWillUnmount: function () {
@@ -59,34 +55,40 @@ var UserProfile = React.createClass({
  },
 
   render: function() {
-    var received_posts;
-
+    var findfriends = [];
+    var friends;
     if (this.state.user) {
-      if(this.state.user.received_posts){
-      received_posts = this.state.user.received_posts.slice(0);
-      fname = this.state.user.fname;
-      received_posts = received_posts.reverse().map(function(post) {
-        return (<PostIndexItem post={post} key={post.id}/>);
-      });
+      friend_ids = this.state.user.friends
+      for (var i = 0; i < friend_ids.length; i++) {
+        if (friend_ids[i].requestee_id != friend_ids[i].requester_id)
+        {
+          debugger
+          findfriends.push(this._findUserById(friend_ids[i].requestee_id ))
+        }
+      }
     }
-      cover_pic =   <img className="cover-image" src={this.state.user.cover_pic} />;
-      profile_pic =   <img className="profile-image" src={this.state.user.profile_pic} />;
-    }
+
+
+    if (findfriends) {
+
+    friends = findfriends.map(function(friend){
+      <Link to={`users/${friend.id}`}>
+      <img src={this.friend.profile_pic}/>
+      </Link>
+    })
+  }
 
 
     return (
       <div>
-      <FriendButton params={this.props.params}/>
-      <Navbar params={this.props.params} user={this.state.user}/>
-      <div className="posts-index-profilefeed">
-      <PostsForm params={this.props.params} placeholder="Post Something"/>
-      {received_posts}
+        <Navbar params={this.props.params} user={this.state.user}/>
+        {friends}
       </div>
-      </div>
+
     );
 
 
   },
 
 });
-module.exports = UserProfile;
+module.exports = Friends;

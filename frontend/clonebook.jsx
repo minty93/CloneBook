@@ -15,6 +15,7 @@ var CurrentUserStore = require('./stores/current_user_store');
 var SessionsApiUtil = require('./util/sessions_api_util');
 var UsersIndex = require('./components/users_index');
 var About = require('./components/about');
+var Friends = require('./components/friends.jsx');
 var PhotoIndex = require('./components/photos/photo_index.jsx');
 
 
@@ -76,6 +77,7 @@ var router = (
   <Route path="users/:userId/timeline" component={UserProfile}/>
   <Route path="users/:userId/about" component={About}/>
   <Route path="users/:userId/photos" component={PhotoIndex}/>
+  <Route path="users/:userId/friends" component={Friends}/>
   </Route>
   <Route path="login" component={SessionForm} onEnter={_ensureLoggedOut}/>
   </Router>

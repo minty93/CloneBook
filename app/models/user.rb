@@ -25,6 +25,14 @@ class User < ActiveRecord::Base
   has_many(:authored_posts, foreign_key: :author_id, primary_key: :id, class_name: "Post")
   has_many(:photos, foreign_key: :user_id, primary_key: :id, class_name: "Photo")
 
+
+  has_many(
+  :friends,
+  foreign_key: :requester_id,
+  primary_key: :id,
+  class_name: "FriendRequest"
+  )
+
   has_many(:received_posts, foreign_key: :profile_id, primary_key: :id, class_name: "Post")
 
   def self.find_by_credentials(email,password)

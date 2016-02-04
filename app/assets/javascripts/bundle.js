@@ -54,14 +54,15 @@
 	var PostsIndex = __webpack_require__(238);
 	var UserProfile = __webpack_require__(245);
 	var CommentsForm = __webpack_require__(241);
-	var App = __webpack_require__(261);
-	var SessionForm = __webpack_require__(263);
-	var UserForm = __webpack_require__(264);
-	var CurrentUserStore = __webpack_require__(254);
-	var SessionsApiUtil = __webpack_require__(255);
-	var UsersIndex = __webpack_require__(265);
-	var About = __webpack_require__(266);
-	var PhotoIndex = __webpack_require__(249);
+	var App = __webpack_require__(265);
+	var SessionForm = __webpack_require__(267);
+	var UserForm = __webpack_require__(268);
+	var CurrentUserStore = __webpack_require__(258);
+	var SessionsApiUtil = __webpack_require__(259);
+	var UsersIndex = __webpack_require__(269);
+	var About = __webpack_require__(270);
+	var Friends = __webpack_require__(271);
+	var PhotoIndex = __webpack_require__(252);
 	
 	// var App = React.createClass({
 	//   render: function(){
@@ -117,7 +118,8 @@
 	    React.createElement(Route, { path: 'users/:userId', component: UserProfile }),
 	    React.createElement(Route, { path: 'users/:userId/timeline', component: UserProfile }),
 	    React.createElement(Route, { path: 'users/:userId/about', component: About }),
-	    React.createElement(Route, { path: 'users/:userId/photos', component: PhotoIndex })
+	    React.createElement(Route, { path: 'users/:userId/photos', component: PhotoIndex }),
+	    React.createElement(Route, { path: 'users/:userId/friends', component: Friends })
 	  ),
 	  React.createElement(Route, { path: 'login', component: SessionForm, onEnter: _ensureLoggedOut })
 	);
@@ -24650,7 +24652,10 @@
 	var UserConstants = {
 	  RECEIVE_USERS: "RECEIVE_USERS",
 	  RECEIVE_USER: "RECEIVE_USER",
-	  RECEIVE_PHOTO: "RECEIVE_PHOTO"
+	  RECEIVE_PHOTO: "RECEIVE_PHOTO",
+	  FRIEND_RECEIVED: "FRIEND_RECEIVED",
+	  FRIENDS_RECEIVED: "FRIENDS_RECEIVED",
+	  FRIEND_REMOVED: "FRIEND_REMOVED"
 	};
 	
 	module.exports = UserConstants;
@@ -26023,7 +26028,6 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @providesModule invariant
 	 */
 	
 	'use strict';
@@ -26079,7 +26083,6 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @providesModule emptyFunction
 	 */
 	
 	"use strict";
@@ -31270,6 +31273,7 @@
 	var CommentStore = __webpack_require__(239);
 	var PostsIndexItem = __webpack_require__(240);
 	var PostsApiUtil = __webpack_require__(207);
+	var UserApiUtil = __webpack_require__(214);
 	var PostsForm = __webpack_require__(206);
 	var CommentsForm = __webpack_require__(241);
 	var CommentsIndexItem = __webpack_require__(244);
@@ -31284,6 +31288,7 @@
 	  componentWillMount: function () {
 	    this.listener = PostStore.addListener(this._onChange);
 	    PostsApiUtil.fetchAllPosts();
+	    UserApiUtil.fetchAllUsers();
 	  },
 	
 	  componentWillUnmount: function () {
@@ -31721,11 +31726,12 @@
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var CoverForm = __webpack_require__(247);
-	var ProfileForm = __webpack_require__(248);
-	var PhotoIndex = __webpack_require__(249);
-	var ImageForm = __webpack_require__(268);
-	var Navbar = __webpack_require__(253);
+	var FriendButton = __webpack_require__(247);
+	var CoverForm = __webpack_require__(250);
+	var ProfileForm = __webpack_require__(251);
+	var PhotoIndex = __webpack_require__(252);
+	var ImageForm = __webpack_require__(256);
+	var Navbar = __webpack_require__(257);
 	
 	var UserProfile = React.createClass({
 	  displayName: 'UserProfile',
@@ -31788,6 +31794,7 @@
 	    return React.createElement(
 	      'div',
 	      null,
+	      React.createElement(FriendButton, { params: this.props.params }),
 	      React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
 	      React.createElement(
 	        'div',
@@ -31981,6 +31988,117 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var CommentStore = __webpack_require__(239);
+	var PostStore = __webpack_require__(219);
+	var CommentsApiUtil = __webpack_require__(242);
+	var PostsApiUtil = __webpack_require__(207);
+	var FriendApiUtil = __webpack_require__(248);
+	
+	var FriendRequestItem = React.createClass({
+	  displayName: "FriendRequestItem",
+	
+	  handleFriend: function () {
+	    FriendApiUtil.createFriend({ requestee_id: this.props.params.userId });
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      "div",
+	      null,
+	      React.createElement(
+	        "button",
+	        { onClick: this.handleFriend },
+	        "Friend"
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = FriendRequestItem;
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var FriendActions = __webpack_require__(249);
+	
+	var FriendApiUtil = {
+	
+	   createFriend: function (friend) {
+	      $.ajax({
+	         method: 'POST',
+	         url: 'api/friend_requests',
+	         data: { friend_request: friend },
+	         success: function (friend) {
+	            FriendActions.receiveNewFriend(friend);
+	         }
+	      });
+	   },
+	
+	   fetchFriends: function () {
+	      $.ajax({
+	         method: 'GET',
+	         url: 'api/friend_requests',
+	         success: function (friends) {
+	            FriendActions.receiveAllFriends(friends);
+	         }
+	      });
+	   },
+	
+	   deleteFriend: function (friend) {
+	
+	      $.ajax({
+	         method: 'DELETE',
+	         url: 'api/friend_requests' + data.id,
+	         data: friend,
+	         success: function (friend) {
+	            FriendActions.removedFriend(friend);
+	         }
+	      });
+	   }
+	};
+	
+	module.exports = FriendApiUtil;
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	var UserConstants = __webpack_require__(216);
+	var AppDispatcher = __webpack_require__(210);
+	
+	var FriendActions = {
+	
+	  receiveNewFriend: function (friend) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.FRIEND_RECEIVED,
+	      friend: friend
+	    });
+	  },
+	
+	  removedFriend: function (friends) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.FRIEND_REMOVED,
+	      friends: friends
+	    });
+	  },
+	  receiveAllFriends: function (friends) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.FRIENDS_RECEIVED,
+	      friends: friends
+	    });
+	  }
+	};
+	
+	module.exports = FriendActions;
+
+/***/ },
+/* 250 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var UserCoverForm = React.createClass({
@@ -32042,7 +32160,7 @@
 	module.exports = UserCoverForm;
 
 /***/ },
-/* 248 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32107,14 +32225,14 @@
 	module.exports = UserProfileForm;
 
 /***/ },
-/* 249 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImagesApiUtil = __webpack_require__(250);
-	var PhotoIndexItem = __webpack_require__(267);
-	var ImageForm = __webpack_require__(268);
-	var Navbar = __webpack_require__(253);
+	var ImagesApiUtil = __webpack_require__(253);
+	var PhotoIndexItem = __webpack_require__(255);
+	var ImageForm = __webpack_require__(256);
+	var Navbar = __webpack_require__(257);
 	var UserStore = __webpack_require__(246);
 	var UserApiUtil = __webpack_require__(214);
 	
@@ -32186,10 +32304,10 @@
 	module.exports = PhotoIndex;
 
 /***/ },
-/* 250 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var PhotoApiActions = __webpack_require__(251);
+	var PhotoApiActions = __webpack_require__(254);
 	
 	var ImagesApiUtil = {
 	
@@ -32211,7 +32329,7 @@
 	module.exports = ImagesApiUtil;
 
 /***/ },
-/* 251 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(210);
@@ -32231,18 +32349,112 @@
 	module.exports = PhotoActions;
 
 /***/ },
-/* 252 */,
-/* 253 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(254);
-	var SessionsApiUtil = __webpack_require__(255);
-	var Search = __webpack_require__(256);
+	var ImagesApiUtil = __webpack_require__(253);
+	
+	var PhotoIndexItem = React.createClass({
+	  displayName: "PhotoIndexItem",
+	
+	  render: function () {
+	    return React.createElement(
+	      "li",
+	      null,
+	      React.createElement("img", { className: "image-view", src: this.props.photo.photo_url })
+	    );
+	  }
+	
+	});
+	
+	module.exports = PhotoIndexItem;
+
+/***/ },
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ImageApiUtil = __webpack_require__(253);
+	var UserApiUtil = __webpack_require__(214);
+	
+	var ImageForm = React.createClass({
+	  displayName: 'ImageForm',
+	
+	  getInitialState: function () {
+	    return { url: "", file: null, description: "" };
+	  },
+	
+	  changeFile: function (e) {
+	    e.preventDefault();
+	    var reader = new FileReader();
+	    var file = e.currentTarget.files[0];
+	
+	    reader.onloadend = function () {
+	      this.setState({ url: reader.result, file: file });
+	    }.bind(this);
+	
+	    if (file) {
+	      reader.readAsDataURL(file);
+	    } else {
+	      this.setState({ url: "", file: null });
+	    }
+	  },
+	
+	  clearFields: function () {
+	    this.setState({ url: "", file: null, description: "" });
+	  },
+	
+	  changeDes: function (e) {
+	    this.setState({ description: e.currentTarget.value });
+	  },
+	
+	  handleSubmit: function (e) {
+	    e.preventDefault();
+	    var file = this.state.file;
+	    var formData = new FormData();
+	    formData.append("photo[photo]", file);
+	    formData.append("photo[description]", this.state.description);
+	    ImageApiUtil.createImage(formData, this.clearFields);
+	    UserApiUtil.fetchAllUsers();
+	    this.clearFields();
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      { className: 'photo-upload group' },
+	      React.createElement(
+	        'form',
+	        { onSubmit: this.handleSubmit },
+	        React.createElement('input', { className: 'file-upload', onChange: this.changeFile, type: 'file' }),
+	        React.createElement('input', { placeholder: 'Add Description', className: 'file-des', onChange: this.changeDes, type: 'text' }),
+	        React.createElement(
+	          'button',
+	          { className: 'upload-button' },
+	          'Upload Photo'
+	        )
+	      ),
+	      React.createElement('img', { className: 'photo-preview-image', src: this.state.url })
+	    );
+	  }
+	
+	});
+	
+	module.exports = ImageForm;
+
+/***/ },
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var CurrentUserStore = __webpack_require__(258);
+	var SessionsApiUtil = __webpack_require__(259);
+	var Search = __webpack_require__(260);
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
-	var CoverForm = __webpack_require__(247);
-	var ProfileForm = __webpack_require__(248);
+	var CoverForm = __webpack_require__(250);
+	var ProfileForm = __webpack_require__(251);
 	
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
@@ -32313,7 +32525,7 @@
 	module.exports = Navbar;
 
 /***/ },
-/* 254 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
@@ -32361,7 +32573,7 @@
 	module.exports = CurrentUserStore;
 
 /***/ },
-/* 255 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var CurrentUserActions = __webpack_require__(217);
@@ -32411,12 +32623,12 @@
 	module.exports = SessionsApiUtil;
 
 /***/ },
-/* 256 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SearchResultsStore = __webpack_require__(257);
-	var SearchApiUtil = __webpack_require__(259);
+	var SearchResultsStore = __webpack_require__(261);
+	var SearchApiUtil = __webpack_require__(263);
 	var UserProfile = __webpack_require__(245);
 	var PostIndexItem = __webpack_require__(240);
 	var CommentIndexItem = __webpack_require__(244);
@@ -32516,12 +32728,12 @@
 	module.exports = Search;
 
 /***/ },
-/* 257 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
 	var AppDispatcher = __webpack_require__(210);
-	var SearchConstants = __webpack_require__(258);
+	var SearchConstants = __webpack_require__(262);
 	
 	var _searchResults = [];
 	var _meta = {};
@@ -32551,7 +32763,7 @@
 	module.exports = SearchResultsStore;
 
 /***/ },
-/* 258 */
+/* 262 */
 /***/ function(module, exports) {
 
 	var SearchConstants = {
@@ -32561,10 +32773,10 @@
 	module.exports = SearchConstants;
 
 /***/ },
-/* 259 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SearchActions = __webpack_require__(260);
+	var SearchActions = __webpack_require__(264);
 	
 	var SearchApiUtil = {
 	
@@ -32585,10 +32797,10 @@
 	module.exports = SearchApiUtil;
 
 /***/ },
-/* 260 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SearchConstants = __webpack_require__(258);
+	var SearchConstants = __webpack_require__(262);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var SearchActions = {
@@ -32605,13 +32817,13 @@
 	module.exports = SearchActions;
 
 /***/ },
-/* 261 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1),
-	    Header = __webpack_require__(262),
-	    SessionsApiUtil = __webpack_require__(255),
-	    CurrentUserStore = __webpack_require__(254);
+	    Header = __webpack_require__(266),
+	    SessionsApiUtil = __webpack_require__(259),
+	    CurrentUserStore = __webpack_require__(258);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -32647,13 +32859,13 @@
 	module.exports = App;
 
 /***/ },
-/* 262 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(254);
-	var SessionsApiUtil = __webpack_require__(255);
-	var Search = __webpack_require__(256);
+	var CurrentUserStore = __webpack_require__(258);
+	var SessionsApiUtil = __webpack_require__(259);
+	var Search = __webpack_require__(260);
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
 	
@@ -32732,12 +32944,12 @@
 	module.exports = Header;
 
 /***/ },
-/* 263 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(255);
+	var SessionsApiUtil = __webpack_require__(259);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var SessionForm = React.createClass({
@@ -32910,12 +33122,12 @@
 	module.exports = SessionForm;
 
 /***/ },
-/* 264 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(255);
+	var SessionsApiUtil = __webpack_require__(259);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var UserForm = React.createClass({
@@ -33087,7 +33299,7 @@
 	module.exports = UserForm;
 
 /***/ },
-/* 265 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33147,7 +33359,7 @@
 	module.exports = UsersIndex;
 
 /***/ },
-/* 266 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33159,9 +33371,9 @@
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var CoverForm = __webpack_require__(247);
-	var ProfileForm = __webpack_require__(248);
-	var Navbar = __webpack_require__(253);
+	var CoverForm = __webpack_require__(250);
+	var ProfileForm = __webpack_require__(251);
+	var Navbar = __webpack_require__(257);
 	
 	var About = React.createClass({
 	  displayName: 'About',
@@ -33272,99 +33484,97 @@
 	module.exports = About;
 
 /***/ },
-/* 267 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImagesApiUtil = __webpack_require__(250);
-	
-	var PhotoIndexItem = React.createClass({
-	  displayName: "PhotoIndexItem",
-	
-	  render: function () {
-	    return React.createElement(
-	      "li",
-	      null,
-	      React.createElement("img", { className: "image-view", src: this.props.photo.photo_url })
-	    );
-	  }
-	
-	});
-	
-	module.exports = PhotoIndexItem;
-
-/***/ },
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ImageApiUtil = __webpack_require__(250);
 	var UserApiUtil = __webpack_require__(214);
+	var PostsApiUtil = __webpack_require__(207);
+	var UserStore = __webpack_require__(246);
+	var PostStore = __webpack_require__(219);
+	var CommentStore = __webpack_require__(239);
+	var PostsForm = __webpack_require__(206);
+	var PostIndexItem = __webpack_require__(240);
+	var PostsForm = __webpack_require__(206);
+	var CoverForm = __webpack_require__(250);
+	var ProfileForm = __webpack_require__(251);
+	var Navbar = __webpack_require__(257);
+	var Link = __webpack_require__(159).Link;
 	
-	var ImageForm = React.createClass({
-	  displayName: 'ImageForm',
+	var Friends = React.createClass({
+	  displayName: 'Friends',
 	
-	  getInitialState: function () {
-	    return { url: "", file: null, description: "" };
-	  },
-	
-	  changeFile: function (e) {
-	    e.preventDefault();
-	    var reader = new FileReader();
-	    var file = e.currentTarget.files[0];
-	
-	    reader.onloadend = function () {
-	      this.setState({ url: reader.result, file: file });
-	    }.bind(this);
-	
-	    if (file) {
-	      reader.readAsDataURL(file);
-	    } else {
-	      this.setState({ url: "", file: null });
+	  _findUserById: function (id) {
+	    id = parseInt(id);
+	    users = UserStore.all();
+	    for (var i = 0; i < users.length; i++) {
+	      if (users[i].id == id) {
+	        return users[i];
+	      }
 	    }
 	  },
 	
-	  clearFields: function () {
-	    this.setState({ url: "", file: null, description: "" });
+	  getInitialState: function () {
+	    var userId = this.props.userId || this.props.params.userId;
+	    var user = this._findUserById(userId);
+	    return { user: user };
 	  },
 	
-	  changeDes: function (e) {
-	    this.setState({ description: e.currentTarget.value });
+	  componentDidMount: function () {
+	    var userId = this.props.userId || this.props.params.userId;
+	    this.listener = UserStore.addListener(this._onChange);
 	  },
 	
-	  handleSubmit: function (e) {
-	    e.preventDefault();
-	    var file = this.state.file;
-	    var formData = new FormData();
-	    formData.append("photo[photo]", file);
-	    formData.append("photo[description]", this.state.description);
-	    ImageApiUtil.createImage(formData, this.clearFields);
+	  componentWillReceiveProps: function (newProps) {
 	    UserApiUtil.fetchAllUsers();
-	    this.clearFields();
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.listener.remove();
+	  },
+	
+	  _onChange: function () {
+	    var userId = this.props.params.userId;
+	    var user = this._findUserById(userId);
+	    if (this.isMounted()) {
+	      this.setState({ user: user });
+	    }
 	  },
 	
 	  render: function () {
+	    var findfriends = [];
+	    var friends;
+	    if (this.state.user) {
+	      friend_ids = this.state.user.friends;
+	      for (var i = 0; i < friend_ids.length; i++) {
+	        if (friend_ids[i].requestee_id != friend_ids[i].requester_id) {
+	          debugger;
+	          findfriends.push(this._findUserById(friend_ids[i].requestee_id));
+	        }
+	      }
+	    }
+	
+	    if (findfriends) {
+	
+	      friends = findfriends.map(function (friend) {
+	        React.createElement(
+	          Link,
+	          { to: `users/${ friend.id }` },
+	          React.createElement('img', { src: this.friend.profile_pic })
+	        );
+	      });
+	    }
+	
 	    return React.createElement(
 	      'div',
-	      { className: 'photo-upload group' },
-	      React.createElement(
-	        'form',
-	        { onSubmit: this.handleSubmit },
-	        React.createElement('input', { className: 'file-upload', onChange: this.changeFile, type: 'file' }),
-	        React.createElement('input', { placeholder: 'Add Description', className: 'file-des', onChange: this.changeDes, type: 'text' }),
-	        React.createElement(
-	          'button',
-	          { className: 'upload-button' },
-	          'Upload Photo'
-	        )
-	      ),
-	      React.createElement('img', { className: 'photo-preview-image', src: this.state.url })
+	      null,
+	      React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
+	      friends
 	    );
 	  }
 	
 	});
-	
-	module.exports = ImageForm;
+	module.exports = Friends;
 
 /***/ }
 /******/ ]);

@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  resources :images
   root to: 'static_pages#root'
 
   resources :users
@@ -7,6 +6,7 @@ Rails.application.routes.draw do
 
 
   namespace :api, defaults: {format: :json} do
+    resources :friend_requests
 
     resources :posts do
       resources :comments, except: [:destroy]

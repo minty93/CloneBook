@@ -20,7 +20,9 @@ class Api::FriendRequestsController < ApplicationController
 
     @friend_request = FriendRequest.new(friend_request_params)
     @friend_request.requester_id = current_user.id
-
+    requestee_id = @friend_request.requestee_id
+    user = User.where("id = ?", requestee_id).to_a
+    name = (current_user.fname + " " + current_user.lname)
     @friend_requests = FriendRequest.all
 
     i = 0
@@ -34,8 +36,9 @@ class Api::FriendRequestsController < ApplicationController
 
 
 
-      if (relevantFriend && @friend_request.save)
-        @friend_requests = FriendRequest.all
+      if (relevantFriend)
+        @friend_request.save!
+        yuck = FriendRequest.create!({requester_id: requestee_id, requestee_id: current_user.id, profile_pic: current_user.profile_pic, name: name})
         render :show
       else
         render json: @friend_request.errors, status: :unprocessable_entity
@@ -69,6 +72,6 @@ class Api::FriendRequestsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def friend_request_params
-      params.require(:friend_request).permit(:requester_id, :requestee_id, :approved)
+      params.require(:friend_request).permit(:requester_id, :requestee_id, :approved, :name, :profile_pic)
     end
 end

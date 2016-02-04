@@ -11,6 +11,8 @@ var CoverForm = require('./user_cover_form');
 var ProfileForm = require('./user_profile_form');
 var Navbar = require('./navbar');
 var Link = require('react-router').Link;
+var FriendButton = require('./friend_request_item');
+
 
 
 
@@ -55,33 +57,40 @@ var Friends = React.createClass({
  },
 
   render: function() {
+
     var findfriends = [];
     var friends;
+
     if (this.state.user) {
       friend_ids = this.state.user.friends
       for (var i = 0; i < friend_ids.length; i++) {
         if (friend_ids[i].requestee_id != friend_ids[i].requester_id)
         {
-          debugger
-          findfriends.push(this._findUserById(friend_ids[i].requestee_id ))
+          findfriends.push((friend_ids[i]))
         }
       }
     }
 
 
     if (findfriends) {
-
     friends = findfriends.map(function(friend){
-      <Link to={`users/${friend.id}`}>
-      <img src={this.friend.profile_pic}/>
-      </Link>
+      return (
+        <div className="friend-list group">
+        <Link to={`users/${friend.requestee_id}`}>
+        <h2>{friend.name}</h2>
+        <img src={friend.profile_pic} className="friend-image"/>
+        </Link>
+        </div>)
     })
   }
 
 
+
     return (
-      <div>
+      <div className="friends group">
         <Navbar params={this.props.params} user={this.state.user}/>
+        <div className="friends-header group"><i className="fa fa-users fa-3x"></i><h2>Friends</h2>
+        </div>
         {friends}
       </div>
 

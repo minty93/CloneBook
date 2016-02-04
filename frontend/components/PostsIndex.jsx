@@ -7,6 +7,8 @@ var UserApiUtil = require('../util/users_api_util');
 var PostsForm = require('./PostsForm');
 var CommentsForm = require('./CommentsForm');
 var CommentsIndexItem = require('./CommentsIndexItem');
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+
 
 
 
@@ -40,7 +42,7 @@ var PostsIndex = React.createClass({
               this.state.posts.slice(0).reverse().map(function(post,index) {
               return(
               <div className="post-box">
-                <PostsIndexItem key={index} post={post}/>
+                <PostsIndexItem key={post.id} post={post}/>            
               </div>);
             })
           }</li>

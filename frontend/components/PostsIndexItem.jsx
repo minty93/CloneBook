@@ -4,7 +4,7 @@ var PostsApiUtil = require('../util/posts_api_util');
 var CommentsForm = require('./CommentsForm');
 var CommentsIndexItem = require('./CommentsIndexItem');
 var UserApiUtil = require('../util/users_api_util');
-
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 var PostsIndexItems = React.createClass({
 
  //  getInitialState: function(){
@@ -76,7 +76,6 @@ var PostsIndexItems = React.createClass({
         {comments}
         <CommentsForm commentableId={this.props.post.id} commentableType={"Post"} />
         </ul>
-
       </div>
     );
   },

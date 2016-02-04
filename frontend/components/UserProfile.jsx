@@ -75,9 +75,9 @@ var UserProfile = React.createClass({
 
 
     return (
-      <div>
-      <FriendButton params={this.props.params}/>
+      <div className="profile-page">
       <Navbar params={this.props.params} user={this.state.user}/>
+      <FriendButton params={this.props.params}/>
       <div className="posts-index-profilefeed">
       <PostsForm params={this.props.params} placeholder="Post Something"/>
       {received_posts}

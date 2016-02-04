@@ -20,5 +20,9 @@ json.photos @user.photos do |photo|
 end
 
 json.friends @user.friends do |friend|
-  json.extract! friend, :id, :requestee_id, :requester_id
+  json.extract! friend, :id, :requestee_id, :requester_id, :profile_pic, :name
 end
+
+# json.friends_asked @user.friends_asked do |friend|
+#   json.extract! friend, :id, :requestee_id, :requester_id, :profile_pic,:name
+# end

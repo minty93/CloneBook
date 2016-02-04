@@ -6,6 +6,8 @@ var History = require('react-router').History;
 var Link = require('react-router').Link;
 var CoverForm = require('./user_cover_form');
 var ProfileForm = require('./user_profile_form');
+var FriendButton = require('./friend_request_item');
+
 
 
 

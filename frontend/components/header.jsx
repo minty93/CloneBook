@@ -42,14 +42,16 @@ var Header = React.createClass({
     if (CurrentUserStore.isLoggedIn()) {
       currentUser = CurrentUserStore.user()
       return (
-        <div className="main-header">
+        <div className="main-header group">
           <img src="http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png" className="side-logo"/>
-          Logged in as { this.state.currentUser.email }
+          <ul className="main-links group">
+          <li className="logged-in">Logged in as { this.state.currentUser.email }<img src={this.state.currentUser.profile_pic} className= "side-logo"/></li>
+          <li className="searchbar"><Search className="search"/></li>
 
-          <button onClick={ this.logout }> LOG OUT</button>
-          <Link to={`/`}>Home</Link>
-          <Link to={`users/${currentUser.id}`}>{currentUser.fname}</Link>
-          <Search/>
+          <li><Link to={`/`}>Home</Link></li>
+          <li><Link to={`users/${currentUser.id}`}>{currentUser.fname}</Link></li>
+          <li><button onClick={ this.logout }> LOG OUT</button></li>
+          </ul>
         </div>
       );
     } else {

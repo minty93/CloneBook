@@ -20,6 +20,11 @@ json.array!(@users) do |user|
 
 
   json.friends user.friends do |friend|
-    json.extract! friend, :id, :requestee_id, :requester_id
+    json.extract! friend, :id, :requestee_id, :requester_id, :profile_pic,:name
   end
+
+
+  # json.friends_asked user.friends_asked do |friend|
+  #   json.extract! friend, :id, :requestee_id, :requester_id, :profile_pic,:name
+  # end
   end

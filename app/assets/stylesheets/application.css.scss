@@ -43,7 +43,7 @@
    box-sizing: border-box;
    line-height: 1.166666666;
    font-size: 16px;
-   background: #eee;
+   background: #E9EAED;
    font-family: montserrat;
 
  }
@@ -57,7 +57,6 @@
    display: block;
    width: 100%;
    height: auto;
-   border: 1px solid #000;
 
 
  }
@@ -80,7 +79,7 @@
  .main-header {
    width: auto;
    margin: 0 auto;
-   height: 45px;
+   height: 55px;
    background: #43609C;
 
  }
@@ -91,6 +90,7 @@
    height: 35px;
    display: inline;
    border: 1px solid #425F9C;
+   margin-top: 10px;
  }
 
  .profile-nav {
@@ -151,9 +151,10 @@
    margin-top: 6px;
    display: block;
    background: #e9eaed;
-   height: 50px;
+   height: 60px;
    width: 849px;
    border: 1px solid lightgrey;
+   padding: 5px
  }
 
  .about-feed > div > i {
@@ -278,4 +279,135 @@
 .image-form {
   height: 800px;
   width: 800px;
+}
+
+.friends {
+  margin: 0 auto;
+  width: 1000px;
+}
+
+.friend-list {
+
+}
+
+.friend-list > a {
+  display: block;
+  width: 300px;
+  height: 100px;
+  border: 1px solid lightgray;
+  float: left;
+  margin: 5px;
+  background: white;
+}
+
+.friend-list > a > img {
+  width: 75px;
+  height: 75px;
+  float: left;
+  margin: 10px;
+}
+
+.friend-list > a > h2 {
+  float: right;
+  margin: 30px;
+  margin-right: 50px;
+  color: #3B5998;
+  font-weight: bold;
+}
+
+
+
+.friend-button {
+  margin: 0 auto;
+  width: 100px;
+  height: 30px;
+}
+
+.friends-header {
+  margin-top: 6px;
+  display: block;
+  background: #e9eaed;
+  height: 60px;
+  width: 849px;
+  border: 1px solid lightgrey;
+  padding: 5px;
+}
+
+.fa-users {
+  margin-left: 10px;
+  float: left;
+  color: #ADB3BC;
+}
+
+
+
+.friends-header > h2 {
+  margin-top: 6px;
+  padding: 5px;
+  float: left;
+  font-size: 22px;
+  font-weight: bold;
+  margin-left: 20px;
+}
+
+.profile-page {
+  position: relative;
+  margin: 0 auto;
+  width: 850px;
+}
+
+.friend-button {
+  float: right;
+  margin: 5px;
+  margin-right: 10px;
+  border: 0 solid;
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0);
+  outline: 1px solid;
+  outline-color: rgba(255, 255, 255, .5);
+  outline-offset: 0px;
+  text-shadow: none;
+  transition: all 1250ms cubic-bezier(0.19, 1, 0.22, 1);
+  border: 1px solid lightgrey;
+  background: #F8F9F9;
+  border-radius: 10%;
+  text-align: center;
+}
+
+
+
+.friend-button:hover {
+  border: 1px solid lightgrey;
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, .5), 0 0 20px rgba(255, 255, 255, .2);
+  outline-color: rgba(255, 255, 255, 0);
+  outline-offset: 15px;
+  text-shadow: 1px 1px 2px #427388;
+  background: #4C67A1;
+  color: white;
+}
+
+.main-links > li {
+  float: left;
+
+  padding: 10px;
+  margin: 5px;
+}
+
+.main-links > li:first-child > img {
+  float: left;
+  padding: 0;
+  margin: 0;
+}
+
+.searchbar {
+  width: 700px;
+}
+
+.main-header > img {
+  float: left;
+  display: inline;
+  margin-bottom: 20px;
+}
+
+.logged-in > li {
+  padding: 0;
 }

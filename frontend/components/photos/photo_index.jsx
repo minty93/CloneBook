@@ -5,7 +5,7 @@ var ImageForm = require('./image_form.jsx');
 var Navbar = require('./../navbar');
 var UserStore = require("../../stores/UserStore");
 var UserApiUtil = require('../../util/users_api_util');
-
+var CurrentUserStore = require('../../stores/current_user_store');
 
 
 
@@ -48,6 +48,7 @@ var PhotoIndex = React.createClass({
  },
   render: function () {
     var photoIndex;
+    var photoform = <div></div>;
     if(this.state.user){
     photoIndex = this.state.user.photos.map(function(photo) {
       return (
@@ -56,11 +57,14 @@ var PhotoIndex = React.createClass({
     });
   }
 
+  if (currentUser.id == this.props.params.userId) {
+    photoform = <ImageForm className="photo-form" user={this.state.user}></ImageForm>;
+  }
     return (
       <div className="group">
         <Navbar params={this.props.params} user={this.state.user}/>
       <div className="cry">
-      <ImageForm className="photo-form" user={this.state.user}></ImageForm>
+        {photoform}
         <ul className="photo-index group">
           {photoIndex}
         </ul>

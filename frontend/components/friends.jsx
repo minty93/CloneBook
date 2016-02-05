@@ -45,7 +45,9 @@ var Friends = React.createClass({
   },
 
   componentWillUnmount: function () {
-    this.listener.remove();
+    if (this.isMounted()) {
+      this.listener.remove();
+    }
   },
 
   _onChange: function () {
@@ -56,32 +58,53 @@ var Friends = React.createClass({
     }
  },
 
+ //
+ //   friend_ids = this.state.user.friends
+ //   for (var i = 0; i < friend_ids.length; i++) {
+ //     if (friend_ids[i].requestee_id != friend_ids[i].requester_id)
+ //     {
+ //       findfriends.push((friend_ids[i]))
+ //     }
+ //   }
+ // }
   render: function() {
 
     var findfriends = [];
-    var friends;
+    var friends =[];
 
     if (this.state.user) {
-      friend_ids = this.state.user.friends
-      for (var i = 0; i < friend_ids.length; i++) {
-        if (friend_ids[i].requestee_id != friend_ids[i].requester_id)
-        {
-          findfriends.push((friend_ids[i]))
+      var rec_friends =[];
+      this.state.user.received_friends.forEach(function(friend){
+        rec_friends.push(friend.requester_id);}
+      );
+      var req_friends = [];
+
+      this.state.user.requested_friends.forEach(function(friend){
+        req_friends.push(friend.requestee_id);
+      }
+    );
+
+    req_friends.forEach(function(friend_id)
+      {
+        if (rec_friends.indexOf(friend_id) !== -1) {
+          findfriends.push(friend_id);
         }
       }
-    }
+    );
 
 
     if (findfriends) {
-    friends = findfriends.map(function(friend){
+      var that = this;
+    friends = findfriends.map(function(friend_id){
+      friend = that._findUserById(friend_id);
       return (
         <div className="friend-list group">
-        <Link to={`users/${friend.requestee_id}`}>
-        <h2>{friend.name}</h2>
+        <Link to={`users/${friend_id}`}>
+        <h2>{friend.fname}</h2>
         <img src={friend.profile_pic} className="friend-image"/>
         </Link>
-        </div>)
-    })
+      </div>);
+    });
   }
 
 
@@ -97,7 +120,8 @@ var Friends = React.createClass({
     );
 
 
-  },
+  }
+},
 
 });
 module.exports = Friends;

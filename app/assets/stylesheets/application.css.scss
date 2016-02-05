@@ -103,8 +103,9 @@
 
 
  .preview-image {
-   width: 250px;
-   height: 150px;
+   width: 100px;
+   height: 100px;
+   margin-right: 0;
  }
 
  .profile-nav > a{
@@ -131,15 +132,8 @@
    border-right: 1px solid lightgrey;
 
  }
- .image-form {
-   display: none;
- }
 
- .image-form > button:hover {
-   margin: 1000px;
-   background: blue;
-   display: block;
- }
+
 
  .about-feed{
    width: 1000px;
@@ -276,10 +270,6 @@
 }
 
 
-.image-form {
-  height: 800px;
-  width: 800px;
-}
 
 .friends {
   margin: 0 auto;
@@ -512,17 +502,77 @@
 }
 
 
-.image-form{
-  
-  position: absolute;
-  top: 500px;
-}
 
-.image-form label > input{
-  position: absolute;
-  top: 500px;
-}
+
 
 .preview-image {
+
+
+}
+
+
+.profile > h3 {
+  display: inline;
+  position: relative;
+  top: 300px;
+  color: white;
+  background: transparent;
+  left: 200px;
+  letter-spacing: 2px;
+  font-size: 20px;
+}
+
+
+// .example-enter {
+//   opacity: 0.01;
+// }
+//
+// .example-enter.example-enter-active {
+//   opacity: 1;
+//   transition: opacity 500ms ease-in;
+// }
+//
+// .example-leave {
+//   opacity: 1;
+// }
+//
+// .example-leave.example-leave-active {
+//   opacity: 0.01;
+//   transition: opacity 300ms ease-in;
+// }
+
+.fullpage {
+top: 0;
+left:  0;
+width: 150px;
+float: left;
+
+}
+
+.image-form1 {
+  width: 30px;
+  display: inline;
+  position: absolute;
+  margin: 5px;
+  top: 500px;
+  left: 100px;
+}
+
+.image-form2 {
+  width: 30px;
+  display: inline;
+  position: absolute;
+  top: 700px;
+  left: 100px;
+}
+
+.image-form1 > label {
+  font-size: 9px;
+
+}
+
+.image-form2  > label  {
+  font-size: 9px;
+
 
 }

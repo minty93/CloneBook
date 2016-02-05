@@ -21,7 +21,7 @@ class Api::FriendRequestsController < ApplicationController
     @friend_request = FriendRequest.new(friend_request_params)
     @friend_request.requester_id = current_user.id
     requestee_id = @friend_request.requestee_id
-    user = User.where("id = ?", requestee_id).to_a
+    # user = User.where("id = ?", requestee_id).to_a
     name = (current_user.fname + " " + current_user.lname)
     @friend_requests = FriendRequest.all
 
@@ -38,7 +38,7 @@ class Api::FriendRequestsController < ApplicationController
 
       if (relevantFriend)
         @friend_request.save!
-        yuck = FriendRequest.create!({requester_id: requestee_id, requestee_id: current_user.id, profile_pic: current_user.profile_pic, name: name})
+        # yuck = FriendRequest.create!({requester_id: requestee_id, requestee_id: current_user.id, profile_pic: current_user.profile_pic, name: name})
         render :show
       else
         render json: @friend_request.errors, status: :unprocessable_entity

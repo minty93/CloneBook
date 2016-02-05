@@ -1,6 +1,7 @@
 var React = require("react");
 var CommentStore = require("../stores/CommentStore");
 var PostStore = require("../stores/PostStore");
+var CurrentUserStore = require("../stores/current_user_store");
 var CommentsApiUtil = require('../util/comments_api_util');
 var PostsApiUtil = require('../util/posts_api_util');
 var FriendApiUtil = require('../util/friends_api_util');
@@ -22,27 +23,44 @@ var FriendRequestItem = React.createClass({
 handleFriend: function(){
   user = this._findUserById(this.props.params.userId);
   name = user.fname + " " + user.lname;
-  FriendApiUtil.createFriend({requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name})
-
+  FriendApiUtil.createFriend({requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name});
 },
 
 
 
-  getInitialState: function(){},
-
   render: function() {
     var userprofile = this._findUserById(this.props.params.userId);
-    var currentUser = CurrentUserStore.user;
+    var currentUser = CurrentUserStore.user();
+    var profileid = parseInt(this.props.params.userId);
 
-    var button;
-    var my_received_friends = currentUser.received_friends;
-    var myreqf = currentUser.requested_friends;
-    var hisreq = userprofile.received_friends;
-    var hisrec = userprofile.requested_friends;
-    
+    var button = (<div></div>);
+    var rec_friends =[];
+    currentUser.received_friends.forEach(function(friend){
+      rec_friends.push(friend.requester_id);}
+    );
+    var req_friends = [];
+
+    currentUser.requested_friends.forEach(function(friend){
+      req_friends.push(friend.requestee_id);
+    }
+    );
+
+    if (rec_friends.indexOf(profileid) !== -1 && req_friends.indexOf(profileid) !== -1) {
+      button = <button className="friend-button" onClick={this.handleDelete}>Unfriend</button>;
+    }
+    else if (rec_friends.indexOf(profileid) !== -1 && req_friends.indexOf(profileid) == -1){
+        button = <button className="friend-button" onClick={this.handleFriend}>Accept Friendship</button>;
+    }
+    else if(rec_friends.indexOf(profileid) == -1 && req_friends.indexOf(profileid) == -1 && profileid !== currentUser.id ) {
+      button = <button className="friend-button" onClick={this.handleFriend}>Send Friendship</button>;
+    }
+    else if(rec_friends.indexOf(profileid) == -1 && req_friends.indexOf(profileid) !== -1) {
+      button = <button className="friend-button" onClick={this.handleFriend}>Pending</button>;
+    }
+
     return (
       <div>
-          <button className="friend-button" onClick={this.handleFriend}>Friend</button>
+        {button}
       </div>
     );
   },

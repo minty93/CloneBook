@@ -1,6 +1,8 @@
 var React = require("react");
 var ImageApiUtil = require('../../util/images_api_util');
 var UserApiUtil = require('../../util/users_api_util');
+var CurrentUserStore = require('../../stores/current_user_store');
+
 
 
 var ImageForm = React.createClass({
@@ -38,7 +40,6 @@ var ImageForm = React.createClass({
     e.preventDefault();
     var file = this.state.file;
     var formData = new FormData();
-    debugger
     formData.append("photo[photo]", file);
     formData.append("photo[description]", this.state.description);
     ImageApiUtil.createImage(formData, this.clearFields);
@@ -51,6 +52,7 @@ var ImageForm = React.createClass({
 
   render: function() {
     return (
+
       <div className="photo-upload group">
         <form onSubmit={this.handleSubmit}>
           <input className="file-upload" onChange={this.changeFile} type="file"/>

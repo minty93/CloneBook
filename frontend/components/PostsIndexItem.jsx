@@ -6,6 +6,8 @@ var CommentsIndexItem = require('./CommentsIndexItem');
 var UserApiUtil = require('../util/users_api_util');
 var TimeAgo = require("react-timeago");
 var Link = require('react-router').Link;
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+
 
 var PostsIndexItems = React.createClass({
 
@@ -25,9 +27,17 @@ var PostsIndexItems = React.createClass({
  //     return res;
  //  },
  //
- //  componentDidMount: function () {
- //    this.listener = PostStore.addListener(this._onChange);
- //  },
+  //  componentDidMount: function () {
+  //    var elem = this.getDOMNode();
+  //    // Set the opacity of the element to 0
+  //    elem.style.opacity = 0;
+  //    window.requestAnimationFrame(function() {
+  //        // Now set a transition on the opacity
+  //        elem.style.transition = "opacity 250ms";
+  //        // and set the opacity to 1
+  //        elem.style.opacity = 1;
+  //    });
+  // },
  //
  //  componentWillUnmount: function () {
  //    this.listener.remove();
@@ -42,7 +52,7 @@ var PostsIndexItems = React.createClass({
 
 
   render: function() {
-    
+
     var comments;
     var profile_pic;
 
@@ -51,9 +61,13 @@ var PostsIndexItems = React.createClass({
         {
           comments = this.props.post.comments.map(function(comment) {
             return(
+              <ReactCSSTransitionGroup transitionName="example" transitionEnterTimeout={500} transitionLeaveTimeout={300}>
               <div>
                 <CommentsIndexItem key={comment.id} comment={comment}/>
-              </div>);
+              </div>
+            </ReactCSSTransitionGroup>
+            );
+
             })
           }</li>;
         }

@@ -59,6 +59,14 @@ UserStore._removePost = function (post) {
   }
 };
 
+UserStore.addNewFriend = function(friend){
+  a = UserStore._findUserById(parseInt(friend.requester_id));
+  a.requested_friends.push({requestee_id:friend.requestee_id});
+  b = UserStore._findUserById(parseInt(friend.requestee_id));
+  b.received_friends.push({requester_id:friend.requester_id});
+};
+
+
 //
 // UserStore._removeUser = function (user) {
 //   var idx = _users.indexOf(user);
@@ -163,11 +171,23 @@ UserStore.__onDispatch = function (payload) {
   case UserConstants.RECEIVE_PHOTO:
     UserStore._addImage(payload.photo);
     break;
+  case UserConstants.FRIEND_RECEIVED:
+    var result = UserStore.addNewFriend(payload.friend);
+    UserStore.__emitChange();
+    break;
+  case UserConstants.FRIENDS_RECEIVED:
+    // var result = resetFriends(payload.friends);
+    // FriendStore.__emitChange();
+    break;
+  case UserConstants.FRIEND_REMOVED:
+    // var result = resetFriends(payload.friends);
+    // FriendStore.__emitChange();
+}
+
   // case ImageConstants.DELETE_IMAGE:
   //   UserStore._removeImage(payload.image);
   //   break;
 
-  }
 };
 
 

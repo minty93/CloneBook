@@ -39,10 +39,10 @@ var Navbar = React.createClass({
       <div group>
       <div className="profile">
         <div className="photo-form">
-        <h3>{fname}</h3>
         {cover_pic}
         {profile_pic}
         </div>
+        <h3>{fname}</h3>
         <ul className="profile-nav group">
         <Link to={`users/${this.props.params.userId }/timeline`}>Timeline</Link>
         <Link to={`users/${this.props.params.userId }/about`}>About</Link>

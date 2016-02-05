@@ -9,7 +9,7 @@ var UserCoverForm = React.createClass({
   render: function() {
     return (
       <div>
-        <form onSubmit={this.handleSubmit} className="image-form">
+        <form onSubmit={this.handleSubmit} className="image-form1">
           <label>
             <input type="file" onChange={this.changeFile} />
           </label>

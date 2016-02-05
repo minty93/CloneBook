@@ -46,7 +46,7 @@ var Search = React.createClass({
 
     var searchResults = SearchResultsStore.all().map(function (searchResult) {
       if (searchResult._type === "User") {
-        return (<li><Link to={`users/${searchResult.id}`}>{searchResult.fname}</Link></li>)
+        return (<li><Link to={`users/${searchResult.id}`}><img className="searchimage" src={searchResult.profile_pic_url}/>{searchResult.fname}</Link></li>)
 
       } else if (searchResult._type === "Post") {
         return <li><PostIndexItem post={searchResult} /></li>;

@@ -35,7 +35,6 @@ var SessionForm = React.createClass({
 
 
         <form onSubmit={ this.submit } className="login-form group">
-          <a href="/auth/facebook">Login with Facebook</a>
           <div className="login">
 
           <label className="email">
@@ -66,9 +65,9 @@ var SessionForm = React.createClass({
           <section className="sidebar group">
             <h2>Connect all around the Universe on CloneBook</h2>
             <ul>
-              <li>See photos and updates</li>
-              <li>Share whats news</li>
-              <li>Discover more</li>
+          <li><i className="fa fa-newspaper-o fa-4x"></i>See photos and updates</li>
+          <li><i className="fa fa-laptop fa-4x"></i>Share whats new</li>
+            <li><i className="fa fa-heart-o fa-4x"></i>Discover more</li>
             </ul>
           </section>
 
@@ -106,11 +105,14 @@ var SessionForm = React.createClass({
             <br/>
             <label>
               Gender
-              <input type="radio" name="gender" value="male"/> Male
-              <input type="radio" name="gender" value="female"/> Female<br/>
+              <div className="gender">
+              <input  type="radio" name="gender" value="male"/> Male
+              <input type="radio" name="gender" value="female"/> Female
+              </div>
             </label>
 
-            <input type="submit" value="Sign Up"/>
+            <input className="signbutton" type="submit" value="Sign Up"/>
+            <a className="btn-facebook" href="/auth/facebook">Login with Facebook</a>
           </form>
           </section>
 

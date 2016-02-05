@@ -13,6 +13,8 @@ var ProfileForm = require('./user_profile_form');
 var PhotoIndex = require('./photos/photo_index');
 var ImageForm = require('./photos/image_form');
 var Navbar = require('./navbar');
+var CoverForm = require('./user_cover_form');
+var ProfileForm = require('./user_profile_form');
 
 
 
@@ -47,7 +49,9 @@ var UserProfile = React.createClass({
   },
 
   componentWillUnmount: function () {
-    this.listener.remove();
+    if (this.isMounted()) {
+      this.listener.remove();
+    }
   },
 
   _onChange: function () {
@@ -75,12 +79,15 @@ var UserProfile = React.createClass({
 
 
     return (
+      <div>
+      <CoverForm params={this.props.params}/>
+      <ProfileForm params={this.props.params}/>
       <div className="profile-page">
       <Navbar params={this.props.params} user={this.state.user}/>
-      <FriendButton params={this.props.params}/>
       <div className="posts-index-profilefeed">
       <PostsForm params={this.props.params} placeholder="Post Something"/>
       {received_posts}
+      </div>
       </div>
       </div>
     );

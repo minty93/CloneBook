@@ -90,7 +90,7 @@
    height: 35px;
    display: inline;
    border: 1px solid #425F9C;
-   margin-top: 10px;
+   margin-top: 5px;
  }
 
  .profile-nav {
@@ -147,7 +147,7 @@
 
  }
 
- .about-feed > div {
+ .about-feed > div:first-child {
    margin-top: 6px;
    display: block;
    background: #e9eaed;
@@ -390,27 +390,28 @@
   color: white;
   padding: 10px;
   margin: 5px;
+  font-size: 12px;
+  padding-top: 15px;
 }
 
 .main-links > li:first-child > img {
-  float: left;
+  float: right;
   padding: 0;
   margin: 0;
 }
 
 .searchbar {
   width: 700px;
+  height: 30px;
 }
 
 .main-header > img {
   float: left;
   display: inline;
-  margin-bottom: 20px;
 }
 
-.logged-in > li {
-  padding: 0;
-}
+
+
 
 .searchbar {
   background: white;
@@ -430,16 +431,98 @@
 }
 
 .ads {
-  width: 500px;
+  width: 400px;
   float: right;
 }
 
 .ads > a {
-  width: 500px;
+  width: 400px;
   margin-right: 100px;
   margin-top: 50px;
   border: 1px solid lightgrey;
   float: right;
+  display: inline-block;
+}
 
+
+.gender {
+  display: block;
+  float: right;
+  width: 250px;
+  margin-left: 70px;
+  align-self: center;
+  padding-left: 100px;
+}
+
+.logged-in > img{
+  margin-top: 0;
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  display: inline;
+  top: 5px;
+  left: 762px;
+}
+
+.main-links > li > a {
+  color: white;
+}
+
+.main-header {
+  padding-left: 50px;
+}
+
+
+.comment-index-items-input {
+  padding: 10px;
+}
+
+.comment-index-items-input > a {
+  color: darkblue;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.actual-comment{
+  color: black;
+  font-size: 12px;
+  margin: 5px;
+}
+
+
+.searchbar > div >input {
+  margin: auto;
+  font-size: 14px;
+}
+
+
+.users-index {
+  color: black;
+  background: white;
+  font-size: 14px;
+
+}
+
+.searchimage{
+  width: 25px;
+  height: 25px;
+  float: left;
+  display: block;
+}
+
+
+.image-form{
+  
+  position: absolute;
+  top: 500px;
+}
+
+.image-form label > input{
+  position: absolute;
+  top: 500px;
+}
+
+.preview-image {
 
 }

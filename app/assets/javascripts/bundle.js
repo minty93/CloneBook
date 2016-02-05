@@ -52,17 +52,17 @@
 	var IndexRoute = ReactRouter.IndexRoute;
 	var PostsForm = __webpack_require__(206);
 	var PostsIndex = __webpack_require__(238);
-	var UserProfile = __webpack_require__(252);
+	var UserProfile = __webpack_require__(245);
 	var CommentsForm = __webpack_require__(241);
-	var App = __webpack_require__(272);
-	var SessionForm = __webpack_require__(274);
-	var UserForm = __webpack_require__(275);
-	var CurrentUserStore = __webpack_require__(265);
-	var SessionsApiUtil = __webpack_require__(266);
-	var UsersIndex = __webpack_require__(276);
-	var About = __webpack_require__(277);
-	var Friends = __webpack_require__(278);
-	var PhotoIndex = __webpack_require__(259);
+	var App = __webpack_require__(265);
+	var SessionForm = __webpack_require__(267);
+	var UserForm = __webpack_require__(268);
+	var CurrentUserStore = __webpack_require__(258);
+	var SessionsApiUtil = __webpack_require__(259);
+	var UsersIndex = __webpack_require__(269);
+	var About = __webpack_require__(270);
+	var Friends = __webpack_require__(271);
+	var PhotoIndex = __webpack_require__(252);
 	
 	// var App = React.createClass({
 	//   render: function(){
@@ -31317,7 +31317,6 @@
 	var PostsForm = __webpack_require__(206);
 	var CommentsForm = __webpack_require__(241);
 	var CommentsIndexItem = __webpack_require__(244);
-	var ReactCSSTransitionGroup = __webpack_require__(245);
 	
 	var PostsIndex = React.createClass({
 	  displayName: "PostsIndex",
@@ -31339,7 +31338,7 @@
 	  render: function () {
 	    return React.createElement(
 	      "div",
-	      null,
+	      { className: "main-page group" },
 	      React.createElement(
 	        "div",
 	        { className: "newsfeed" },
@@ -31467,7 +31466,9 @@
 	var CommentsForm = __webpack_require__(241);
 	var CommentsIndexItem = __webpack_require__(244);
 	var UserApiUtil = __webpack_require__(214);
-	var ReactCSSTransitionGroup = __webpack_require__(245);
+	var TimeAgo = __webpack_require__(272);
+	var Link = __webpack_require__(159).Link;
+	
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
 	
@@ -31502,6 +31503,7 @@
 	  // },
 	
 	  render: function () {
+	
 	    var comments;
 	    var profile_pic;
 	
@@ -31542,10 +31544,15 @@
 	        ),
 	        React.createElement("img", { className: "small-image", src: profile_pic }),
 	        React.createElement(
+	          Link,
+	          { className: "username", to: `users/${ this.props.post.author_id }` },
+	          this.props.post.author_name
+	        ),
+	        React.createElement(
 	          "h1",
-	          { className: "title" },
-	          this.props.post.author_name,
-	          " posted"
+	          { className: "timeago" },
+	          "Created ",
+	          React.createElement(TimeAgo, { date: this.props.post.created_at })
 	        ),
 	        React.createElement(
 	          "li",
@@ -31735,6 +31742,9 @@
 	var CommentsApiUtil = __webpack_require__(242);
 	var PostsApiUtil = __webpack_require__(207);
 	var UserApiUtil = __webpack_require__(214);
+	var TimeAgo = __webpack_require__(272);
+	var Link = __webpack_require__(159).Link;
+	
 	var CommentsIndexItem = React.createClass({
 	  displayName: "CommentsIndexItem",
 	
@@ -31746,7 +31756,10 @@
 	    CommentsApiUtil.destroyComment(this.props.comment.id);
 	  },
 	
+	  // <h1 className="comment-timeago">Created <TimeAgo date={this.props.comment.created_at} /></h1>
+	
 	  render: function () {
+	
 	    return React.createElement(
 	      "div",
 	      { className: "comment-index-items" },
@@ -31754,10 +31767,9 @@
 	        "ul",
 	        { className: "comment-index-items-input" },
 	        React.createElement(
-	          "h1",
-	          { className: "title" },
-	          this.props.comment.author_name,
-	          " commented"
+	          Link,
+	          { className: "comment-username", to: `users/${ this.props.comment.author_id }` },
+	          this.props.comment.author_name
 	        ),
 	        React.createElement(
 	          "li",
@@ -31781,815 +31793,23 @@
 /* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(246);
-
-/***/ },
-/* 246 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @typechecks
-	 * @providesModule ReactCSSTransitionGroup
-	 */
-	
-	'use strict';
-	
-	var React = __webpack_require__(2);
-	
-	var assign = __webpack_require__(39);
-	
-	var ReactTransitionGroup = __webpack_require__(247);
-	var ReactCSSTransitionGroupChild = __webpack_require__(249);
-	
-	function createTransitionTimeoutPropValidator(transitionType) {
-	  var timeoutPropName = 'transition' + transitionType + 'Timeout';
-	  var enabledPropName = 'transition' + transitionType;
-	
-	  return function (props) {
-	    // If the transition is enabled
-	    if (props[enabledPropName]) {
-	      // If no timeout duration is provided
-	      if (props[timeoutPropName] == null) {
-	        return new Error(timeoutPropName + ' wasn\'t supplied to ReactCSSTransitionGroup: ' + 'this can cause unreliable animations and won\'t be supported in ' + 'a future version of React. See ' + 'https://fb.me/react-animation-transition-group-timeout for more ' + 'information.');
-	
-	        // If the duration isn't a number
-	      } else if (typeof props[timeoutPropName] !== 'number') {
-	          return new Error(timeoutPropName + ' must be a number (in milliseconds)');
-	        }
-	    }
-	  };
-	}
-	
-	var ReactCSSTransitionGroup = React.createClass({
-	  displayName: 'ReactCSSTransitionGroup',
-	
-	  propTypes: {
-	    transitionName: ReactCSSTransitionGroupChild.propTypes.name,
-	
-	    transitionAppear: React.PropTypes.bool,
-	    transitionEnter: React.PropTypes.bool,
-	    transitionLeave: React.PropTypes.bool,
-	    transitionAppearTimeout: createTransitionTimeoutPropValidator('Appear'),
-	    transitionEnterTimeout: createTransitionTimeoutPropValidator('Enter'),
-	    transitionLeaveTimeout: createTransitionTimeoutPropValidator('Leave')
-	  },
-	
-	  getDefaultProps: function () {
-	    return {
-	      transitionAppear: false,
-	      transitionEnter: true,
-	      transitionLeave: true
-	    };
-	  },
-	
-	  _wrapChild: function (child) {
-	    // We need to provide this childFactory so that
-	    // ReactCSSTransitionGroupChild can receive updates to name, enter, and
-	    // leave while it is leaving.
-	    return React.createElement(ReactCSSTransitionGroupChild, {
-	      name: this.props.transitionName,
-	      appear: this.props.transitionAppear,
-	      enter: this.props.transitionEnter,
-	      leave: this.props.transitionLeave,
-	      appearTimeout: this.props.transitionAppearTimeout,
-	      enterTimeout: this.props.transitionEnterTimeout,
-	      leaveTimeout: this.props.transitionLeaveTimeout
-	    }, child);
-	  },
-	
-	  render: function () {
-	    return React.createElement(ReactTransitionGroup, assign({}, this.props, { childFactory: this._wrapChild }));
-	  }
-	});
-	
-	module.exports = ReactCSSTransitionGroup;
-
-/***/ },
-/* 247 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactTransitionGroup
-	 */
-	
-	'use strict';
-	
-	var React = __webpack_require__(2);
-	var ReactTransitionChildMapping = __webpack_require__(248);
-	
-	var assign = __webpack_require__(39);
-	var emptyFunction = __webpack_require__(15);
-	
-	var ReactTransitionGroup = React.createClass({
-	  displayName: 'ReactTransitionGroup',
-	
-	  propTypes: {
-	    component: React.PropTypes.any,
-	    childFactory: React.PropTypes.func
-	  },
-	
-	  getDefaultProps: function () {
-	    return {
-	      component: 'span',
-	      childFactory: emptyFunction.thatReturnsArgument
-	    };
-	  },
-	
-	  getInitialState: function () {
-	    return {
-	      children: ReactTransitionChildMapping.getChildMapping(this.props.children)
-	    };
-	  },
-	
-	  componentWillMount: function () {
-	    this.currentlyTransitioningKeys = {};
-	    this.keysToEnter = [];
-	    this.keysToLeave = [];
-	  },
-	
-	  componentDidMount: function () {
-	    var initialChildMapping = this.state.children;
-	    for (var key in initialChildMapping) {
-	      if (initialChildMapping[key]) {
-	        this.performAppear(key);
-	      }
-	    }
-	  },
-	
-	  componentWillReceiveProps: function (nextProps) {
-	    var nextChildMapping = ReactTransitionChildMapping.getChildMapping(nextProps.children);
-	    var prevChildMapping = this.state.children;
-	
-	    this.setState({
-	      children: ReactTransitionChildMapping.mergeChildMappings(prevChildMapping, nextChildMapping)
-	    });
-	
-	    var key;
-	
-	    for (key in nextChildMapping) {
-	      var hasPrev = prevChildMapping && prevChildMapping.hasOwnProperty(key);
-	      if (nextChildMapping[key] && !hasPrev && !this.currentlyTransitioningKeys[key]) {
-	        this.keysToEnter.push(key);
-	      }
-	    }
-	
-	    for (key in prevChildMapping) {
-	      var hasNext = nextChildMapping && nextChildMapping.hasOwnProperty(key);
-	      if (prevChildMapping[key] && !hasNext && !this.currentlyTransitioningKeys[key]) {
-	        this.keysToLeave.push(key);
-	      }
-	    }
-	
-	    // If we want to someday check for reordering, we could do it here.
-	  },
-	
-	  componentDidUpdate: function () {
-	    var keysToEnter = this.keysToEnter;
-	    this.keysToEnter = [];
-	    keysToEnter.forEach(this.performEnter);
-	
-	    var keysToLeave = this.keysToLeave;
-	    this.keysToLeave = [];
-	    keysToLeave.forEach(this.performLeave);
-	  },
-	
-	  performAppear: function (key) {
-	    this.currentlyTransitioningKeys[key] = true;
-	
-	    var component = this.refs[key];
-	
-	    if (component.componentWillAppear) {
-	      component.componentWillAppear(this._handleDoneAppearing.bind(this, key));
-	    } else {
-	      this._handleDoneAppearing(key);
-	    }
-	  },
-	
-	  _handleDoneAppearing: function (key) {
-	    var component = this.refs[key];
-	    if (component.componentDidAppear) {
-	      component.componentDidAppear();
-	    }
-	
-	    delete this.currentlyTransitioningKeys[key];
-	
-	    var currentChildMapping = ReactTransitionChildMapping.getChildMapping(this.props.children);
-	
-	    if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
-	      // This was removed before it had fully appeared. Remove it.
-	      this.performLeave(key);
-	    }
-	  },
-	
-	  performEnter: function (key) {
-	    this.currentlyTransitioningKeys[key] = true;
-	
-	    var component = this.refs[key];
-	
-	    if (component.componentWillEnter) {
-	      component.componentWillEnter(this._handleDoneEntering.bind(this, key));
-	    } else {
-	      this._handleDoneEntering(key);
-	    }
-	  },
-	
-	  _handleDoneEntering: function (key) {
-	    var component = this.refs[key];
-	    if (component.componentDidEnter) {
-	      component.componentDidEnter();
-	    }
-	
-	    delete this.currentlyTransitioningKeys[key];
-	
-	    var currentChildMapping = ReactTransitionChildMapping.getChildMapping(this.props.children);
-	
-	    if (!currentChildMapping || !currentChildMapping.hasOwnProperty(key)) {
-	      // This was removed before it had fully entered. Remove it.
-	      this.performLeave(key);
-	    }
-	  },
-	
-	  performLeave: function (key) {
-	    this.currentlyTransitioningKeys[key] = true;
-	
-	    var component = this.refs[key];
-	    if (component.componentWillLeave) {
-	      component.componentWillLeave(this._handleDoneLeaving.bind(this, key));
-	    } else {
-	      // Note that this is somewhat dangerous b/c it calls setState()
-	      // again, effectively mutating the component before all the work
-	      // is done.
-	      this._handleDoneLeaving(key);
-	    }
-	  },
-	
-	  _handleDoneLeaving: function (key) {
-	    var component = this.refs[key];
-	
-	    if (component.componentDidLeave) {
-	      component.componentDidLeave();
-	    }
-	
-	    delete this.currentlyTransitioningKeys[key];
-	
-	    var currentChildMapping = ReactTransitionChildMapping.getChildMapping(this.props.children);
-	
-	    if (currentChildMapping && currentChildMapping.hasOwnProperty(key)) {
-	      // This entered again before it fully left. Add it again.
-	      this.performEnter(key);
-	    } else {
-	      this.setState(function (state) {
-	        var newChildren = assign({}, state.children);
-	        delete newChildren[key];
-	        return { children: newChildren };
-	      });
-	    }
-	  },
-	
-	  render: function () {
-	    // TODO: we could get rid of the need for the wrapper node
-	    // by cloning a single child
-	    var childrenToRender = [];
-	    for (var key in this.state.children) {
-	      var child = this.state.children[key];
-	      if (child) {
-	        // You may need to apply reactive updates to a child as it is leaving.
-	        // The normal React way to do it won't work since the child will have
-	        // already been removed. In case you need this behavior you can provide
-	        // a childFactory function to wrap every child, even the ones that are
-	        // leaving.
-	        childrenToRender.push(React.cloneElement(this.props.childFactory(child), { ref: key, key: key }));
-	      }
-	    }
-	    return React.createElement(this.props.component, this.props, childrenToRender);
-	  }
-	});
-	
-	module.exports = ReactTransitionGroup;
-
-/***/ },
-/* 248 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @typechecks static-only
-	 * @providesModule ReactTransitionChildMapping
-	 */
-	
-	'use strict';
-	
-	var flattenChildren = __webpack_require__(116);
-	
-	var ReactTransitionChildMapping = {
-	  /**
-	   * Given `this.props.children`, return an object mapping key to child. Just
-	   * simple syntactic sugar around flattenChildren().
-	   *
-	   * @param {*} children `this.props.children`
-	   * @return {object} Mapping of key to child
-	   */
-	  getChildMapping: function (children) {
-	    if (!children) {
-	      return children;
-	    }
-	    return flattenChildren(children);
-	  },
-	
-	  /**
-	   * When you're adding or removing children some may be added or removed in the
-	   * same render pass. We want to show *both* since we want to simultaneously
-	   * animate elements in and out. This function takes a previous set of keys
-	   * and a new set of keys and merges them with its best guess of the correct
-	   * ordering. In the future we may expose some of the utilities in
-	   * ReactMultiChild to make this easy, but for now React itself does not
-	   * directly have this concept of the union of prevChildren and nextChildren
-	   * so we implement it here.
-	   *
-	   * @param {object} prev prev children as returned from
-	   * `ReactTransitionChildMapping.getChildMapping()`.
-	   * @param {object} next next children as returned from
-	   * `ReactTransitionChildMapping.getChildMapping()`.
-	   * @return {object} a key set that contains all keys in `prev` and all keys
-	   * in `next` in a reasonable order.
-	   */
-	  mergeChildMappings: function (prev, next) {
-	    prev = prev || {};
-	    next = next || {};
-	
-	    function getValueForKey(key) {
-	      if (next.hasOwnProperty(key)) {
-	        return next[key];
-	      } else {
-	        return prev[key];
-	      }
-	    }
-	
-	    // For each key of `next`, the list of keys to insert before that key in
-	    // the combined list
-	    var nextKeysPending = {};
-	
-	    var pendingKeys = [];
-	    for (var prevKey in prev) {
-	      if (next.hasOwnProperty(prevKey)) {
-	        if (pendingKeys.length) {
-	          nextKeysPending[prevKey] = pendingKeys;
-	          pendingKeys = [];
-	        }
-	      } else {
-	        pendingKeys.push(prevKey);
-	      }
-	    }
-	
-	    var i;
-	    var childMapping = {};
-	    for (var nextKey in next) {
-	      if (nextKeysPending.hasOwnProperty(nextKey)) {
-	        for (i = 0; i < nextKeysPending[nextKey].length; i++) {
-	          var pendingNextKey = nextKeysPending[nextKey][i];
-	          childMapping[nextKeysPending[nextKey][i]] = getValueForKey(pendingNextKey);
-	        }
-	      }
-	      childMapping[nextKey] = getValueForKey(nextKey);
-	    }
-	
-	    // Finally, add the keys which didn't appear before any key in `next`
-	    for (i = 0; i < pendingKeys.length; i++) {
-	      childMapping[pendingKeys[i]] = getValueForKey(pendingKeys[i]);
-	    }
-	
-	    return childMapping;
-	  }
-	};
-	
-	module.exports = ReactTransitionChildMapping;
-
-/***/ },
-/* 249 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @typechecks
-	 * @providesModule ReactCSSTransitionGroupChild
-	 */
-	
-	'use strict';
-	
-	var React = __webpack_require__(2);
-	var ReactDOM = __webpack_require__(3);
-	
-	var CSSCore = __webpack_require__(250);
-	var ReactTransitionEvents = __webpack_require__(251);
-	
-	var onlyChild = __webpack_require__(156);
-	
-	// We don't remove the element from the DOM until we receive an animationend or
-	// transitionend event. If the user screws up and forgets to add an animation
-	// their node will be stuck in the DOM forever, so we detect if an animation
-	// does not start and if it doesn't, we just call the end listener immediately.
-	var TICK = 17;
-	
-	var ReactCSSTransitionGroupChild = React.createClass({
-	  displayName: 'ReactCSSTransitionGroupChild',
-	
-	  propTypes: {
-	    name: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.shape({
-	      enter: React.PropTypes.string,
-	      leave: React.PropTypes.string,
-	      active: React.PropTypes.string
-	    }), React.PropTypes.shape({
-	      enter: React.PropTypes.string,
-	      enterActive: React.PropTypes.string,
-	      leave: React.PropTypes.string,
-	      leaveActive: React.PropTypes.string,
-	      appear: React.PropTypes.string,
-	      appearActive: React.PropTypes.string
-	    })]).isRequired,
-	
-	    // Once we require timeouts to be specified, we can remove the
-	    // boolean flags (appear etc.) and just accept a number
-	    // or a bool for the timeout flags (appearTimeout etc.)
-	    appear: React.PropTypes.bool,
-	    enter: React.PropTypes.bool,
-	    leave: React.PropTypes.bool,
-	    appearTimeout: React.PropTypes.number,
-	    enterTimeout: React.PropTypes.number,
-	    leaveTimeout: React.PropTypes.number
-	  },
-	
-	  transition: function (animationType, finishCallback, userSpecifiedDelay) {
-	    var node = ReactDOM.findDOMNode(this);
-	
-	    if (!node) {
-	      if (finishCallback) {
-	        finishCallback();
-	      }
-	      return;
-	    }
-	
-	    var className = this.props.name[animationType] || this.props.name + '-' + animationType;
-	    var activeClassName = this.props.name[animationType + 'Active'] || className + '-active';
-	    var timeout = null;
-	
-	    var endListener = function (e) {
-	      if (e && e.target !== node) {
-	        return;
-	      }
-	
-	      clearTimeout(timeout);
-	
-	      CSSCore.removeClass(node, className);
-	      CSSCore.removeClass(node, activeClassName);
-	
-	      ReactTransitionEvents.removeEndEventListener(node, endListener);
-	
-	      // Usually this optional callback is used for informing an owner of
-	      // a leave animation and telling it to remove the child.
-	      if (finishCallback) {
-	        finishCallback();
-	      }
-	    };
-	
-	    CSSCore.addClass(node, className);
-	
-	    // Need to do this to actually trigger a transition.
-	    this.queueClass(activeClassName);
-	
-	    // If the user specified a timeout delay.
-	    if (userSpecifiedDelay) {
-	      // Clean-up the animation after the specified delay
-	      timeout = setTimeout(endListener, userSpecifiedDelay);
-	      this.transitionTimeouts.push(timeout);
-	    } else {
-	      // DEPRECATED: this listener will be removed in a future version of react
-	      ReactTransitionEvents.addEndEventListener(node, endListener);
-	    }
-	  },
-	
-	  queueClass: function (className) {
-	    this.classNameQueue.push(className);
-	
-	    if (!this.timeout) {
-	      this.timeout = setTimeout(this.flushClassNameQueue, TICK);
-	    }
-	  },
-	
-	  flushClassNameQueue: function () {
-	    if (this.isMounted()) {
-	      this.classNameQueue.forEach(CSSCore.addClass.bind(CSSCore, ReactDOM.findDOMNode(this)));
-	    }
-	    this.classNameQueue.length = 0;
-	    this.timeout = null;
-	  },
-	
-	  componentWillMount: function () {
-	    this.classNameQueue = [];
-	    this.transitionTimeouts = [];
-	  },
-	
-	  componentWillUnmount: function () {
-	    if (this.timeout) {
-	      clearTimeout(this.timeout);
-	    }
-	    this.transitionTimeouts.forEach(function (timeout) {
-	      clearTimeout(timeout);
-	    });
-	  },
-	
-	  componentWillAppear: function (done) {
-	    if (this.props.appear) {
-	      this.transition('appear', done, this.props.appearTimeout);
-	    } else {
-	      done();
-	    }
-	  },
-	
-	  componentWillEnter: function (done) {
-	    if (this.props.enter) {
-	      this.transition('enter', done, this.props.enterTimeout);
-	    } else {
-	      done();
-	    }
-	  },
-	
-	  componentWillLeave: function (done) {
-	    if (this.props.leave) {
-	      this.transition('leave', done, this.props.leaveTimeout);
-	    } else {
-	      done();
-	    }
-	  },
-	
-	  render: function () {
-	    return onlyChild(this.props.children);
-	  }
-	});
-	
-	module.exports = ReactCSSTransitionGroupChild;
-
-/***/ },
-/* 250 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule CSSCore
-	 * @typechecks
-	 */
-	
-	'use strict';
-	
-	var invariant = __webpack_require__(13);
-	
-	/**
-	 * The CSSCore module specifies the API (and implements most of the methods)
-	 * that should be used when dealing with the display of elements (via their
-	 * CSS classes and visibility on screen. It is an API focused on mutating the
-	 * display and not reading it as no logical state should be encoded in the
-	 * display of elements.
-	 */
-	
-	var CSSCore = {
-	
-	  /**
-	   * Adds the class passed in to the element if it doesn't already have it.
-	   *
-	   * @param {DOMElement} element the element to set the class on
-	   * @param {string} className the CSS className
-	   * @return {DOMElement} the element passed in
-	   */
-	  addClass: function (element, className) {
-	    !!/\s/.test(className) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'CSSCore.addClass takes only a single class name. "%s" contains ' + 'multiple classes.', className) : invariant(false) : undefined;
-	
-	    if (className) {
-	      if (element.classList) {
-	        element.classList.add(className);
-	      } else if (!CSSCore.hasClass(element, className)) {
-	        element.className = element.className + ' ' + className;
-	      }
-	    }
-	    return element;
-	  },
-	
-	  /**
-	   * Removes the class passed in from the element
-	   *
-	   * @param {DOMElement} element the element to set the class on
-	   * @param {string} className the CSS className
-	   * @return {DOMElement} the element passed in
-	   */
-	  removeClass: function (element, className) {
-	    !!/\s/.test(className) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'CSSCore.removeClass takes only a single class name. "%s" contains ' + 'multiple classes.', className) : invariant(false) : undefined;
-	
-	    if (className) {
-	      if (element.classList) {
-	        element.classList.remove(className);
-	      } else if (CSSCore.hasClass(element, className)) {
-	        element.className = element.className.replace(new RegExp('(^|\\s)' + className + '(?:\\s|$)', 'g'), '$1').replace(/\s+/g, ' ') // multiple spaces to one
-	        .replace(/^\s*|\s*$/g, ''); // trim the ends
-	      }
-	    }
-	    return element;
-	  },
-	
-	  /**
-	   * Helper to add or remove a class from an element based on a condition.
-	   *
-	   * @param {DOMElement} element the element to set the class on
-	   * @param {string} className the CSS className
-	   * @param {*} bool condition to whether to add or remove the class
-	   * @return {DOMElement} the element passed in
-	   */
-	  conditionClass: function (element, className, bool) {
-	    return (bool ? CSSCore.addClass : CSSCore.removeClass)(element, className);
-	  },
-	
-	  /**
-	   * Tests whether the element has the class specified.
-	   *
-	   * @param {DOMNode|DOMWindow} element the element to set the class on
-	   * @param {string} className the CSS className
-	   * @return {boolean} true if the element has the class, false if not
-	   */
-	  hasClass: function (element, className) {
-	    !!/\s/.test(className) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'CSS.hasClass takes only a single class name.') : invariant(false) : undefined;
-	    if (element.classList) {
-	      return !!className && element.classList.contains(className);
-	    }
-	    return (' ' + element.className + ' ').indexOf(' ' + className + ' ') > -1;
-	  }
-	
-	};
-	
-	module.exports = CSSCore;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
-/* 251 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactTransitionEvents
-	 */
-	
-	'use strict';
-	
-	var ExecutionEnvironment = __webpack_require__(9);
-	
-	/**
-	 * EVENT_NAME_MAP is used to determine which event fired when a
-	 * transition/animation ends, based on the style property used to
-	 * define that event.
-	 */
-	var EVENT_NAME_MAP = {
-	  transitionend: {
-	    'transition': 'transitionend',
-	    'WebkitTransition': 'webkitTransitionEnd',
-	    'MozTransition': 'mozTransitionEnd',
-	    'OTransition': 'oTransitionEnd',
-	    'msTransition': 'MSTransitionEnd'
-	  },
-	
-	  animationend: {
-	    'animation': 'animationend',
-	    'WebkitAnimation': 'webkitAnimationEnd',
-	    'MozAnimation': 'mozAnimationEnd',
-	    'OAnimation': 'oAnimationEnd',
-	    'msAnimation': 'MSAnimationEnd'
-	  }
-	};
-	
-	var endEvents = [];
-	
-	function detectEvents() {
-	  var testEl = document.createElement('div');
-	  var style = testEl.style;
-	
-	  // On some platforms, in particular some releases of Android 4.x,
-	  // the un-prefixed "animation" and "transition" properties are defined on the
-	  // style object but the events that fire will still be prefixed, so we need
-	  // to check if the un-prefixed events are useable, and if not remove them
-	  // from the map
-	  if (!('AnimationEvent' in window)) {
-	    delete EVENT_NAME_MAP.animationend.animation;
-	  }
-	
-	  if (!('TransitionEvent' in window)) {
-	    delete EVENT_NAME_MAP.transitionend.transition;
-	  }
-	
-	  for (var baseEventName in EVENT_NAME_MAP) {
-	    var baseEvents = EVENT_NAME_MAP[baseEventName];
-	    for (var styleName in baseEvents) {
-	      if (styleName in style) {
-	        endEvents.push(baseEvents[styleName]);
-	        break;
-	      }
-	    }
-	  }
-	}
-	
-	if (ExecutionEnvironment.canUseDOM) {
-	  detectEvents();
-	}
-	
-	// We use the raw {add|remove}EventListener() call because EventListener
-	// does not know how to remove event listeners and we really should
-	// clean up. Also, these events are not triggered in older browsers
-	// so we should be A-OK here.
-	
-	function addEventListener(node, eventName, eventListener) {
-	  node.addEventListener(eventName, eventListener, false);
-	}
-	
-	function removeEventListener(node, eventName, eventListener) {
-	  node.removeEventListener(eventName, eventListener, false);
-	}
-	
-	var ReactTransitionEvents = {
-	  addEndEventListener: function (node, eventListener) {
-	    if (endEvents.length === 0) {
-	      // If CSS transitions are not supported, trigger an "end animation"
-	      // event immediately.
-	      window.setTimeout(eventListener, 0);
-	      return;
-	    }
-	    endEvents.forEach(function (endEvent) {
-	      addEventListener(node, endEvent, eventListener);
-	    });
-	  },
-	
-	  removeEndEventListener: function (node, eventListener) {
-	    if (endEvents.length === 0) {
-	      return;
-	    }
-	    endEvents.forEach(function (endEvent) {
-	      removeEventListener(node, endEvent, eventListener);
-	    });
-	  }
-	};
-	
-	module.exports = ReactTransitionEvents;
-
-/***/ },
-/* 252 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(253);
+	var UserStore = __webpack_require__(246);
 	var PostStore = __webpack_require__(219);
 	var CommentStore = __webpack_require__(239);
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var FriendButton = __webpack_require__(254);
-	var CoverForm = __webpack_require__(257);
-	var ProfileForm = __webpack_require__(258);
-	var PhotoIndex = __webpack_require__(259);
-	var ImageForm = __webpack_require__(263);
-	var Navbar = __webpack_require__(264);
+	var FriendButton = __webpack_require__(247);
+	var CoverForm = __webpack_require__(250);
+	var ProfileForm = __webpack_require__(251);
+	var PhotoIndex = __webpack_require__(252);
+	var ImageForm = __webpack_require__(256);
+	var Navbar = __webpack_require__(257);
+	var CoverForm = __webpack_require__(250);
+	var ProfileForm = __webpack_require__(251);
 	
 	var UserProfile = React.createClass({
 	  displayName: 'UserProfile',
@@ -32623,7 +31843,9 @@
 	  },
 	
 	  componentWillUnmount: function () {
-	    this.listener.remove();
+	    if (this.isMounted()) {
+	      this.listener.remove();
+	    }
 	  },
 	
 	  _onChange: function () {
@@ -32651,14 +31873,19 @@
 	
 	    return React.createElement(
 	      'div',
-	      { className: 'profile-page' },
-	      React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
-	      React.createElement(FriendButton, { params: this.props.params }),
+	      null,
+	      React.createElement(CoverForm, { params: this.props.params }),
+	      React.createElement(ProfileForm, { params: this.props.params }),
 	      React.createElement(
 	        'div',
-	        { className: 'posts-index-profilefeed' },
-	        React.createElement(PostsForm, { params: this.props.params, placeholder: 'Post Something' }),
-	        received_posts
+	        { className: 'profile-page' },
+	        React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
+	        React.createElement(
+	          'div',
+	          { className: 'posts-index-profilefeed' },
+	          React.createElement(PostsForm, { params: this.props.params, placeholder: 'Post Something' }),
+	          received_posts
+	        )
 	      )
 	    );
 	  }
@@ -32667,7 +31894,7 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 253 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -32842,7 +32069,7 @@
 	module.exports = UserStore;
 
 /***/ },
-/* 254 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -32850,8 +32077,8 @@
 	var PostStore = __webpack_require__(219);
 	var CommentsApiUtil = __webpack_require__(242);
 	var PostsApiUtil = __webpack_require__(207);
-	var FriendApiUtil = __webpack_require__(255);
-	var UserStore = __webpack_require__(253);
+	var FriendApiUtil = __webpack_require__(248);
+	var UserStore = __webpack_require__(246);
 	
 	var FriendRequestItem = React.createClass({
 	  displayName: "FriendRequestItem",
@@ -32872,7 +32099,18 @@
 	    FriendApiUtil.createFriend({ requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name });
 	  },
 	
+	  getInitialState: function () {},
+	
 	  render: function () {
+	    var userprofile = this._findUserById(this.props.params.userId);
+	    var currentUser = CurrentUserStore.user;
+	
+	    var button;
+	    var my_received_friends = currentUser.received_friends;
+	    var myreqf = currentUser.requested_friends;
+	    var hisreq = userprofile.received_friends;
+	    var hisrec = userprofile.requested_friends;
+	
 	    return React.createElement(
 	      "div",
 	      null,
@@ -32889,10 +32127,10 @@
 	module.exports = FriendRequestItem;
 
 /***/ },
-/* 255 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var FriendActions = __webpack_require__(256);
+	var FriendActions = __webpack_require__(249);
 	
 	var FriendApiUtil = {
 	
@@ -32933,7 +32171,7 @@
 	module.exports = FriendApiUtil;
 
 /***/ },
-/* 256 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -32966,7 +32204,7 @@
 	module.exports = FriendActions;
 
 /***/ },
-/* 257 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33031,7 +32269,7 @@
 	module.exports = UserCoverForm;
 
 /***/ },
-/* 258 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33096,15 +32334,15 @@
 	module.exports = UserProfileForm;
 
 /***/ },
-/* 259 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImagesApiUtil = __webpack_require__(260);
-	var PhotoIndexItem = __webpack_require__(262);
-	var ImageForm = __webpack_require__(263);
-	var Navbar = __webpack_require__(264);
-	var UserStore = __webpack_require__(253);
+	var ImagesApiUtil = __webpack_require__(253);
+	var PhotoIndexItem = __webpack_require__(255);
+	var ImageForm = __webpack_require__(256);
+	var Navbar = __webpack_require__(257);
+	var UserStore = __webpack_require__(246);
 	var UserApiUtil = __webpack_require__(214);
 	
 	var PhotoIndex = React.createClass({
@@ -33175,10 +32413,10 @@
 	module.exports = PhotoIndex;
 
 /***/ },
-/* 260 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var PhotoApiActions = __webpack_require__(261);
+	var PhotoApiActions = __webpack_require__(254);
 	
 	var ImagesApiUtil = {
 	
@@ -33201,7 +32439,7 @@
 	module.exports = ImagesApiUtil;
 
 /***/ },
-/* 261 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(210);
@@ -33221,11 +32459,11 @@
 	module.exports = PhotoActions;
 
 /***/ },
-/* 262 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImagesApiUtil = __webpack_require__(260);
+	var ImagesApiUtil = __webpack_require__(253);
 	
 	var PhotoIndexItem = React.createClass({
 	  displayName: "PhotoIndexItem",
@@ -33243,11 +32481,11 @@
 	module.exports = PhotoIndexItem;
 
 /***/ },
-/* 263 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImageApiUtil = __webpack_require__(260);
+	var ImageApiUtil = __webpack_require__(253);
 	var UserApiUtil = __webpack_require__(214);
 	
 	var ImageForm = React.createClass({
@@ -33317,18 +32555,18 @@
 	module.exports = ImageForm;
 
 /***/ },
-/* 264 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(265);
-	var SessionsApiUtil = __webpack_require__(266);
-	var Search = __webpack_require__(267);
+	var CurrentUserStore = __webpack_require__(258);
+	var SessionsApiUtil = __webpack_require__(259);
+	var Search = __webpack_require__(260);
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
-	var CoverForm = __webpack_require__(257);
-	var ProfileForm = __webpack_require__(258);
-	var FriendButton = __webpack_require__(254);
+	var CoverForm = __webpack_require__(250);
+	var ProfileForm = __webpack_require__(251);
+	var FriendButton = __webpack_require__(247);
 	
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
@@ -33354,42 +32592,44 @@
 	
 	    return React.createElement(
 	      'div',
-	      { className: 'profile' },
-	      React.createElement(CoverForm, { params: this.props.params }),
-	      React.createElement(ProfileForm, { params: this.props.params }),
+	      { group: true },
 	      React.createElement(
 	        'div',
-	        { className: 'photo-form' },
+	        { className: 'profile' },
 	        React.createElement(
-	          'h3',
-	          null,
-	          fname
-	        ),
-	        cover_pic,
-	        profile_pic
-	      ),
-	      React.createElement(
-	        'ul',
-	        { className: 'profile-nav group' },
-	        React.createElement(
-	          Link,
-	          { to: `users/${ this.props.params.userId }/timeline` },
-	          'Timeline'
+	          'div',
+	          { className: 'photo-form' },
+	          React.createElement(
+	            'h3',
+	            null,
+	            fname
+	          ),
+	          cover_pic,
+	          profile_pic
 	        ),
 	        React.createElement(
-	          Link,
-	          { to: `users/${ this.props.params.userId }/about` },
-	          'About'
-	        ),
-	        React.createElement(
-	          Link,
-	          { to: `users/${ this.props.params.userId }/friends` },
-	          'Friends'
-	        ),
-	        React.createElement(
-	          Link,
-	          { to: `users/${ this.props.params.userId }/photos` },
-	          'Photos'
+	          'ul',
+	          { className: 'profile-nav group' },
+	          React.createElement(
+	            Link,
+	            { to: `users/${ this.props.params.userId }/timeline` },
+	            'Timeline'
+	          ),
+	          React.createElement(
+	            Link,
+	            { to: `users/${ this.props.params.userId }/about` },
+	            'About'
+	          ),
+	          React.createElement(
+	            Link,
+	            { to: `users/${ this.props.params.userId }/friends` },
+	            'Friends'
+	          ),
+	          React.createElement(
+	            Link,
+	            { to: `users/${ this.props.params.userId }/photos` },
+	            'Photos'
+	          )
 	        )
 	      )
 	    );
@@ -33399,7 +32639,7 @@
 	module.exports = Navbar;
 
 /***/ },
-/* 265 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
@@ -33447,7 +32687,7 @@
 	module.exports = CurrentUserStore;
 
 /***/ },
-/* 266 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var CurrentUserActions = __webpack_require__(217);
@@ -33497,13 +32737,13 @@
 	module.exports = SessionsApiUtil;
 
 /***/ },
-/* 267 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var SearchResultsStore = __webpack_require__(268);
-	var SearchApiUtil = __webpack_require__(270);
-	var UserProfile = __webpack_require__(252);
+	var SearchResultsStore = __webpack_require__(261);
+	var SearchApiUtil = __webpack_require__(263);
+	var UserProfile = __webpack_require__(245);
 	var PostIndexItem = __webpack_require__(240);
 	var CommentIndexItem = __webpack_require__(244);
 	var Link = __webpack_require__(159).Link;
@@ -33555,6 +32795,7 @@
 	          React.createElement(
 	            Link,
 	            { to: `users/${ searchResult.id }` },
+	            React.createElement('img', { className: 'searchimage', src: searchResult.profile_pic_url }),
 	            searchResult.fname
 	          )
 	        );
@@ -33594,12 +32835,12 @@
 	module.exports = Search;
 
 /***/ },
-/* 268 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
 	var AppDispatcher = __webpack_require__(210);
-	var SearchConstants = __webpack_require__(269);
+	var SearchConstants = __webpack_require__(262);
 	
 	var _searchResults = [];
 	var _meta = {};
@@ -33629,7 +32870,7 @@
 	module.exports = SearchResultsStore;
 
 /***/ },
-/* 269 */
+/* 262 */
 /***/ function(module, exports) {
 
 	var SearchConstants = {
@@ -33639,10 +32880,10 @@
 	module.exports = SearchConstants;
 
 /***/ },
-/* 270 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SearchActions = __webpack_require__(271);
+	var SearchActions = __webpack_require__(264);
 	
 	var SearchApiUtil = {
 	
@@ -33663,10 +32904,10 @@
 	module.exports = SearchApiUtil;
 
 /***/ },
-/* 271 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SearchConstants = __webpack_require__(269);
+	var SearchConstants = __webpack_require__(262);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var SearchActions = {
@@ -33683,13 +32924,13 @@
 	module.exports = SearchActions;
 
 /***/ },
-/* 272 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1),
-	    Header = __webpack_require__(273),
-	    SessionsApiUtil = __webpack_require__(266),
-	    CurrentUserStore = __webpack_require__(265);
+	    Header = __webpack_require__(266),
+	    SessionsApiUtil = __webpack_require__(259),
+	    CurrentUserStore = __webpack_require__(258);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -33725,13 +32966,13 @@
 	module.exports = App;
 
 /***/ },
-/* 273 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(265);
-	var SessionsApiUtil = __webpack_require__(266);
-	var Search = __webpack_require__(267);
+	var CurrentUserStore = __webpack_require__(258);
+	var SessionsApiUtil = __webpack_require__(259);
+	var Search = __webpack_require__(260);
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
 	
@@ -33778,13 +33019,6 @@
 	          { className: 'main-links group' },
 	          React.createElement(
 	            'li',
-	            { className: 'logged-in' },
-	            'Logged in as ',
-	            this.state.currentUser.email,
-	            React.createElement('img', { src: this.state.currentUser.profile_pic, className: 'side-logo' })
-	          ),
-	          React.createElement(
-	            'li',
 	            { className: 'searchbar' },
 	            React.createElement(Search, { className: 'search' })
 	          ),
@@ -33796,6 +33030,12 @@
 	              { className: 'link', to: `/` },
 	              'Home'
 	            )
+	          ),
+	          React.createElement(
+	            'li',
+	            { className: 'logged-in' },
+	            ' ',
+	            React.createElement('img', { src: this.state.currentUser.profile_pic })
 	          ),
 	          React.createElement(
 	            'li',
@@ -33812,7 +33052,7 @@
 	            React.createElement(
 	              'button',
 	              { onClick: this.logout },
-	              ' LOG OUT'
+	              ' Log Out'
 	            )
 	          )
 	        )
@@ -33835,12 +33075,12 @@
 	module.exports = Header;
 
 /***/ },
-/* 274 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(266);
+	var SessionsApiUtil = __webpack_require__(259);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var SessionForm = React.createClass({
@@ -33882,11 +33122,6 @@
 	        React.createElement(
 	          'form',
 	          { onSubmit: this.submit, className: 'login-form group' },
-	          React.createElement(
-	            'a',
-	            { href: '/auth/facebook' },
-	            'Login with Facebook'
-	          ),
 	          React.createElement(
 	            'div',
 	            { className: 'login' },
@@ -33938,16 +33173,19 @@
 	            React.createElement(
 	              'li',
 	              null,
+	              React.createElement('i', { className: 'fa fa-newspaper-o fa-4x' }),
 	              'See photos and updates'
 	            ),
 	            React.createElement(
 	              'li',
 	              null,
-	              'Share whats news'
+	              React.createElement('i', { className: 'fa fa-laptop fa-4x' }),
+	              'Share whats new'
 	            ),
 	            React.createElement(
 	              'li',
 	              null,
+	              React.createElement('i', { className: 'fa fa-heart-o fa-4x' }),
 	              'Discover more'
 	            )
 	          )
@@ -34000,13 +33238,21 @@
 	              'label',
 	              null,
 	              'Gender',
-	              React.createElement('input', { type: 'radio', name: 'gender', value: 'male' }),
-	              ' Male',
-	              React.createElement('input', { type: 'radio', name: 'gender', value: 'female' }),
-	              ' Female',
-	              React.createElement('br', null)
+	              React.createElement(
+	                'div',
+	                { className: 'gender' },
+	                React.createElement('input', { type: 'radio', name: 'gender', value: 'male' }),
+	                ' Male',
+	                React.createElement('input', { type: 'radio', name: 'gender', value: 'female' }),
+	                ' Female'
+	              )
 	            ),
-	            React.createElement('input', { type: 'submit', value: 'Sign Up' })
+	            React.createElement('input', { className: 'signbutton', type: 'submit', value: 'Sign Up' }),
+	            React.createElement(
+	              'a',
+	              { className: 'btn-facebook', href: '/auth/facebook' },
+	              'Login with Facebook'
+	            )
 	          )
 	        )
 	      )
@@ -34018,12 +33264,12 @@
 	module.exports = SessionForm;
 
 /***/ },
-/* 275 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(266);
+	var SessionsApiUtil = __webpack_require__(259);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var UserForm = React.createClass({
@@ -34107,21 +33353,24 @@
 	          React.createElement(
 	            'h2',
 	            null,
-	            'Connect with friends all around the Universe on CloneBook'
+	            'Connect to friends all around the Universe on CloneBook'
 	          ),
 	          React.createElement(
 	            'ul',
 	            null,
+	            React.createElement('i', { className: 'fa fa-newspaper-o' }),
 	            React.createElement(
 	              'li',
 	              null,
 	              'See photos and updates'
 	            ),
+	            React.createElement('i', { className: 'fa fa-laptop' }),
 	            React.createElement(
 	              'li',
 	              null,
-	              'Share what\'s new'
+	              'Share whats new'
 	            ),
+	            React.createElement('i', { className: 'fa fa-heart-o' }),
 	            React.createElement(
 	              'li',
 	              null,
@@ -34195,11 +33444,11 @@
 	module.exports = UserForm;
 
 /***/ },
-/* 276 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var UsersStore = __webpack_require__(253);
+	var UsersStore = __webpack_require__(246);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var UsersIndex = React.createClass({
@@ -34255,21 +33504,21 @@
 	module.exports = UsersIndex;
 
 /***/ },
-/* 277 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(253);
+	var UserStore = __webpack_require__(246);
 	var PostStore = __webpack_require__(219);
 	var CommentStore = __webpack_require__(239);
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var CoverForm = __webpack_require__(257);
-	var ProfileForm = __webpack_require__(258);
-	var Navbar = __webpack_require__(264);
+	var CoverForm = __webpack_require__(250);
+	var ProfileForm = __webpack_require__(251);
+	var Navbar = __webpack_require__(257);
 	
 	var About = React.createClass({
 	  displayName: 'About',
@@ -34380,23 +33629,23 @@
 	module.exports = About;
 
 /***/ },
-/* 278 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(253);
+	var UserStore = __webpack_require__(246);
 	var PostStore = __webpack_require__(219);
 	var CommentStore = __webpack_require__(239);
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var CoverForm = __webpack_require__(257);
-	var ProfileForm = __webpack_require__(258);
-	var Navbar = __webpack_require__(264);
+	var CoverForm = __webpack_require__(250);
+	var ProfileForm = __webpack_require__(251);
+	var Navbar = __webpack_require__(257);
 	var Link = __webpack_require__(159).Link;
-	var FriendButton = __webpack_require__(254);
+	var FriendButton = __webpack_require__(247);
 	
 	var Friends = React.createClass({
 	  displayName: 'Friends',
@@ -34491,6 +33740,139 @@
 	
 	});
 	module.exports = Friends;
+
+/***/ },
+/* 272 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict'
+	
+	var React = __webpack_require__(1)
+	var assign = __webpack_require__(39)
+	
+	module.exports = React.createClass(
+	  { displayName: 'Time-Ago'
+	  , timeoutId: 0
+	  , getDefaultProps: function(){
+	      return { live: true
+	             , component: 'span'
+	             , minPeriod: 0
+	             , maxPeriod: Infinity
+	             , formatter: function (value, unit, suffix) {
+	                 if(value !== 1){
+	                   unit += 's'
+	                 }
+	                 return value + ' ' + unit + ' ' + suffix
+	               }
+	             }
+	    }
+	  , propTypes:
+	      { live: React.PropTypes.bool.isRequired
+	      , minPeriod: React.PropTypes.number.isRequired
+	      , maxPeriod: React.PropTypes.number.isRequired
+	      , component: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.func]).isRequired
+	      , formatter: React.PropTypes.func.isRequired
+	      , date: React.PropTypes.oneOfType(
+	          [ React.PropTypes.string
+	          , React.PropTypes.number
+	          , React.PropTypes.instanceOf(Date)
+	          ]
+	        ).isRequired
+	      }
+	  , componentDidMount: function(){
+	      if(this.props.live) {
+	        this.tick(true)
+	      }
+	    }
+	  , componentDidUpdate: function(lastProps){
+	      if(this.props.live !== lastProps.live || this.props.date !== lastProps.date){
+	        if(!this.props.live && this.timeoutId){
+	          clearTimeout(this.timeoutId);
+	          this.timeoutId = undefined;
+	        }
+	        this.tick()
+	      }
+	    }
+	  , componentWillUnmount: function() {
+	    if(this.timeoutId) {
+	      clearTimeout(this.timeoutId);
+	      this.timeoutId = undefined;
+	    }
+	  }
+	  , tick: function(refresh){
+	      if(!this.isMounted() || !this.props.live){
+	        return
+	      }
+	
+	      var period = 1000
+	
+	      var then = (new Date(this.props.date)).valueOf()
+	      var now = Date.now()
+	      var seconds = Math.round(Math.abs(now-then)/1000)
+	
+	      if(seconds < 60){
+	        period = 1000
+	      } else if(seconds < 60*60) {
+	        period = 1000 * 60
+	      } else if(seconds < 60*60*24) {
+	        period = 1000 * 60 * 60
+	      } else {
+	        period = 0
+	      }
+	
+	      period = Math.min(Math.max(period, this.props.minPeriod), this.props.maxPeriod)
+	
+	      if(!!period){
+	        this.timeoutId = setTimeout(this.tick, period)
+	      }
+	
+	      if(!refresh){
+	        this.forceUpdate()
+	      }
+	    }
+	  , render: function(){
+	      var then = (new Date(this.props.date)).valueOf()
+	      var now = Date.now()
+	      var seconds = Math.round(Math.abs(now-then)/1000)
+	
+	      var suffix = then < now ? 'ago' : 'from now'
+	
+	      var value, unit
+	
+	      if(seconds < 60){
+	        value = Math.round(seconds)
+	        unit = 'second'
+	      } else if(seconds < 60*60) {
+	        value = Math.round(seconds/60)
+	        unit = 'minute'
+	      } else if(seconds < 60*60*24) {
+	        value = Math.round(seconds/(60*60))
+	        unit = 'hour'
+	      } else if(seconds < 60*60*24*7) {
+	        value = Math.round(seconds/(60*60*24))
+	        unit = 'day'
+	      } else if(seconds < 60*60*24*30) {
+	        value = Math.round(seconds/(60*60*24*7))
+	        unit = 'week'
+	      } else if(seconds < 60*60*24*365) {
+	        value = Math.round(seconds/(60*60*24*30))
+	        unit = 'month'
+	      } else {
+	        value = Math.round(seconds/(60*60*24*365))
+	        unit = 'year'
+	      }
+	
+	      var props = assign({}, this.props)
+	
+	      delete props.date
+	      delete props.formatter
+	      delete props.component
+	
+	      return React.createElement( this.props.component, props, this.props.formatter(value, unit, suffix, then) )
+	    }
+	  }
+	)
+
 
 /***/ }
 /******/ ]);

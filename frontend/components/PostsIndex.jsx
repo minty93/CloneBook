@@ -7,7 +7,6 @@ var UserApiUtil = require('../util/users_api_util');
 var PostsForm = require('./PostsForm');
 var CommentsForm = require('./CommentsForm');
 var CommentsIndexItem = require('./CommentsIndexItem');
-var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
 
 
@@ -34,7 +33,7 @@ var PostsIndex = React.createClass({
 
   render: function() {
     return (
-      <div>
+      <div className="main-page group">
       <div className="newsfeed">
         <ul className="posts-index">
         <li><PostsForm params={this.props.params} placeholder="What's on your mind?"/></li>

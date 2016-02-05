@@ -62,11 +62,11 @@ var UserForm = React.createClass({
         <div className="main group">
 
           <section className="sidebar group">
-            <h2>Connect with friends all around the Universe on CloneBook</h2>
+            <h2>Connect to friends all around the Universe on CloneBook</h2>
             <ul>
-              <li>See photos and updates</li>
-              <li>Share what's new</li>
-              <li>Discover more</li>
+              <i className="fa fa-newspaper-o"></i><li>See photos and updates</li>
+              <i className="fa fa-laptop"></i><li>Share whats new</li>
+              <i className="fa fa-heart-o"></i><li>Discover more</li>
             </ul>
           </section>
 

@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   include PgSearch
 
-  multisearchable :against => [:email, :fname, :lname]
+  multisearchable :against => [:email, :fname, :lname, :profile_pic]
 
   PgSearch.multisearch_options = {
   :using => [:tsearch]
@@ -27,8 +27,15 @@ class User < ActiveRecord::Base
 
 
   has_many(
-  :friends,
+  :requested_friends,
   foreign_key: :requester_id,
+  primary_key: :id,
+  class_name: "FriendRequest"
+  )
+
+  has_many(
+  :received_friends,
+  foreign_key: :requestee_id,
   primary_key: :id,
   class_name: "FriendRequest"
   )

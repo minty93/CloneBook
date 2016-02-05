@@ -26,7 +26,20 @@ handleFriend: function(){
 
 },
 
+
+
+  getInitialState: function(){},
+
   render: function() {
+    var userprofile = this._findUserById(this.props.params.userId);
+    var currentUser = CurrentUserStore.user;
+
+    var button;
+    var my_received_friends = currentUser.received_friends;
+    var myreqf = currentUser.requested_friends;
+    var hisreq = userprofile.received_friends;
+    var hisrec = userprofile.requested_friends;
+    
     return (
       <div>
           <button className="friend-button" onClick={this.handleFriend}>Friend</button>

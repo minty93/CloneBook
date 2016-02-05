@@ -36,9 +36,8 @@ var Navbar = React.createClass({
 
 
     return (
+      <div group>
       <div className="profile">
-        <CoverForm params={this.props.params}/>
-        <ProfileForm params={this.props.params}/>
         <div className="photo-form">
         <h3>{fname}</h3>
         {cover_pic}
@@ -50,6 +49,7 @@ var Navbar = React.createClass({
         <Link to={`users/${this.props.params.userId }/friends`}>Friends</Link>
         <Link to={`users/${this.props.params.userId }/photos`}>Photos</Link>
         </ul>
+      </div>
       </div>
     );
   }

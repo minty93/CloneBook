@@ -1,6 +1,7 @@
 // Place all the styles related to the Users controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+//*= require font-awesome
 
 .group:after {
   clear: both;
@@ -15,6 +16,13 @@
   background: #3b5998;
   margin: 0 auto;
   padding: 15px 0px 9px 0;
+}
+
+
+.login > label > input:focus{
+   outline: none;
+   border-color: #9ecaed;
+   box-shadow: 0 0 10px #9ecaed;
 }
 
 .header > label {
@@ -46,7 +54,7 @@
 .login > label {
   position: relative;
   display: block;
-  margin-left: 105px;
+  margin-left: 90px;
   margin-right: 20px;
   float: left;
 
@@ -66,7 +74,7 @@
 
   .guest {
     float: left;
-    width: 70px;
+    width: 90px;
     height: 20px;
     color: white;
     font-size: 12px;
@@ -75,7 +83,7 @@
     text-align: center;
     box-shadow: 1px;
     margin-top: 20px;
-    margin-right: 10px;
+    // margin-right: 10px;
     margin-left: 10px;
     float: right;
     border: 1px solid black;
@@ -155,6 +163,10 @@
 }
 
 
+
+
+
+
 .profile {
   width: 1000px;
   margin: 0 auto;
@@ -184,4 +196,68 @@
 .profilefeed{
   // margin-top: 400px;
   align-content: center;
+}
+
+.fa {
+  width: 100px;
+  color: black;
+  float: left;
+  display: inline;
+  color: #ADBAD4;
+}
+
+.sidebar > li {
+  float: right;
+  display: inline;
+}
+
+.signup {
+  width: 400px;
+}
+
+.signup > label > input {
+  float: right;
+}
+
+.signbutton {
+  margin-top: 10px;
+  box-sizing: border-box;
+  border-top: 1px solid #95d67c;
+  width: 191px;
+  height: 36px;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  background: -webkit-gradient(linear, center bottom, center top, from(#578843), to(#74b960));
+  border: 1px solid lightgray;
+  border-radius: 5%;
+  opacity: 1;
+}
+
+
+.signbutton:hover{
+   opacity: 0.75;
+}
+
+
+.btn-facebook,
+.btn-facebook:visited {
+  margin-top: 10px;
+  border-top: 1px solid #95d67c;
+  width: 191px;
+  height: 136px;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  background: -webkit-gradient(linear, center bottom, center top, from(#578843), to(#74b960));
+  border: 1px solid lightgray;
+  border-radius: 5%;
+  opacity: 1;
+  padding: 7.5px;
+}
+
+.btn-facebook:hover{
+   opacity: 0.75;
 }

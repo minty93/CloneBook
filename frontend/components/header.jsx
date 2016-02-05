@@ -45,12 +45,12 @@ var Header = React.createClass({
         <div className="main-header group">
           <img src="http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png" className="side-logo"/>
           <ul className="main-links group">
-          <li className="logged-in">Logged in as { this.state.currentUser.email }<img src={this.state.currentUser.profile_pic} className= "side-logo"/></li>
           <li className="searchbar"><Search className="search"/></li>
 
           <li><Link className="link" to={`/`}>Home</Link></li>
+          <li className="logged-in"> <img src={this.state.currentUser.profile_pic} /></li>
           <li><Link className="link" to={`users/${currentUser.id}`}>{currentUser.fname}</Link></li>
-          <li><button onClick={ this.logout }> LOG OUT</button></li>
+          <li><button onClick={ this.logout }> Log Out</button></li>
           </ul>
         </div>
       );

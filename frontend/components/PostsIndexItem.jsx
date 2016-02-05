@@ -53,8 +53,10 @@ var PostsIndexItems = React.createClass({
 
   render: function() {
 
+
     var comments;
     var profile_pic;
+    var to;
 
     if(this.props.post.comments){
       <li>
@@ -72,13 +74,18 @@ var PostsIndexItems = React.createClass({
           }</li>;
         }
 
-      if(this.props.post.author && this.props.post.author.profile_pic){
-        profile_pic = this.props.post.author.profile_pic.url;
+      if(this.props.post.author && this.props.post.author.profile_pic_url){
+        profile_pic = this.props.post.author.profile_pic_url;
       }
       else {
         profile_pic = "http://s29.postimg.org/mt68s3j5z/star_wars_profile_pic.jpg";
       }
 
+      if(this.props.user){
+        to = <Link className="username" to={'users/' + this.props.user.id}></Link>;}
+      else {
+        to = <div></div>;
+      }
 
 
     return (
@@ -86,7 +93,7 @@ var PostsIndexItems = React.createClass({
         <ul className="post-index-items group">
         <li><button onClick={this.handleDelete}>Delete Post</button></li>
           <img className="small-image" src={profile_pic} />
-          <Link className="username" to={'users/' + this.props.post.author_id}>{this.props.post.author_name}</Link>
+          <Link className="username" to={'users/' + this.props.post.author_id}>{this.props.post.author_name}{to}</Link>
           <h1 className="timeago">Created <TimeAgo date={this.props.post.created_at} /></h1>
           <li className="actual-post">{this.props.post.body}</li>
         </ul>

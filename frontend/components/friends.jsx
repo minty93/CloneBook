@@ -38,6 +38,7 @@ var Friends = React.createClass({
   componentDidMount: function () {
     var userId = (this.props.userId || this.props.params.userId);
     this.listener = UserStore.addListener(this._onChange);
+    UserApiUtil.fetchAllUsers();
   },
 
   componentWillReceiveProps: function(newProps){

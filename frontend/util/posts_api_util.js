@@ -47,6 +47,33 @@ var PostApiUtil = {
     });
   },
 
+  createLike: function(data, post_id, callback){
+    $.ajax({
+      data: {like: data},
+      url: "api/posts" + post_id + "/likes",
+      type: "POST",
+      dataType: "json",
+      success: function(data){
+        callback && callback();
+        PostApiActions.createLike(data);
+      }
+    });
+  },
+
+  deleteLike: function(data, post_id, callback){
+    $.ajax({
+      data: {like: data},
+      url: "api/posts" + post_id + "/likes",
+      type: "POST",
+      dataType: "json",
+      success: function(data){
+        callback && callback();
+        PostApiActions.createLike(data);
+      }
+    });
+  },
+
+
 };
 
 module.exports = PostApiUtil;

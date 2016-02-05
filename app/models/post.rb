@@ -14,6 +14,7 @@ class Post < ActiveRecord::Base
   belongs_to(:profile, foreign_key: :profile_id, primary_key: :id, class_name: "User")
 
   has_many :comments, as: :commentable
+  has_many :likes, as: :likeable
 
 
 

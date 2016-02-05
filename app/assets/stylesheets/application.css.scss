@@ -387,7 +387,7 @@
 
 .main-links > li {
   float: left;
-
+  color: white;
   padding: 10px;
   margin: 5px;
 }
@@ -410,4 +410,36 @@
 
 .logged-in > li {
   padding: 0;
+}
+
+.searchbar {
+  background: white;
+  width: 600px;
+  border: 1px solid lightgrey;
+  color: black;
+}
+
+.searchbar > div > input {
+
+  color: black;
+}
+
+
+.link {
+  color: white;
+}
+
+.ads {
+  width: 500px;
+  float: right;
+}
+
+.ads > a {
+  width: 500px;
+  margin-right: 100px;
+  margin-top: 50px;
+  border: 1px solid lightgrey;
+  float: right;
+
+
 }

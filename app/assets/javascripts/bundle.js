@@ -24173,6 +24173,32 @@
 	        PostApiActions.createPost(data);
 	      }
 	    });
+	  },
+	
+	  createLike: function (data, post_id, callback) {
+	    $.ajax({
+	      data: { like: data },
+	      url: "api/posts" + post_id + "/likes",
+	      type: "POST",
+	      dataType: "json",
+	      success: function (data) {
+	        callback && callback();
+	        PostApiActions.createLike(data);
+	      }
+	    });
+	  },
+	
+	  deleteLike: function (data, post_id, callback) {
+	    $.ajax({
+	      data: { like: data },
+	      url: "api/posts" + post_id + "/likes",
+	      type: "POST",
+	      dataType: "json",
+	      success: function (data) {
+	        callback && callback();
+	        PostApiActions.createLike(data);
+	      }
+	    });
 	  }
 	
 	};
@@ -24213,6 +24239,20 @@
 	    AppDispatcher.dispatch({
 	      actionType: PostConstants.CREATE_POST,
 	      post: post
+	    });
+	  },
+	
+	  deleteLike: function (like) {
+	    AppDispatcher.dispatch({
+	      actionType: LikeConstants.DELETE_LIKE,
+	      like: like
+	    });
+	  },
+	
+	  createLike: function (like) {
+	    AppDispatcher.dispatch({
+	      actionType: LikeConstants.CREATE_LIKE,
+	      like: like
 	    });
 	  }
 	
@@ -31299,25 +31339,48 @@
 	  render: function () {
 	    return React.createElement(
 	      "div",
-	      { className: "newsfeed" },
+	      null,
 	      React.createElement(
-	        "ul",
-	        { className: "posts-index" },
+	        "div",
+	        { className: "newsfeed" },
 	        React.createElement(
-	          "li",
-	          null,
-	          React.createElement(PostsForm, { params: this.props.params, placeholder: "What's on your mind?" })
+	          "ul",
+	          { className: "posts-index" },
+	          React.createElement(
+	            "li",
+	            null,
+	            React.createElement(PostsForm, { params: this.props.params, placeholder: "What's on your mind?" })
+	          ),
+	          React.createElement(
+	            "li",
+	            null,
+	            this.state.posts.slice(0).reverse().map(function (post, index) {
+	              return React.createElement(
+	                "div",
+	                { className: "post-box" },
+	                React.createElement(PostsIndexItem, { key: post.id, post: post })
+	              );
+	            })
+	          )
+	        )
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "ads group" },
+	        React.createElement(
+	          "a",
+	          { href: "http://www.appacademy.io/" },
+	          React.createElement("img", { src: "http://s13.postimg.org/7sb4gw4mv/1441509975_1.jpg" })
 	        ),
 	        React.createElement(
-	          "li",
-	          null,
-	          this.state.posts.slice(0).reverse().map(function (post, index) {
-	            return React.createElement(
-	              "div",
-	              { className: "post-box" },
-	              React.createElement(PostsIndexItem, { key: post.id, post: post })
-	            );
-	          })
+	          "a",
+	          { href: "http://www.github.com/" },
+	          React.createElement("img", { src: "http://cdn.inquisitr.com/wp-content/uploads/2015/05/Github.jpg" })
+	        ),
+	        React.createElement(
+	          "a",
+	          { href: "https://slack.com/" },
+	          React.createElement("img", { src: "http://cdn.churchm.ag/wp-content/uploads/2015/03/Slack-Logoness-750x431.png" })
 	        )
 	      )
 	    );
@@ -33126,6 +33189,7 @@
 	      data: formData,
 	      processData: false,
 	      contentType: false,
+	      dataType: 'json',
 	      success: function (photo) {
 	        PhotoApiActions.receivePhoto(photo);
 	        callback && callback();
@@ -33221,6 +33285,7 @@
 	    e.preventDefault();
 	    var file = this.state.file;
 	    var formData = new FormData();
+	    debugger;
 	    formData.append("photo[photo]", file);
 	    formData.append("photo[description]", this.state.description);
 	    ImageApiUtil.createImage(formData, this.clearFields);
@@ -33514,7 +33579,7 @@
 	      'div',
 	      null,
 	      React.createElement('h1', { className: 'title' }),
-	      React.createElement('input', { type: 'text', placeholder: 'Search', onKeyUp: this.search }),
+	      React.createElement('input', { className: 'search-input', type: 'text', placeholder: 'Search', onKeyUp: this.search }),
 	      React.createElement('button', { onClick: this.nextPage }),
 	      React.createElement(
 	        'ul',
@@ -33728,7 +33793,7 @@
 	            null,
 	            React.createElement(
 	              Link,
-	              { to: `/` },
+	              { className: 'link', to: `/` },
 	              'Home'
 	            )
 	          ),
@@ -33737,7 +33802,7 @@
 	            null,
 	            React.createElement(
 	              Link,
-	              { to: `users/${ currentUser.id }` },
+	              { className: 'link', to: `users/${ currentUser.id }` },
 	              currentUser.fname
 	            )
 	          ),
@@ -33817,6 +33882,11 @@
 	        React.createElement(
 	          'form',
 	          { onSubmit: this.submit, className: 'login-form group' },
+	          React.createElement(
+	            'a',
+	            { href: '/auth/facebook' },
+	            'Login with Facebook'
+	          ),
 	          React.createElement(
 	            'div',
 	            { className: 'login' },

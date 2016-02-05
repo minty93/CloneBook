@@ -38,6 +38,7 @@ var ImageForm = React.createClass({
     e.preventDefault();
     var file = this.state.file;
     var formData = new FormData();
+    debugger
     formData.append("photo[photo]", file);
     formData.append("photo[description]", this.state.description);
     ImageApiUtil.createImage(formData, this.clearFields);

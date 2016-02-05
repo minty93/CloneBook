@@ -24,10 +24,24 @@ var PostApiActions = {
   },
 
   createPost: function (post) {
-    
+
     AppDispatcher.dispatch({
       actionType: PostConstants.CREATE_POST,
       post: post
+    });
+  },
+
+  deleteLike: function (like) {
+    AppDispatcher.dispatch({
+      actionType: LikeConstants.DELETE_LIKE,
+      like: like
+    });
+  },
+
+  createLike: function (like) {
+    AppDispatcher.dispatch({
+      actionType: LikeConstants.CREATE_LIKE,
+      like: like
     });
   },
 

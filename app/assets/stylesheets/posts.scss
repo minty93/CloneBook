@@ -5,7 +5,8 @@
 
 
 .newsfeed {
-  // background: #E9EAED;
+  background: #E9EAED;
+  width: 1000px;
 }
 
 .posts-index {
@@ -19,6 +20,11 @@
   border: 1px solid lightgrey;
   background: #FFFFFF;
 
+}
+
+.post-form {
+
+  background: #E9EAED;
 }
 
 .post-form > form {

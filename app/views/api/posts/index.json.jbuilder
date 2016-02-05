@@ -3,6 +3,8 @@ json.array!(@posts) do |post|
   json.comments post.comments do |comment|
     json.extract! comment, :id, :description, :author_id, :author_name, :commentable_id, :commentable_type
   end
-  
+  json.likes post.likes do |like|
+    json.extract! like, :id, :likeable_id, :likeable_type
+  end
 
 end

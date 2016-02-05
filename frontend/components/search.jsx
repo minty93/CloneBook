@@ -61,7 +61,7 @@ var Search = React.createClass({
     return (
       <div>
         <h1 className="title"></h1>
-        <input type="text" placeholder="Search" onKeyUp={ this.search } />
+        <input className="search-input" type="text" placeholder="Search" onKeyUp={ this.search } />
         <button onClick={this.nextPage}></button>
         <ul className="users-index">{ searchResults }</ul>
       </div>

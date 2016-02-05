@@ -3,18 +3,23 @@ Rails.application.routes.draw do
 
   resources :users
   resource :session, only: [:create, :new, :destroy]
+  get 'auth/facebook/callback', to: 'sessions#omniauth_facebook'
 
 
   namespace :api, defaults: {format: :json} do
     resources :friend_requests
-
     resources :posts do
-      resources :comments, except: [:destroy]
+      resources :comments, except: [:destroy] do
+      end
+      resources :likes, except: [:destroy]
     end
-    resources :photos
+    resources :photos, only: [:create, :destroy, :new, :show]
     resources :users, only: [:show, :index, :create, :new, :update]
     resource :session, only: [:create, :destroy, :show, :new]
-    resources :comments, only: [:destroy]
+    resources :comments, only: [:destroy] do
+      resources :likes, except: [:destroy]
+    end
+    resources :likes, only: [:destroy]
     get "search", to: "utils#search"
   end
 

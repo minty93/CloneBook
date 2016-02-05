@@ -35,6 +35,7 @@ var SessionForm = React.createClass({
 
 
         <form onSubmit={ this.submit } className="login-form group">
+          <a href="/auth/facebook">Login with Facebook</a>
           <div className="login">
 
           <label className="email">

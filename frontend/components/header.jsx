@@ -48,8 +48,8 @@ var Header = React.createClass({
           <li className="logged-in">Logged in as { this.state.currentUser.email }<img src={this.state.currentUser.profile_pic} className= "side-logo"/></li>
           <li className="searchbar"><Search className="search"/></li>
 
-          <li><Link to={`/`}>Home</Link></li>
-          <li><Link to={`users/${currentUser.id}`}>{currentUser.fname}</Link></li>
+          <li><Link className="link" to={`/`}>Home</Link></li>
+          <li><Link className="link" to={`users/${currentUser.id}`}>{currentUser.fname}</Link></li>
           <li><button onClick={ this.logout }> LOG OUT</button></li>
           </ul>
         </div>

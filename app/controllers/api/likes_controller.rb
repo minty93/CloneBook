@@ -45,7 +45,7 @@ class Api::LikesController < ApplicationController
   def destroy
     @like.destroy
     render json: @like
-    end
+    
   end
 
   private

@@ -86,7 +86,7 @@ var PostsIndexItems = React.createClass({
         <ul className="post-index-items group">
         <li><button onClick={this.handleDelete}>Delete Post</button></li>
           <img className="small-image" src={profile_pic} />
-          <Link className="username" to={`users/${this.props.post.author_id}`}>{this.props.post.author_name}</Link>
+          <Link className="username" to={'users/' + this.props.post.author_id}>{this.props.post.author_name}</Link>
           <h1 className="timeago">Created <TimeAgo date={this.props.post.created_at} /></h1>
           <li className="actual-post">{this.props.post.body}</li>
         </ul>

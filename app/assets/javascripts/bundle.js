@@ -31563,7 +31563,7 @@
 	        React.createElement("img", { className: "small-image", src: profile_pic }),
 	        React.createElement(
 	          Link,
-	          { className: "username", to: `users/${ this.props.post.author_id }` },
+	          { className: "username", to: 'users/' + this.props.post.author_id },
 	          this.props.post.author_name
 	        ),
 	        React.createElement(

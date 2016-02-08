@@ -7,6 +7,8 @@ var UserApiUtil = require('../util/users_api_util');
 var TimeAgo = require("react-timeago");
 var Link = require('react-router').Link;
 var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+var CurrentUserStore = require('./../stores/current_user_store');
+
 
 
 var PostsIndexItems = React.createClass({
@@ -71,6 +73,15 @@ var PostsIndexItems = React.createClass({
     var profile_pic;
     var to;
 
+
+    var deletebutton = <div></div>;
+
+    if (this.props.post.author_id == CurrentUserStore.user().id){
+
+      deletebutton = <button onClick={this.handleDelete}>Delete Post</button>
+    }
+
+
     if(this.props.post.comments){
       <li>
         {
@@ -89,7 +100,7 @@ var PostsIndexItems = React.createClass({
     return (
       <div >
         <ul className="post-index-items group">
-        <li><button onClick={this.handleDelete}>Delete Post</button></li>
+          <li>{deletebutton}</li>
           <img className="small-image" src={this.props.post.profile_pic} />
           <Link className="username" to={'users/' + this.props.post.author_id}>{this.props.post.author_name} posted</Link>
           <h1 className="timeago">Created <TimeAgo date={this.props.post.created_at} /></h1>

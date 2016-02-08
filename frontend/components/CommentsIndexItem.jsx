@@ -6,6 +6,8 @@ var PostsApiUtil = require('../util/posts_api_util');
 var UserApiUtil = require('../util/users_api_util');
 var TimeAgo = require("react-timeago");
 var Link = require('react-router').Link;
+var CurrentUserStore = require('./../stores/current_user_store');
+
 
 var CommentsIndexItem = React.createClass({
 
@@ -23,13 +25,20 @@ var CommentsIndexItem = React.createClass({
 
 
   render: function() {
-    
+
+    var deletebutton = <div></div>;
+
+    if (this.props.comment.author_id == CurrentUserStore.user().id){
+
+      deletebutton = <button onClick={this.handleDelete}>Delete Comment</button>
+    }
+
     return (
       <div className="comment-index-items" >
         <ul className="comment-index-items-input">
         <Link className="comment-username" to={`users/${this.props.comment.author_id}`}>{this.props.comment.author_name}</Link>
           <li className="actual-comment">{this.props.comment.description}</li>
-          <button onClick={this.handleDelete}>Delete</button>
+          <li>{deletebutton}</li>
         </ul>
       </div>
     );

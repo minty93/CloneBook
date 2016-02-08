@@ -31475,6 +31475,7 @@
 	var TimeAgo = __webpack_require__(245);
 	var Link = __webpack_require__(159).Link;
 	var ReactCSSTransitionGroup = __webpack_require__(246);
+	var CurrentUserStore = __webpack_require__(256);
 	
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
@@ -31539,6 +31540,17 @@
 	    var profile_pic;
 	    var to;
 	
+	    var deletebutton = React.createElement("div", null);
+	
+	    if (this.props.post.author_id == CurrentUserStore.user().id) {
+	
+	      deletebutton = React.createElement(
+	        "button",
+	        { onClick: this.handleDelete },
+	        "Delete Post"
+	      );
+	    }
+	
 	    if (this.props.post.comments) {
 	      React.createElement(
 	        "li",
@@ -31565,11 +31577,7 @@
 	        React.createElement(
 	          "li",
 	          null,
-	          React.createElement(
-	            "button",
-	            { onClick: this.handleDelete },
-	            "Delete Post"
-	          )
+	          deletebutton
 	        ),
 	        React.createElement("img", { className: "small-image", src: this.props.post.profile_pic }),
 	        React.createElement(
@@ -31774,6 +31782,7 @@
 	var UserApiUtil = __webpack_require__(214);
 	var TimeAgo = __webpack_require__(245);
 	var Link = __webpack_require__(159).Link;
+	var CurrentUserStore = __webpack_require__(256);
 	
 	var CommentsIndexItem = React.createClass({
 	  displayName: "CommentsIndexItem",
@@ -31790,6 +31799,17 @@
 	  // <h1 className="comment-timeago">Created <TimeAgo date={this.props.comment.created_at} /></h1>
 	
 	  render: function () {
+	
+	    var deletebutton = React.createElement("div", null);
+	
+	    if (this.props.comment.author_id == CurrentUserStore.user().id) {
+	
+	      deletebutton = React.createElement(
+	        "button",
+	        { onClick: this.handleDelete },
+	        "Delete Comment"
+	      );
+	    }
 	
 	    return React.createElement(
 	      "div",
@@ -31808,9 +31828,9 @@
 	          this.props.comment.description
 	        ),
 	        React.createElement(
-	          "button",
-	          { onClick: this.handleDelete },
-	          "Delete"
+	          "li",
+	          null,
+	          deletebutton
 	        )
 	      )
 	    );
@@ -33075,23 +33095,23 @@
 	    }
 	  },
 	
-	  getInitialState: function () {
-	    user = this._findUserById(this.props.params.userId);
-	    return { user: user };
-	  },
-	
-	  componentDidMount: function () {
-	    this.listener = UserStore.addListener(this._onChange);
-	  },
-	
-	  componentWillUnmount: function () {
-	    this.listener.remove();
-	  },
-	
-	  _onChange: function () {
-	    user = this._findUserById(this.props.params.userId);
-	    this.setState({ user: user });
-	  },
+	  // getInitialState: function(){
+	  //   user = this._findUserById(this.props.params.userId);
+	  //   return {user: user };
+	  // },
+	  //
+	  // componentDidMount: function() {
+	  //   this.listener = UserStore.addListener(this._onChange);
+	  // },
+	  //
+	  // componentWillUnmount: function() {
+	  //   this.listener.remove();
+	  // },
+	  //
+	  // _onChange: function(){
+	  //   user = this._findUserById(this.props.params.userId);
+	  //   this.setState({user: user})
+	  // },
 	
 	  handleFriend: function () {
 	    user = this.state.user;
@@ -33100,7 +33120,7 @@
 	  },
 	
 	  render: function () {
-	    debugger;
+	
 	    var userprofile = this._findUserById(this.props.params.userId);
 	    var currentUser = CurrentUserStore.user();
 	    var profileid = parseInt(this.props.params.userId);

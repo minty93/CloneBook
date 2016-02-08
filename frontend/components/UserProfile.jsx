@@ -66,6 +66,7 @@ var UserProfile = React.createClass({
   render: function() {
     var received_posts;
 
+
     if (this.state.user) {
       if(this.state.user.received_posts){
       received_posts = this.state.user.received_posts.slice(0);

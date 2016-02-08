@@ -46,6 +46,7 @@ var UserProfile = React.createClass({
 
   componentWillReceiveProps: function(newProps){
     UserApiUtil.fetchUser(parseInt(newProps.params.userId));
+    this.forceUpdate();
   },
 
   componentWillUnmount: function () {

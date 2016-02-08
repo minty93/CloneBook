@@ -20,15 +20,37 @@ var FriendRequestItem = React.createClass({
     }
   },
 
+  getInitialState: function(){
+    user = this._findUserById(this.props.params.userId);
+    return {user: user };
+  },
+
+  componentDidMount: function() {
+    this.listener = UserStore.addListener(this._onChange);
+  },
+
+  componentWillUnmount: function() {
+    this.listener.remove();
+  },
+
+  _onChange: function(){
+    user = this._findUserById(this.props.params.userId);
+    this.setState({user: user})
+  },
+
+
+
 handleFriend: function(){
-  user = this._findUserById(this.props.params.userId);
+  user = this.state.user
   name = user.fname + " " + user.lname;
   FriendApiUtil.createFriend({requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name});
 },
 
 
 
+
   render: function() {
+    debugger
     var userprofile = this._findUserById(this.props.params.userId);
     var currentUser = CurrentUserStore.user();
     var profileid = parseInt(this.props.params.userId);

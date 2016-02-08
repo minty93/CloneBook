@@ -60,6 +60,7 @@ UserStore._removePost = function (post) {
 };
 
 UserStore.addNewFriend = function(friend){
+  debugger;
   a = UserStore._findUserById(parseInt(friend.requester_id));
   a.requested_friends.push({requestee_id:friend.requestee_id});
   b = UserStore._findUserById(parseInt(friend.requestee_id));
@@ -172,7 +173,7 @@ UserStore.__onDispatch = function (payload) {
     UserStore._addImage(payload.photo);
     break;
   case UserConstants.FRIEND_RECEIVED:
-    var result = UserStore.addNewFriend(payload.friend);
+    UserStore.addNewFriend(payload.friend);
     UserStore.__emitChange();
     break;
   case UserConstants.FRIENDS_RECEIVED:

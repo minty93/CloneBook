@@ -56,9 +56,20 @@ handleFriend: function(){
 },
 
 
+handleDelete: function(){
+
+  user = this.state.user
+  name = user.fname + " " + user.lname;
+  FriendApiUtil.deleteFriend({requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name});
+  UserApiUtil.fetchUser(this.props.params.userId);
+
+},
+
+
 
 
   render: function() {
+
     var userprofile = this._findUserById(this.props.params.userId);
     var currentUser = this._findUserById(CurrentUserStore.user().id);
     var profileid = parseInt(this.props.params.userId);

@@ -33173,7 +33173,17 @@
 	    UserApiUtil.fetchUser(this.props.params.userId);
 	  },
 	
+	  handleDelete: function () {
+	
+	    user = this.state.user;
+	    name = user.fname + " " + user.lname;
+	    FriendApiUtil.deleteFriend({ requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name });
+	    UserApiUtil.fetchUser(this.props.params.userId);
+	  },
+	
 	  render: function () {
+	    "hell";
+	
 	    var userprofile = this._findUserById(this.props.params.userId);
 	    var currentUser = this._findUserById(CurrentUserStore.user().id);
 	    var profileid = parseInt(this.props.params.userId);
@@ -33256,10 +33266,10 @@
 	   },
 	
 	   deleteFriend: function (friend) {
-	
+	      debugger;
 	      $.ajax({
 	         method: 'DELETE',
-	         url: 'api/friend_requests' + data.id,
+	         url: 'api/friend_requests/',
 	         data: friend,
 	         success: function (friend) {
 	            FriendActions.removedFriend(friend);

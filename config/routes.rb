@@ -7,7 +7,8 @@ Rails.application.routes.draw do
 
 
   namespace :api, defaults: {format: :json} do
-    resources :friend_requests
+    resources :friend_requests, except: [:destroy]
+    resource :friend_requests, only: [:destroy] 
     resources :posts do
       resources :comments, except: [:destroy] do
       end

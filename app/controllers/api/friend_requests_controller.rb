@@ -60,6 +60,7 @@ class Api::FriendRequestsController < ApplicationController
   #
 
   def destroy
+    debugger
     @friend_request.destroy
     render :show
   end

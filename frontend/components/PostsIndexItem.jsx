@@ -51,7 +51,7 @@ var PostsIndexItems = React.createClass({
  //   this.setState({ post: post });
  // },
 
- //   debugger
+ //   
  // if(this.props.post.author && this.props.post.author.profile_pic_url){
  //   profile_pic = this.props.post.author.profile_pic_url;
  // }
@@ -66,8 +66,13 @@ var PostsIndexItems = React.createClass({
  //       to = <div></div>;
  //       }
 
-  render: function() {
+ handleDelete: function(e){
+   e.preventDefault();
+   var that = this;
+   PostsApiUtil.destroyPost(this.props.post.id);
+ },
 
+  render: function() {
 
     var comments;
     var profile_pic;
@@ -114,11 +119,6 @@ var PostsIndexItems = React.createClass({
     );
   },
 
-  handleDelete: function(e){
-    e.preventDefault();
-    var that = this;
-    PostsApiUtil.destroyPost(this.props.post.id);
-  },
 
 
 

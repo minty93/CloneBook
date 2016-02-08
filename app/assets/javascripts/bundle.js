@@ -52,12 +52,12 @@
 	var IndexRoute = ReactRouter.IndexRoute;
 	var PostsForm = __webpack_require__(206);
 	var PostsIndex = __webpack_require__(238);
-	var UserProfile = __webpack_require__(253);
+	var UserProfile = __webpack_require__(254);
 	var CommentsForm = __webpack_require__(241);
 	var App = __webpack_require__(273);
 	var SessionForm = __webpack_require__(275);
 	var UserForm = __webpack_require__(276);
-	var CurrentUserStore = __webpack_require__(256);
+	var CurrentUserStore = __webpack_require__(246);
 	var SessionsApiUtil = __webpack_require__(267);
 	var UsersIndex = __webpack_require__(277);
 	var About = __webpack_require__(278);
@@ -31317,7 +31317,7 @@
 	var PostsForm = __webpack_require__(206);
 	var CommentsForm = __webpack_require__(241);
 	var CommentsIndexItem = __webpack_require__(244);
-	var ReactCSSTransitionGroup = __webpack_require__(246);
+	var ReactCSSTransitionGroup = __webpack_require__(247);
 	
 	var PostsIndex = React.createClass({
 	  displayName: "PostsIndex",
@@ -31474,8 +31474,8 @@
 	var UserApiUtil = __webpack_require__(214);
 	var TimeAgo = __webpack_require__(245);
 	var Link = __webpack_require__(159).Link;
-	var ReactCSSTransitionGroup = __webpack_require__(246);
-	var CurrentUserStore = __webpack_require__(256);
+	var ReactCSSTransitionGroup = __webpack_require__(247);
+	var CurrentUserStore = __webpack_require__(246);
 	
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
@@ -31519,7 +31519,7 @@
 	  //   this.setState({ post: post });
 	  // },
 	
-	  //   debugger
+	  //  
 	  // if(this.props.post.author && this.props.post.author.profile_pic_url){
 	  //   profile_pic = this.props.post.author.profile_pic_url;
 	  // }
@@ -31533,6 +31533,12 @@
 	  //     else {
 	  //       to = <div></div>;
 	  //       }
+	
+	  handleDelete: function (e) {
+	    e.preventDefault();
+	    var that = this;
+	    PostsApiUtil.destroyPost(this.props.post.id);
+	  },
 	
 	  render: function () {
 	
@@ -31605,12 +31611,6 @@
 	        React.createElement(CommentsForm, { commentableId: this.props.post.id, commentableType: "Post" })
 	      )
 	    );
-	  },
-	
-	  handleDelete: function (e) {
-	    e.preventDefault();
-	    var that = this;
-	    PostsApiUtil.destroyPost(this.props.post.id);
 	  }
 	
 	});
@@ -31782,7 +31782,7 @@
 	var UserApiUtil = __webpack_require__(214);
 	var TimeAgo = __webpack_require__(245);
 	var Link = __webpack_require__(159).Link;
-	var CurrentUserStore = __webpack_require__(256);
+	var CurrentUserStore = __webpack_require__(246);
 	
 	var CommentsIndexItem = React.createClass({
 	  displayName: "CommentsIndexItem",
@@ -31977,10 +31977,58 @@
 /* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(247);
+	var Store = __webpack_require__(220).Store;
+	var AppDispatcher = __webpack_require__(210);
+	var CurrentUserConstants = __webpack_require__(218);
+	
+	var _currentUser = {};
+	var _currentUserHasBeenFetched = false;
+	var CurrentUserStore = new Store(AppDispatcher);
+	
+	CurrentUserStore.currentUser = function () {
+		return $.extend({}, _currentUser);
+	};
+	
+	CurrentUserStore.user = function () {
+		return _currentUser;
+	};
+	
+	CurrentUserStore.isLoggedIn = function () {
+		return !!_currentUser.id;
+	};
+	
+	CurrentUserStore.signOut = function () {
+		_currentUser = {};
+		CurrentUserStore.__emitChange();
+	};
+	
+	CurrentUserStore.userHasBeenFetched = function () {
+		return _currentUserHasBeenFetched;
+	};
+	
+	CurrentUserStore.__onDispatch = function (payload) {
+		switch (payload.actionType) {
+			case CurrentUserConstants.RECEIVE_CURRENT_USER:
+				_currentUserHasBeenFetched = true;
+				_currentUser = payload.currentUser;
+				CurrentUserStore.__emitChange();
+				break;
+			case CurrentUserConstants.LOG_OUT:
+				CurrentUserStore.signOut();
+				break;
+		}
+	};
+	
+	module.exports = CurrentUserStore;
 
 /***/ },
 /* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(248);
+
+/***/ },
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32001,8 +32049,8 @@
 	
 	var assign = __webpack_require__(39);
 	
-	var ReactTransitionGroup = __webpack_require__(248);
-	var ReactCSSTransitionGroupChild = __webpack_require__(250);
+	var ReactTransitionGroup = __webpack_require__(249);
+	var ReactCSSTransitionGroupChild = __webpack_require__(251);
 	
 	function createTransitionTimeoutPropValidator(transitionType) {
 	  var timeoutPropName = 'transition' + transitionType + 'Timeout';
@@ -32068,7 +32116,7 @@
 	module.exports = ReactCSSTransitionGroup;
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32085,7 +32133,7 @@
 	'use strict';
 	
 	var React = __webpack_require__(2);
-	var ReactTransitionChildMapping = __webpack_require__(249);
+	var ReactTransitionChildMapping = __webpack_require__(250);
 	
 	var assign = __webpack_require__(39);
 	var emptyFunction = __webpack_require__(15);
@@ -32278,7 +32326,7 @@
 	module.exports = ReactTransitionGroup;
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32381,7 +32429,7 @@
 	module.exports = ReactTransitionChildMapping;
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32401,8 +32449,8 @@
 	var React = __webpack_require__(2);
 	var ReactDOM = __webpack_require__(3);
 	
-	var CSSCore = __webpack_require__(251);
-	var ReactTransitionEvents = __webpack_require__(252);
+	var CSSCore = __webpack_require__(252);
+	var ReactTransitionEvents = __webpack_require__(253);
 	
 	var onlyChild = __webpack_require__(156);
 	
@@ -32551,7 +32599,7 @@
 	module.exports = ReactCSSTransitionGroupChild;
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -32654,7 +32702,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32768,19 +32816,19 @@
 	module.exports = ReactTransitionEvents;
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(254);
+	var UserStore = __webpack_require__(255);
 	var PostStore = __webpack_require__(219);
 	var CommentStore = __webpack_require__(239);
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var FriendButton = __webpack_require__(255);
+	var FriendButton = __webpack_require__(256);
 	var CoverForm = __webpack_require__(259);
 	var ProfileForm = __webpack_require__(260);
 	var PhotoIndex = __webpack_require__(261);
@@ -32875,7 +32923,7 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -32940,7 +32988,6 @@
 	};
 	
 	UserStore.addNewFriend = function (friend) {
-	  debugger;
 	  a = UserStore._findUserById(parseInt(friend.requester_id));
 	  a.requested_friends.push({ requestee_id: friend.requestee_id });
 	  b = UserStore._findUserById(parseInt(friend.requestee_id));
@@ -33069,17 +33116,18 @@
 	module.exports = UserStore;
 
 /***/ },
-/* 255 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var CommentStore = __webpack_require__(239);
 	var PostStore = __webpack_require__(219);
-	var CurrentUserStore = __webpack_require__(256);
+	var CurrentUserStore = __webpack_require__(246);
 	var CommentsApiUtil = __webpack_require__(242);
 	var PostsApiUtil = __webpack_require__(207);
 	var FriendApiUtil = __webpack_require__(257);
-	var UserStore = __webpack_require__(254);
+	var UserStore = __webpack_require__(255);
+	var UserApiUtil = __webpack_require__(214);
 	
 	var FriendRequestItem = React.createClass({
 	  displayName: "FriendRequestItem",
@@ -33095,34 +33143,39 @@
 	    }
 	  },
 	
-	  // getInitialState: function(){
-	  //   user = this._findUserById(this.props.params.userId);
-	  //   return {user: user };
-	  // },
-	  //
-	  // componentDidMount: function() {
-	  //   this.listener = UserStore.addListener(this._onChange);
-	  // },
-	  //
-	  // componentWillUnmount: function() {
-	  //   this.listener.remove();
-	  // },
-	  //
-	  // _onChange: function(){
-	  //   user = this._findUserById(this.props.params.userId);
-	  //   this.setState({user: user})
-	  // },
+	  getInitialState: function () {
+	    user = this._findUserById(this.props.params.userId);
+	    return { user: {} };
+	  },
+	
+	  componentDidMount: function () {
+	    this.listener = UserStore.addListener(this._onChange);
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.listener.remove();
+	  },
+	
+	  _onChange: function () {
+	    user = this._findUserById(this.props.params.userId);
+	    this.setState({ user: user });
+	  },
+	
+	  componentWillReceiveProps(newProps) {
+	    user = this._findUserById(newProps.params.userId);
+	    this.setState({ user: user });
+	  },
 	
 	  handleFriend: function () {
 	    user = this.state.user;
 	    name = user.fname + " " + user.lname;
 	    FriendApiUtil.createFriend({ requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name });
+	    UserApiUtil.fetchUser(this.props.params.userId);
 	  },
 	
 	  render: function () {
-	
 	    var userprofile = this._findUserById(this.props.params.userId);
-	    var currentUser = CurrentUserStore.user();
+	    var currentUser = this._findUserById(CurrentUserStore.user().id);
 	    var profileid = parseInt(this.props.params.userId);
 	
 	    var button = React.createElement("div", null);
@@ -33172,54 +33225,6 @@
 	});
 	
 	module.exports = FriendRequestItem;
-
-/***/ },
-/* 256 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Store = __webpack_require__(220).Store;
-	var AppDispatcher = __webpack_require__(210);
-	var CurrentUserConstants = __webpack_require__(218);
-	
-	var _currentUser = {};
-	var _currentUserHasBeenFetched = false;
-	var CurrentUserStore = new Store(AppDispatcher);
-	
-	CurrentUserStore.currentUser = function () {
-		return $.extend({}, _currentUser);
-	};
-	
-	CurrentUserStore.user = function () {
-		return _currentUser;
-	};
-	
-	CurrentUserStore.isLoggedIn = function () {
-		return !!_currentUser.id;
-	};
-	
-	CurrentUserStore.signOut = function () {
-		_currentUser = {};
-		CurrentUserStore.__emitChange();
-	};
-	
-	CurrentUserStore.userHasBeenFetched = function () {
-		return _currentUserHasBeenFetched;
-	};
-	
-	CurrentUserStore.__onDispatch = function (payload) {
-		switch (payload.actionType) {
-			case CurrentUserConstants.RECEIVE_CURRENT_USER:
-				_currentUserHasBeenFetched = true;
-				_currentUser = payload.currentUser;
-				CurrentUserStore.__emitChange();
-				break;
-			case CurrentUserConstants.LOG_OUT:
-				CurrentUserStore.signOut();
-				break;
-		}
-	};
-	
-	module.exports = CurrentUserStore;
 
 /***/ },
 /* 257 */
@@ -33437,9 +33442,9 @@
 	var PhotoIndexItem = __webpack_require__(264);
 	var ImageForm = __webpack_require__(265);
 	var Navbar = __webpack_require__(266);
-	var UserStore = __webpack_require__(254);
+	var UserStore = __webpack_require__(255);
 	var UserApiUtil = __webpack_require__(214);
-	var CurrentUserStore = __webpack_require__(256);
+	var CurrentUserStore = __webpack_require__(246);
 	
 	var PhotoIndex = React.createClass({
 	  displayName: 'PhotoIndex',
@@ -33589,7 +33594,7 @@
 	var React = __webpack_require__(1);
 	var ImageApiUtil = __webpack_require__(262);
 	var UserApiUtil = __webpack_require__(214);
-	var CurrentUserStore = __webpack_require__(256);
+	var CurrentUserStore = __webpack_require__(246);
 	
 	var ImageForm = React.createClass({
 	  displayName: 'ImageForm',
@@ -33662,14 +33667,14 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(256);
+	var CurrentUserStore = __webpack_require__(246);
 	var SessionsApiUtil = __webpack_require__(267);
 	var Search = __webpack_require__(268);
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
 	var CoverForm = __webpack_require__(259);
 	var ProfileForm = __webpack_require__(260);
-	var FriendButton = __webpack_require__(255);
+	var FriendButton = __webpack_require__(256);
 	
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
@@ -33799,7 +33804,7 @@
 	var React = __webpack_require__(1);
 	var SearchResultsStore = __webpack_require__(269);
 	var SearchApiUtil = __webpack_require__(271);
-	var UserProfile = __webpack_require__(253);
+	var UserProfile = __webpack_require__(254);
 	var PostIndexItem = __webpack_require__(240);
 	var CommentIndexItem = __webpack_require__(244);
 	var Link = __webpack_require__(159).Link;
@@ -33987,7 +33992,7 @@
 	var React = __webpack_require__(1),
 	    Header = __webpack_require__(274),
 	    SessionsApiUtil = __webpack_require__(267),
-	    CurrentUserStore = __webpack_require__(256);
+	    CurrentUserStore = __webpack_require__(246);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -34027,7 +34032,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(256);
+	var CurrentUserStore = __webpack_require__(246);
 	var SessionsApiUtil = __webpack_require__(267);
 	var Search = __webpack_require__(268);
 	var History = __webpack_require__(159).History;
@@ -34505,7 +34510,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var UsersStore = __webpack_require__(254);
+	var UsersStore = __webpack_require__(255);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var UsersIndex = React.createClass({
@@ -34567,7 +34572,7 @@
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(254);
+	var UserStore = __webpack_require__(255);
 	var PostStore = __webpack_require__(219);
 	var CommentStore = __webpack_require__(239);
 	var PostsForm = __webpack_require__(206);
@@ -34693,7 +34698,7 @@
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(254);
+	var UserStore = __webpack_require__(255);
 	var PostStore = __webpack_require__(219);
 	var CommentStore = __webpack_require__(239);
 	var PostsForm = __webpack_require__(206);
@@ -34703,7 +34708,7 @@
 	var ProfileForm = __webpack_require__(260);
 	var Navbar = __webpack_require__(266);
 	var Link = __webpack_require__(159).Link;
-	var FriendButton = __webpack_require__(255);
+	var FriendButton = __webpack_require__(256);
 	
 	var Friends = React.createClass({
 	  displayName: 'Friends',

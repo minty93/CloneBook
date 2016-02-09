@@ -25,10 +25,9 @@ var FriendApiUtil = {
   },
 
   deleteFriend: function(friend){
-    debugger
     $.ajax({
        method: 'DELETE',
-       url: 'api/friend_requests/',
+       url: '/api/friend_requests',
        data: friend,
        success: function(friend) {
         FriendActions.removedFriend(friend);

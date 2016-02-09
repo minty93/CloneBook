@@ -33182,7 +33182,6 @@
 	  },
 	
 	  render: function () {
-	    "hell";
 	
 	    var userprofile = this._findUserById(this.props.params.userId);
 	    var currentUser = this._findUserById(CurrentUserStore.user().id);
@@ -33266,10 +33265,9 @@
 	   },
 	
 	   deleteFriend: function (friend) {
-	      debugger;
 	      $.ajax({
 	         method: 'DELETE',
-	         url: 'api/friend_requests/',
+	         url: '/api/friend_requests',
 	         data: friend,
 	         success: function (friend) {
 	            FriendActions.removedFriend(friend);

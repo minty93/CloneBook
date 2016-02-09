@@ -1,5 +1,5 @@
 class Api::FriendRequestsController < ApplicationController
-  before_action :set_friend_request, only: [:show, :edit, :update, :destroy]
+  before_action :set_friend_request, only: [:show, :edit, :update]
 
   # GET /friend_requests
   # GET /friend_requests.json
@@ -60,7 +60,6 @@ class Api::FriendRequestsController < ApplicationController
   #
 
   def destroy
-    debugger
     @friend_request.destroy
     render :show
   end

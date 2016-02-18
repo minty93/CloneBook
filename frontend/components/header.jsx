@@ -43,13 +43,14 @@ var Header = React.createClass({
       currentUser = CurrentUserStore.user()
       return (
         <div className="main-header group">
-          <img src="http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png" className="side-logo"/>
+          <Link className="link" to={`/`}>
+          <img src="http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png" className="side-logo"/></Link>
           <ul className="main-links group">
           <li className="searchbar"><Search className="search"/></li>
 
           <li><Link className="link" to={`/`}>Home</Link></li>
-          <li className="logged-in"> <img src={this.state.currentUser.profile_pic} /></li>
-          <li><Link className="link" to={`users/${currentUser.id}`}>{currentUser.fname}</Link></li>
+          <li className="logged-in">
+          <Link className="link" to={`users/${currentUser.id}`}><img src={this.state.currentUser.profile_pic} />{currentUser.fname}</Link></li>
           <li><button onClick={ this.logout }> Log Out</button></li>
           </ul>
         </div>

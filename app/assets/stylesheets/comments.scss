@@ -5,13 +5,14 @@
 .comment-form > form > input {
   background: white;
   width: 450px;
-  height: 50px;
+  height: 30px;
   color: black;
   margin-bottom: 5px;
   border: 1px solid lightgrey;
   font-size: 12px;
   margin-top: 10px;
   margin-left: 10px;
+  padding-left: 5px;
 
 }
 
@@ -19,8 +20,9 @@
 .comment-form > form{
   margin: 0 auto;
   border: 1px solid lightgrey;
+  border-top: none;
   width: 494px;
-  height: 75px;
+  height: 55px;
   background: #F6F7F8;
   position: relative;
 }
@@ -33,7 +35,7 @@
   align-self: center;
   margin: 0 auto;
   width: 494px;
-  height: 75px;
+  height: 45px;
   background: #F6F7F8;
   position: relative;
   border-left: 1px solid lightgrey;
@@ -62,5 +64,36 @@
 
 .actual-comment{
   margin-left: 40px;
+  display: inline-block;
+  float: left;
 
+}
+
+.comment-index-items-input > li > button{
+  margin-left: 140px;
+  display: inline-block;
+  float: right;
+
+}
+
+.comment-index-items-input {
+  height: 20px;
+}
+
+
+.post-index-items > li > button:hover {
+  width: auto;
+  height: 22px;
+  background: #4C67A1;
+  float: right;
+  margin-right: 10px;
+  color: white;
+  padding: 3px;
+  border-radius: 3px;
+}
+
+.comment-username {
+  float: left;
+  display: inline;
+  margin-top: 4px;
 }

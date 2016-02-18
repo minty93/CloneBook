@@ -90,7 +90,7 @@
    height: 35px;
    display: inline;
    border: 1px solid #425F9C;
-   margin-top: 5px;
+   margin-top: 8px;
  }
 
  .profile-nav {
@@ -375,13 +375,24 @@
   color: white;
 }
 
+.search-input {
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+.searchbar {
+  margin-top: 100px;
+  padding: 0px;
+}
+
 .main-links > li {
   float: left;
   color: white;
   padding: 10px;
   margin: 5px;
+  margin-top: 10px;
   font-size: 12px;
-  padding-top: 15px;
+  // padding-top: 15px;
 }
 
 .main-links > li:first-child > img {
@@ -392,7 +403,7 @@
 
 .searchbar {
   width: 700px;
-  height: 30px;
+  height: 33px;
 }
 
 .main-header > img {
@@ -418,6 +429,7 @@
 
 .link {
   color: white;
+  float: left;
 }
 
 .ads {
@@ -444,6 +456,10 @@
   padding-left: 100px;
 }
 
+.logged-in {
+  display: block;
+}
+
 .logged-in > img{
   margin-top: 0;
   position: absolute;
@@ -452,6 +468,11 @@
   display: inline;
   top: 5px;
   left: 762px;
+  margin-right: 20px;
+}
+
+.logged-in > a{
+  margin-left: 25px;
 }
 
 .main-links > li > a {
@@ -464,7 +485,7 @@
 
 
 .comment-index-items-input {
-  padding: 10px;
+  padding: 5px;
 }
 
 .comment-index-items-input > a {
@@ -573,6 +594,47 @@ float: left;
 
 .image-form2  > label  {
   font-size: 9px;
+}
 
+.logged-in {
+  top: 0;
+  margin: 0 !important;
+  padding-top: 6px !important;
+}
+
+.logged-in > a > img {
+  margin-top: 0px;
+  width: 40px;
+  height: 40px;
+  float: left;
+}
+
+
+.logged-in > a > span {
+  display: inline-block;
+  margin-top: 14px;
+  float: left;
+  margin-left: 5px;
+}
+
+
+.search-input {
+  margin-top: 0px;
+}
+
+
+.timesecond {
+  display: block;
+}
+
+.comment-index-items-input > li > button {
+  float: right;
+  margin: 0 auto;
+}
+
+.timeagosecond > span {
+  display: block !important;
+  float: left;
+  width: 496px;
 
 }

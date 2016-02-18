@@ -31362,7 +31362,7 @@
 	                React.createElement(
 	                  "div",
 	                  { className: "post-box" },
-	                  React.createElement(PostsIndexItem, { key: post.id, post: post })
+	                  React.createElement(PostsIndexItem, { key: index, post: post })
 	                )
 	              );
 	            })
@@ -31375,7 +31375,7 @@
 	        React.createElement(
 	          "a",
 	          { href: "http://www.appacademy.io/" },
-	          React.createElement("img", { src: "http://s13.postimg.org/7sb4gw4mv/1441509975_1.jpg" })
+	          React.createElement("img", { src: "http://s30.postimg.org/wvcuhclo1/1441118500_app_academy.png" })
 	        ),
 	        React.createElement(
 	          "a",
@@ -31519,7 +31519,7 @@
 	  //   this.setState({ post: post });
 	  // },
 	
-	  //  
+	  //
 	  // if(this.props.post.author && this.props.post.author.profile_pic_url){
 	  //   profile_pic = this.props.post.author.profile_pic_url;
 	  // }
@@ -31561,14 +31561,14 @@
 	      React.createElement(
 	        "li",
 	        null,
-	        comments = this.props.post.comments.map(function (comment) {
+	        comments = this.props.post.comments.map(function (comment, index) {
 	          return React.createElement(
 	            ReactCSSTransitionGroup,
 	            { transitionName: "example", transitionEnterTimeout: 500, transitionLeaveTimeout: 300 },
 	            React.createElement(
 	              "div",
 	              null,
-	              React.createElement(CommentsIndexItem, { key: comment.id, comment: comment })
+	              React.createElement(CommentsIndexItem, { key: index, comment: comment })
 	            )
 	          );
 	        })
@@ -31595,7 +31595,7 @@
 	        React.createElement(
 	          "h1",
 	          { className: "timeago" },
-	          "Created ",
+	          "Created",
 	          React.createElement(TimeAgo, { date: this.props.post.created_at })
 	        ),
 	        React.createElement(
@@ -31832,6 +31832,11 @@
 	          null,
 	          deletebutton
 	        )
+	      ),
+	      React.createElement(
+	        "h1",
+	        { className: "timeagosecond" },
+	        React.createElement(TimeAgo, { date: this.props.comment.created_at })
 	      )
 	    );
 	  }
@@ -33888,7 +33893,7 @@
 	    // {SearchResultsStore.meta().totalCount}
 	    return React.createElement(
 	      'div',
-	      null,
+	      { className: 'search' },
 	      React.createElement('h1', { className: 'title' }),
 	      React.createElement('input', { className: 'search-input', type: 'text', placeholder: 'Search', onKeyUp: this.search }),
 	      React.createElement('button', { onClick: this.nextPage }),
@@ -34083,7 +34088,11 @@
 	      return React.createElement(
 	        'div',
 	        { className: 'main-header group' },
-	        React.createElement('img', { src: 'http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png', className: 'side-logo' }),
+	        React.createElement(
+	          Link,
+	          { className: 'link', to: `/` },
+	          React.createElement('img', { src: 'http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png', className: 'side-logo' })
+	        ),
 	        React.createElement(
 	          'ul',
 	          { className: 'main-links group' },
@@ -34104,15 +34113,10 @@
 	          React.createElement(
 	            'li',
 	            { className: 'logged-in' },
-	            ' ',
-	            React.createElement('img', { src: this.state.currentUser.profile_pic })
-	          ),
-	          React.createElement(
-	            'li',
-	            null,
 	            React.createElement(
 	              Link,
 	              { className: 'link', to: `users/${ currentUser.id }` },
+	              React.createElement('img', { src: this.state.currentUser.profile_pic }),
 	              currentUser.fname
 	            )
 	          ),

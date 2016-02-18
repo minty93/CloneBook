@@ -40,6 +40,7 @@ var CommentsIndexItem = React.createClass({
           <li className="actual-comment">{this.props.comment.description}</li>
           <li>{deletebutton}</li>
         </ul>
+        <h1 className="timeagosecond"><TimeAgo date={this.props.comment.created_at} /></h1>
       </div>
     );
   },

@@ -37,14 +37,14 @@ var PostsIndex = React.createClass({
       <div className="main-page group">
       <div className="newsfeed">
         <ul className="posts-index">
-        <li><PostsForm params={this.props.params} placeholder="What's on your mind?"/></li>
-          <li>
+        <li ><PostsForm params={this.props.params} placeholder="What's on your mind?"/></li>
+          <li >
             {
               this.state.posts.slice(0).reverse().map(function(post,index) {
               return(
               <ReactCSSTransitionGroup transitionName="example" transitionEnterTimeout={500} transitionLeaveTimeout={300}>
               <div className="post-box">
-                <PostsIndexItem key={post.id} post={post}/>
+                <PostsIndexItem key={index} post={post}/>
               </div>
             </ReactCSSTransitionGroup>
             );
@@ -53,7 +53,7 @@ var PostsIndex = React.createClass({
         </ul>
       </div>
       <div className="ads group">
-        <a href="http://www.appacademy.io/"><img src="http://s13.postimg.org/7sb4gw4mv/1441509975_1.jpg"/></a>
+        <a href="http://www.appacademy.io/"><img src="http://s30.postimg.org/wvcuhclo1/1441118500_app_academy.png"/></a>
         <a href="http://www.github.com/"><img src="http://cdn.inquisitr.com/wp-content/uploads/2015/05/Github.jpg"/></a>
         <a href="https://slack.com/"><img src="http://cdn.churchm.ag/wp-content/uploads/2015/03/Slack-Logoness-750x431.png"/></a>
       </div>

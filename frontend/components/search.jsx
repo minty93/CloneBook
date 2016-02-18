@@ -59,7 +59,7 @@ var Search = React.createClass({
     // Displaying {SearchResultsStore.all().length} of
     // {SearchResultsStore.meta().totalCount}
     return (
-      <div>
+      <div className="search">
         <h1 className="title"></h1>
         <input className="search-input" type="text" placeholder="Search" onKeyUp={ this.search } />
         <button onClick={this.nextPage}></button>

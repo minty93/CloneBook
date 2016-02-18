@@ -51,7 +51,7 @@ var PostsIndexItems = React.createClass({
  //   this.setState({ post: post });
  // },
 
- //   
+ //
  // if(this.props.post.author && this.props.post.author.profile_pic_url){
  //   profile_pic = this.props.post.author.profile_pic_url;
  // }
@@ -88,13 +88,13 @@ var PostsIndexItems = React.createClass({
 
 
     if(this.props.post.comments){
-      <li>
+      <li >
         {
-          comments = this.props.post.comments.map(function(comment) {
+          comments = this.props.post.comments.map(function(comment, index) {
             return(
               <ReactCSSTransitionGroup transitionName="example" transitionEnterTimeout={500} transitionLeaveTimeout={300}>
               <div>
-                <CommentsIndexItem key={comment.id} comment={comment}/>
+                <CommentsIndexItem key={index} comment={comment}/>
               </div>
             </ReactCSSTransitionGroup>
             );
@@ -108,7 +108,7 @@ var PostsIndexItems = React.createClass({
           <li>{deletebutton}</li>
           <img className="small-image" src={this.props.post.profile_pic} />
           <Link className="username" to={'users/' + this.props.post.author_id}>{this.props.post.author_name} posted</Link>
-          <h1 className="timeago">Created <TimeAgo date={this.props.post.created_at} /></h1>
+          <h1 className="timeago">Created<TimeAgo date={this.props.post.created_at} /></h1>
           <li className="actual-post">{this.props.post.body}</li>
         </ul>
         <ul>

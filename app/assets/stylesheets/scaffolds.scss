@@ -25,9 +25,8 @@ a {
     color: #666;
   }
 
-  &:hover {
-    color: #fff;
-    background-color: #000;
+  &:hover > span:first-child {
+    border-bottom: 1px solid black;
   }
 }
 
@@ -45,6 +44,10 @@ div {
   padding: 2px;
   background-color: red;
   display: table;
+}
+
+.comment-username:hover{
+  border-bottom: 1px solid black;
 }
 
 #error_explanation {

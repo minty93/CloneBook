@@ -15,12 +15,12 @@
 
 .posts-index {
   margin: 0 auto;
-  border: 1px solid black;
+  // border: 1px solid black;
   width: 494px;
   height: 150px;
   margin-bottom: 15px;
   margin-top: 15px;
-  border: 1px solid lightgrey;
+  // border: 1px solid lightgrey;
   background: #FFFFFF;
 
 }
@@ -38,7 +38,7 @@
   height: 150px;
   margin-bottom: 15px;
   margin-top: 15px;
-  border-bottom: 1px solid lightgrey;
+  border: 1px solid lightgrey;
   background: white;
   position: relative;
 }
@@ -46,7 +46,7 @@
 .post-form > form > input {
     resize: none;
     float: right;
-    width: 494px;
+    width: 492px;
     height: 100px;
     padding: 10px;
     display: inline;
@@ -82,8 +82,8 @@
    border: 1px solid black;
    width: 496px;
    height: 150px;
-   margin-bottom: 15px;
-   margin-top: 15px;
+   margin-bottom: 8px;
+   margin-top: 8px;
    border: 1px solid lightgrey;
    background: white;
 
@@ -98,7 +98,7 @@
 .post-index-items > li > button {
   width: auto;
   height: 22px;
-  background: #4C67A1;
+  background: white;
   float: right;
   margin-right: 10px;
   color: white;
@@ -116,10 +116,17 @@
 
 .post-index-items.group {
   margin-bottom: 0;
-  padding: 20px;
+  padding: 10px;
+  height: auto;
+  padding-top: 17px;
+
 }
 
 .posts-index-items{
+}
+
+.username{
+  margin-left: 10px;
 }
 
 .username > a{
@@ -135,20 +142,26 @@
   font-size: 12px;
   color: lightgray;
   display: block;
-  margin: 5px;
   float: left;
+  margin: 2px;
+}
+
+.timeago > span:first-child {
+  margin-left: 10px;
 }
 .timeago > span > span{
   font-size: 12px;
   color: lightgray;
   display: block;
-  margin: 5px;
+  margin: 1px;
+
 }
 
 .actual-post {
   display: block;
-  margin: 25px;
-  margin-left: 55px;
+  margin: 15px;
+  margin-top: 40px;
+  margin-left: 0;
   font-size: 15px;
   font-weight: lighter;
   color: black;

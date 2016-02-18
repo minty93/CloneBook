@@ -23,12 +23,13 @@ class Api::PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
+    @post.profile_name ||= current_user.fname + " " + current_user.lname
     @post.profile_id ||= current_user.id
     @post.author_id = current_user.id
     @post.profile_pic = current_user.profile_pic.url
     @post.author_name = current_user.fname + " " + current_user.lname
       if @post.save
-        render :show
+        render json: @post
       else
         render json: @post.errors.full_messages, status: :unprocessable_entity
       end
@@ -57,6 +58,6 @@ class Api::PostsController < ApplicationController
     end
 
     def post_params
-      params.require(:post).permit(:body, :author_id, :profile_id, :likes)
+      params.require(:post).permit(:body, :author_id, :profile_id, :likes, :profile_name)
     end
 end

@@ -80,7 +80,8 @@ var PostsIndexItems = React.createClass({
 
 
     var deletebutton = <div></div>;
-
+    var profile_person = <Link className="username" to={'users/' + this.props.post.profile_id}>{this.props.post.profile_name}</Link>
+    debugger
     if (this.props.post.author_id == CurrentUserStore.user().id){
 
       deletebutton = <button onClick={this.handleDelete}>Delete Post</button>
@@ -107,7 +108,8 @@ var PostsIndexItems = React.createClass({
         <ul className="post-index-items group">
           <li>{deletebutton}</li>
           <img className="small-image" src={this.props.post.profile_pic} />
-          <Link className="username" to={'users/' + this.props.post.author_id}>{this.props.post.author_name} posted</Link>
+          <Link className="username" to={'users/' + this.props.post.author_id}>{this.props.post.author_name} posted {profile_person}</Link>
+
           <h1 className="timeago">Created<TimeAgo date={this.props.post.created_at} /></h1>
           <li className="actual-post">{this.props.post.body}</li>
         </ul>

@@ -24073,6 +24073,7 @@
 	var PostsApiUtil = __webpack_require__(207);
 	var UserApiUtil = __webpack_require__(214);
 	var PostStore = __webpack_require__(219);
+	var UserStore = __webpack_require__(255);
 	
 	var PostForm = React.createClass({
 	  displayName: 'PostForm',
@@ -24109,9 +24110,13 @@
 	  },
 	
 	  handleSubmit: function (e) {
+	    if (this.props.params.userId) {
+	      profile_user = UserStore._findUserById(this.props.params.userId);
+	    }
+	
 	    e.preventDefault();
 	    var that = this;
-	    var post = { body: this.state.body, profile_id: this.props.params.userId };
+	    var post = { body: this.state.body, profile_id: this.props.params.userId, profile_name: profile_user.fname + " " + profile_user.lname };
 	    var callback = function () {
 	      that.setState({ body: "" });
 	    };
@@ -31547,7 +31552,12 @@
 	    var to;
 	
 	    var deletebutton = React.createElement("div", null);
-	
+	    var profile_person = React.createElement(
+	      Link,
+	      { className: "username", to: 'users/' + this.props.post.profile_id },
+	      this.props.post.profile_name
+	    );
+	    debugger;
 	    if (this.props.post.author_id == CurrentUserStore.user().id) {
 	
 	      deletebutton = React.createElement(
@@ -31590,7 +31600,8 @@
 	          Link,
 	          { className: "username", to: 'users/' + this.props.post.author_id },
 	          this.props.post.author_name,
-	          " posted"
+	          " posted ",
+	          profile_person
 	        ),
 	        React.createElement(
 	          "h1",

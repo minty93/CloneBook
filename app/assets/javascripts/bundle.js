@@ -33268,11 +33268,11 @@
 	
 	  render: function () {
 	
-	    var searchResults = SearchResultsStore.all().map(function (searchResult) {
+	    var searchResults = SearchResultsStore.all().map(function (searchResult, index) {
 	      if (searchResult._type === "User") {
 	        return React.createElement(
 	          'li',
-	          null,
+	          { key: index },
 	          React.createElement(
 	            Link,
 	            { to: `users/${ searchResult.id }` },
@@ -33965,8 +33965,8 @@
 	    var photoIndex;
 	    var photoform = React.createElement('div', null);
 	    if (this.state.user) {
-	      photoIndex = this.state.user.photos.map(function (photo) {
-	        return React.createElement(PhotoIndexItem, { key: photo.id, photo: photo });
+	      photoIndex = this.state.user.photos.map(function (photo, index) {
+	        return React.createElement(PhotoIndexItem, { key: index, photo: photo });
 	      });
 	    }
 	
@@ -33983,7 +33983,7 @@
 	        photoform,
 	        React.createElement(
 	          'ul',
-	          { className: 'photo-index group' },
+	          { key: 33, className: 'photo-index group' },
 	          photoIndex
 	        )
 	      )

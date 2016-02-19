@@ -388,6 +388,7 @@
 }
 
 .main-links > li {
+  display: inline-block;
   float: left;
   color: white;
   padding: 10px;
@@ -396,6 +397,13 @@
   font-size: 12px;
   // padding-top: 15px;
 }
+
+
+.main-links > li > button{
+  display: inline-block;
+  cursor: pointer;
+}
+
 
 
 .main-links > li:hover {
@@ -587,6 +595,7 @@ float: left;
   display: inline;
   position: absolute;
   margin: 5px;
+  margin-left: 0px;
   top: 500px;
   left: 96px;
 }
@@ -597,6 +606,7 @@ float: left;
   position: absolute;
   top: 600px;
   left: 96px;
+  margin-left: 0px;
 }
 
 .image-form1 > label {

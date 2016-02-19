@@ -50,9 +50,9 @@ var PhotoIndex = React.createClass({
     var photoIndex;
     var photoform = <div></div>;
     if(this.state.user){
-    photoIndex = this.state.user.photos.map(function(photo) {
+    photoIndex = this.state.user.photos.map(function(photo, index) {
       return (
-        <PhotoIndexItem key={photo.id} photo={photo}/>
+        <PhotoIndexItem key={index} photo={photo}/>
       );
     });
   }
@@ -65,7 +65,7 @@ var PhotoIndex = React.createClass({
         <Navbar params={this.props.params} user={this.state.user}/>
       <div className="cry">
         {photoform}
-        <ul className="photo-index group">
+        <ul key={33} className="photo-index group">
           {photoIndex}
         </ul>
       </div>

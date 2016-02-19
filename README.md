@@ -5,7 +5,7 @@
 ##Description
 A social networking website for inspired by Facebook to connect to the Galaxies and Beyond!
 
-![Alt text](./images/img2.png)
+![Alt text](./app/assets/images/img5.png)
 
 ##Features
 Rails back end, React.js and Flux front end

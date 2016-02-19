@@ -27,8 +27,20 @@ UserStore._addUser = function (user) {
   if (idx == -1) {
     _users.push(user);
   }
-  this.__emitChange();
 };
+
+UserStore._updateUser = function (user) {
+  var _usersIds = [];
+  for (var i = 0; i < _users.length; i++) {
+    _usersIds.push(_users[i].id);
+  }
+  var idx = _usersIds.indexOf(user.id);
+  if (idx != -1) {
+    _users[idx] = user;
+  }
+};
+
+
 
 UserStore._findUserById = function(id) {
   id = parseInt(id);

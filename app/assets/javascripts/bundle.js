@@ -51,13 +51,13 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var PostsForm = __webpack_require__(206);
-	var PostsIndex = __webpack_require__(238);
-	var UserProfile = __webpack_require__(254);
-	var CommentsForm = __webpack_require__(241);
+	var PostsIndex = __webpack_require__(239);
+	var UserProfile = __webpack_require__(255);
+	var CommentsForm = __webpack_require__(242);
 	var App = __webpack_require__(273);
 	var SessionForm = __webpack_require__(275);
 	var UserForm = __webpack_require__(276);
-	var CurrentUserStore = __webpack_require__(246);
+	var CurrentUserStore = __webpack_require__(247);
 	var SessionsApiUtil = __webpack_require__(267);
 	var UsersIndex = __webpack_require__(277);
 	var About = __webpack_require__(278);
@@ -24073,7 +24073,7 @@
 	var PostsApiUtil = __webpack_require__(207);
 	var UserApiUtil = __webpack_require__(214);
 	var PostStore = __webpack_require__(219);
-	var UserStore = __webpack_require__(255);
+	var UserStore = __webpack_require__(238);
 	
 	var PostForm = React.createClass({
 	  displayName: 'PostForm',
@@ -24111,12 +24111,15 @@
 	
 	  handleSubmit: function (e) {
 	    if (this.props.params.userId) {
-	      profile_user = UserStore._findUserById(this.props.params.userId);
+	      var profile_user = UserStore._findUserById(this.props.params.userId);
+	    }
+	    if (profile_user) {
+	      var profile_name = profile_user.fname + " " + profile_user.lname;
 	    }
 	
 	    e.preventDefault();
 	    var that = this;
-	    var post = { body: this.state.body, profile_id: this.props.params.userId, profile_name: profile_user.fname + " " + profile_user.lname };
+	    var post = { body: this.state.body, profile_id: this.props.params.userId, profile_name: profile_name };
 	    var callback = function () {
 	      that.setState({ body: "" });
 	    };
@@ -24620,13 +24623,14 @@
 	    });
 	  },
 	
-	  fetchUser: function (id) {
+	  fetchUser: function (id, callback) {
 	    $.ajax({
 	      url: '/api/users/' + id,
 	      type: 'GET',
 	      dataType: 'json',
 	      success: function (user) {
 	        UserApiActions.receiveUser(user);
+	        callback && callback(user);
 	      }
 	    });
 	  },
@@ -31313,16 +31317,220 @@
 /* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
+	
+	var _users = [],
+	    Store = __webpack_require__(220).Store,
+	    UserConstants = __webpack_require__(216),
+	    CommentConstants = __webpack_require__(237),
+	    CurrentUserConstants = __webpack_require__(218),
+	    PostConstants = __webpack_require__(209),
+	    PostStore = __webpack_require__(219),
+	    AppDispatcher = __webpack_require__(210),
+	    UserStore = new Store(AppDispatcher);
+	
+	UserStore.all = function () {
+	  return _users.slice(0);
+	};
+	
+	UserStore.resetUsers = function (users) {
+	  _users = users;
+	  this.__emitChange();
+	};
+	
+	UserStore._addUser = function (user) {
+	  var _usersIds = [];
+	  for (var i = 0; i < _users.length; i++) {
+	    _usersIds.push(_users[i].id);
+	  }
+	  var idx = _usersIds.indexOf(user.id);
+	  if (idx == -1) {
+	    _users.push(user);
+	  }
+	};
+	
+	UserStore._updateUser = function (user) {
+	  var _usersIds = [];
+	  for (var i = 0; i < _users.length; i++) {
+	    _usersIds.push(_users[i].id);
+	  }
+	  var idx = _usersIds.indexOf(user.id);
+	  if (idx != -1) {
+	    _users[idx] = user;
+	  }
+	};
+	
+	UserStore._findUserById = function (id) {
+	  id = parseInt(id);
+	  users = UserStore.all();
+	  for (var i = 0; i < users.length; i++) {
+	    if (users[i].id == id) {
+	      return users[i];
+	    }
+	  }
+	};
+	
+	UserStore._addPost = function (post) {
+	  var user = this._findUserById(post.profile_id);
+	  user.received_posts.push(post);
+	  this.__emitChange();
+	};
+	
+	UserStore._removePost = function (post) {
+	  var _postsIds = [];
+	  var user = this._findUserById(post.profile_id);
+	  for (var i = 0; i < user.received_posts.length; i++) {
+	    _postsIds.push(user.received_posts[i].id);
+	  }
+	  var idx = _postsIds.indexOf(post.id);
+	  if (idx != -1) {
+	    user.received_posts.splice(idx, 1);
+	    this.__emitChange();
+	  }
+	};
+	
+	UserStore.addNewFriend = function (friend) {
+	  a = UserStore._findUserById(parseInt(friend.requester_id));
+	  a.requested_friends.push({ requestee_id: friend.requestee_id });
+	  b = UserStore._findUserById(parseInt(friend.requestee_id));
+	  b.received_friends.push({ requester_id: friend.requester_id });
+	};
+	
+	//
+	// UserStore._removeUser = function (user) {
+	//   var idx = _users.indexOf(user);
+	//   if (idx != -1) {
+	//     _users.splice(idx, 1);
+	//     this.__emitChange();
+	//   }
+	// };
+	
+	UserStore._findPostById = function (id) {
+	  id = parseInt(id);
+	  posts = PostStore.all();
+	  for (var i = 0; i < posts.length; i++) {
+	    if (posts[i].id == id) {
+	      return posts[i];
+	    }
+	  }
+	};
+	
+	UserStore._addComment = function (comment) {
+	  var postInd;
+	  var post = this._findPostById(comment.commentable_id);
+	  var user = this._findUserById(post.profile_id);
+	
+	  for (var i = 0; i < user.received_posts.length; i++) {
+	    if (user.received_posts[i].id == post.id) {
+	      postInd = i;
+	    }
+	  }
+	
+	  user.received_posts[postInd].comments.push(comment);
+	  this.__emitChange();
+	};
+	//
+	UserStore._removeComment = function (comment) {
+	  var _commentsIds = [],
+	      postind;
+	  var post = this._findPostById(comment.commentable_id);
+	  var user = this._findUserById(post.profile_id);
+	
+	  for (var i = 0; i < user.received_posts.length; i++) {
+	    if (user.received_posts[i].id == post.id) {
+	      postind = i;
+	    }
+	  }
+	
+	  for (var x = 0; x < user.received_posts[postind].comments.length; x++) {
+	    _commentsIds.push(user.received_posts[postind].comments[x].id);
+	  }
+	  var idx = _commentsIds.indexOf(comment.id);
+	  if (idx != -1) {
+	    user.received_posts[postind].comments.splice(idx, 1);
+	    this.__emitChange();
+	  }
+	};
+	
+	UserStore._addImage = function (photo) {
+	  var user = this._findUserById(photo.user_id);
+	  user.photos.push(photo);
+	  this.__emitChange();
+	};
+	
+	UserStore._removeImage = function (image) {
+	  var _imagesIds = [];
+	  var user = this._findUserById(image.user_id);
+	  for (var i = 0; i < user.images.length; i++) {
+	    _imagesIds.push(user.images[i].id);
+	  }
+	  var idx = _imagesIds.indexOf(image.id);
+	  if (idx != -1) {
+	    user.images.splice(idx, 1);
+	    this.__emitChange();
+	  }
+	};
+	
+	UserStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case UserConstants.RECEIVE_USERS:
+	      UserStore.resetUsers(payload.users);
+	      break;
+	    case UserConstants.RECEIVE_USER:
+	      UserStore._addUser(payload.user);
+	      break;
+	    case PostConstants.CREATE_POST:
+	      UserStore._addPost(payload.post);
+	      break;
+	    case PostConstants.DELETE_POST:
+	      UserStore._removePost(payload.post);
+	      break;
+	    case CurrentUserConstants.RECEIVE_CURRENT_USER:
+	      UserStore._addUser(payload.currentUser);
+	      break;
+	    case CommentConstants.DELETE_COMMENT:
+	      UserStore._removeComment(payload.comment);
+	      break;
+	    case CommentConstants.CREATE_COMMENT:
+	      UserStore._addComment(payload.comment);
+	      break;
+	    case UserConstants.RECEIVE_PHOTO:
+	      UserStore._addImage(payload.photo);
+	      break;
+	    case UserConstants.FRIEND_RECEIVED:
+	      UserStore.addNewFriend(payload.friend);
+	      UserStore.__emitChange();
+	      break;
+	    case UserConstants.FRIENDS_RECEIVED:
+	      // var result = resetFriends(payload.friends);
+	      // FriendStore.__emitChange();
+	      break;
+	    case UserConstants.FRIEND_REMOVED:
+	    // var result = resetFriends(payload.friends);
+	    // FriendStore.__emitChange();
+	  }
+	
+	  // case ImageConstants.DELETE_IMAGE:
+	  //   UserStore._removeImage(payload.image);
+	  //   break;
+	};
+	
+	module.exports = UserStore;
+
+/***/ },
+/* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1);
 	var PostStore = __webpack_require__(219);
-	var CommentStore = __webpack_require__(239);
-	var PostsIndexItem = __webpack_require__(240);
+	var CommentStore = __webpack_require__(240);
+	var PostsIndexItem = __webpack_require__(241);
 	var PostsApiUtil = __webpack_require__(207);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsForm = __webpack_require__(206);
-	var CommentsForm = __webpack_require__(241);
-	var CommentsIndexItem = __webpack_require__(244);
-	var ReactCSSTransitionGroup = __webpack_require__(247);
+	var CommentsForm = __webpack_require__(242);
+	var CommentsIndexItem = __webpack_require__(245);
+	var ReactCSSTransitionGroup = __webpack_require__(248);
+	var Header = __webpack_require__(274);
 	
 	var PostsIndex = React.createClass({
 	  displayName: "PostsIndex",
@@ -31407,7 +31615,7 @@
 	module.exports = PostsIndex;
 
 /***/ },
-/* 239 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -31468,61 +31676,58 @@
 	module.exports = CommentStore;
 
 /***/ },
-/* 240 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var PostStore = __webpack_require__(219);
 	var PostsApiUtil = __webpack_require__(207);
-	var CommentsForm = __webpack_require__(241);
-	var CommentsIndexItem = __webpack_require__(244);
+	var CommentsForm = __webpack_require__(242);
+	var CommentsIndexItem = __webpack_require__(245);
 	var UserApiUtil = __webpack_require__(214);
-	var TimeAgo = __webpack_require__(245);
+	var TimeAgo = __webpack_require__(246);
 	var Link = __webpack_require__(159).Link;
-	var ReactCSSTransitionGroup = __webpack_require__(247);
-	var CurrentUserStore = __webpack_require__(246);
+	var ReactCSSTransitionGroup = __webpack_require__(248);
+	var CurrentUserStore = __webpack_require__(247);
+	var UserStore = __webpack_require__(238);
 	
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
 	
 	
-	  //  getInitialState: function(){
-	  //    var postId = this.props.post.id;
-	  //    var post = this._findPostById(postId) || {} ;
-	  //    return { post: post };
-	  //  },
+	  _findPostById: function (id) {
+	    var res;
+	    PostStore.all().forEach(function (post) {
+	      if (id == post.id) {
+	        res = post;
+	      }
+	    }.bind(this));
+	    return res;
+	  },
+	
+	  getInitialState: function () {
+	    var postId = this.props.post.id;
+	    var post = this._findPostById(postId) || {};
+	    return { post_image: post.profile_pic };
+	  },
 	  //
-	  //  _findPostById: function (id) {
-	  //     var res;
-	  //     PostStore.all().forEach(function (post) {
-	  //      if (id == post.id) {
-	  //        res = post;
-	  //      }
-	  //    }.bind(this));
-	  //     return res;
-	  //  },
 	  //
-	  //  componentDidMount: function () {
-	  //    var elem = this.getDOMNode();
-	  //    // Set the opacity of the element to 0
-	  //    elem.style.opacity = 0;
-	  //    window.requestAnimationFrame(function() {
-	  //        // Now set a transition on the opacity
-	  //        elem.style.transition = "opacity 250ms";
-	  //        // and set the opacity to 1
-	  //        elem.style.opacity = 1;
-	  //    });
-	  // },
+	  componentDidMount: function () {
+	    this.listener = UserStore.addListener(this._onChange);
+	  },
+	
 	  //
-	  //  componentWillUnmount: function () {
-	  //    this.listener.remove();
-	  //  },
-	  //
-	  //  _onChange: function () {
-	  //   var postId = this.props.post.postId;
-	  //   var post = this._findPostById(this.state.post.id);
-	  //   this.setState({ post: post });
-	  // },
+	  componentWillUnmount: function () {
+	    this.listener.remove();
+	  },
+	
+	  _onChange: function () {
+	    var postId = this.props.post.postId;
+	    var post = this._findPostById(this.state.post.id);
+	    UserApiUtil.fetchUser(parseInt(this.props.post.profile_id), function (user) {
+	      this.setState({ post_image: user.profile_pic });
+	    }.bind(this));
+	  },
 	
 	  //
 	  // if(this.props.post.author && this.props.post.author.profile_pic_url){
@@ -31550,16 +31755,26 @@
 	    var comments;
 	    var profile_pic;
 	    var to;
+	    var profile_person;
+	    var post_image;
 	
-	    var deletebutton = React.createElement("div", null);
-	    var profile_person = React.createElement(
-	      Link,
-	      { className: "username", to: 'users/' + this.props.post.profile_id },
-	      this.props.post.profile_name
-	    );
-	    debugger;
+	    var profile_pic_url;
+	
+	    var deletebutton;
+	    if (this.props.post.profile_id !== this.props.post.author_id) {
+	      profile_person = React.createElement(
+	        Link,
+	        { to: 'users/' + this.props.post.profile_id },
+	        this.props.post.profile_name
+	      );
+	      to = React.createElement(
+	        "span",
+	        null,
+	        " to "
+	      );
+	    }
+	
 	    if (this.props.post.author_id == CurrentUserStore.user().id) {
-	
 	      deletebutton = React.createElement(
 	        "button",
 	        { onClick: this.handleDelete },
@@ -31595,14 +31810,15 @@
 	          null,
 	          deletebutton
 	        ),
-	        React.createElement("img", { className: "small-image", src: this.props.post.profile_pic }),
 	        React.createElement(
 	          Link,
 	          { className: "username", to: 'users/' + this.props.post.author_id },
-	          this.props.post.author_name,
-	          " posted ",
-	          profile_person
+	          this.props.post.author_name
 	        ),
+	        " ",
+	        to,
+	        profile_person,
+	        React.createElement("img", { className: "small-image", src: this.state.post_image }),
 	        React.createElement(
 	          "h1",
 	          { className: "timeago" },
@@ -31629,13 +31845,13 @@
 	module.exports = PostsIndexItems;
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CommentsApiUtil = __webpack_require__(242);
+	var CommentsApiUtil = __webpack_require__(243);
 	var PostsApiUtil = __webpack_require__(207);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var UserApiUtil = __webpack_require__(214);
 	
 	var CommentForm = React.createClass({
@@ -31685,10 +31901,10 @@
 	module.exports = CommentForm;
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CommentApiActions = __webpack_require__(243);
+	var CommentApiActions = __webpack_require__(244);
 	
 	var CommentApiUtil = {
 	  fetchSingleComment: function (id) {
@@ -31742,7 +31958,7 @@
 	module.exports = CommentApiUtil;
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var CommentConstants = __webpack_require__(237);
@@ -31782,18 +31998,18 @@
 	module.exports = CommentApiActions;
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var PostStore = __webpack_require__(219);
-	var CommentsApiUtil = __webpack_require__(242);
+	var CommentsApiUtil = __webpack_require__(243);
 	var PostsApiUtil = __webpack_require__(207);
 	var UserApiUtil = __webpack_require__(214);
-	var TimeAgo = __webpack_require__(245);
+	var TimeAgo = __webpack_require__(246);
 	var Link = __webpack_require__(159).Link;
-	var CurrentUserStore = __webpack_require__(246);
+	var CurrentUserStore = __webpack_require__(247);
 	
 	var CommentsIndexItem = React.createClass({
 	  displayName: "CommentsIndexItem",
@@ -31857,7 +32073,7 @@
 	module.exports = CommentsIndexItem;
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -31990,7 +32206,7 @@
 
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
@@ -32038,13 +32254,13 @@
 	module.exports = CurrentUserStore;
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(248);
+	module.exports = __webpack_require__(249);
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32065,8 +32281,8 @@
 	
 	var assign = __webpack_require__(39);
 	
-	var ReactTransitionGroup = __webpack_require__(249);
-	var ReactCSSTransitionGroupChild = __webpack_require__(251);
+	var ReactTransitionGroup = __webpack_require__(250);
+	var ReactCSSTransitionGroupChild = __webpack_require__(252);
 	
 	function createTransitionTimeoutPropValidator(transitionType) {
 	  var timeoutPropName = 'transition' + transitionType + 'Timeout';
@@ -32132,7 +32348,7 @@
 	module.exports = ReactCSSTransitionGroup;
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32149,7 +32365,7 @@
 	'use strict';
 	
 	var React = __webpack_require__(2);
-	var ReactTransitionChildMapping = __webpack_require__(250);
+	var ReactTransitionChildMapping = __webpack_require__(251);
 	
 	var assign = __webpack_require__(39);
 	var emptyFunction = __webpack_require__(15);
@@ -32342,7 +32558,7 @@
 	module.exports = ReactTransitionGroup;
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32445,7 +32661,7 @@
 	module.exports = ReactTransitionChildMapping;
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32465,8 +32681,8 @@
 	var React = __webpack_require__(2);
 	var ReactDOM = __webpack_require__(3);
 	
-	var CSSCore = __webpack_require__(252);
-	var ReactTransitionEvents = __webpack_require__(253);
+	var CSSCore = __webpack_require__(253);
+	var ReactTransitionEvents = __webpack_require__(254);
 	
 	var onlyChild = __webpack_require__(156);
 	
@@ -32615,7 +32831,7 @@
 	module.exports = ReactCSSTransitionGroupChild;
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -32718,7 +32934,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32832,17 +33048,17 @@
 	module.exports = ReactTransitionEvents;
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(255);
+	var UserStore = __webpack_require__(238);
 	var PostStore = __webpack_require__(219);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var PostIndexItem = __webpack_require__(240);
+	var PostIndexItem = __webpack_require__(241);
 	var PostsForm = __webpack_require__(206);
 	var FriendButton = __webpack_require__(256);
 	var CoverForm = __webpack_require__(259);
@@ -32852,6 +33068,8 @@
 	var Navbar = __webpack_require__(266);
 	var CoverForm = __webpack_require__(259);
 	var ProfileForm = __webpack_require__(260);
+	var Header = __webpack_require__(274);
+	var CurrentUserStore = __webpack_require__(247);
 	
 	var UserProfile = React.createClass({
 	  displayName: 'UserProfile',
@@ -32869,15 +33087,17 @@
 	
 	  getInitialState: function () {
 	    var userId = this.props.userId || this.props.params.userId;
-	    var user = this._findUserById(userId);
+	    UserApiUtil.fetchUser(parseInt(userId));
+	    if (this._findUserById(userId) != undefined) {
+	      var user = this._findUserById(userId);
+	    };
 	    return { user: user };
 	  },
 	
 	  componentDidMount: function () {
 	    var userId = this.props.userId || this.props.params.userId;
 	    this.listener = UserStore.addListener(this._onChange);
-	    // this.listener = PostStore.addListener(this._onChange);
-	    // this.listener = CommentStore.addListener(this._onChange);
+	
 	    UserApiUtil.fetchUser(parseInt(userId));
 	  },
 	
@@ -32894,23 +33114,34 @@
 	
 	  _onChange: function () {
 	    var userId = this.props.params.userId;
-	    var user = this._findUserById(userId);
-	    if (this.isMounted()) {
+	    var user;
+	    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user) {
 	      this.setState({ user: user });
-	    }
+	    }.bind(this));
+	    // this._findUserById(userId);
 	  },
 	
 	  render: function () {
+	
 	    var received_posts;
+	    var navbar;
+	    var cover_form;
+	    var profile_form;
 	
 	    if (this.state.user) {
 	      if (this.state.user.received_posts) {
 	        received_posts = this.state.user.received_posts.slice(0);
 	        fname = this.state.user.fname;
+	        navbar = React.createElement(Navbar, { params: this.props.params, user: this.state.user });
 	        received_posts = received_posts.reverse().map(function (post) {
 	          return React.createElement(PostIndexItem, { post: post, key: post.id });
 	        });
 	      }
+	      if (this.state.user.id == CurrentUserStore.user().id) {
+	        cover_form = React.createElement(CoverForm, { className: 'fullpage', params: this.props.params });
+	        profile_form = React.createElement(ProfileForm, { className: 'fullpage', params: this.props.params });
+	      }
+	
 	      cover_pic = React.createElement('img', { className: 'cover-image', src: this.state.user.cover_pic });
 	      profile_pic = React.createElement('img', { className: 'profile-image', src: this.state.user.profile_pic });
 	    }
@@ -32918,12 +33149,12 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      React.createElement(CoverForm, { className: 'fullpage', params: this.props.params }),
-	      React.createElement(ProfileForm, { className: 'fullpage', params: this.props.params }),
+	      cover_form,
+	      profile_form,
+	      navbar,
 	      React.createElement(
 	        'div',
 	        { className: 'profile-page' },
-	        React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
 	        React.createElement(FriendButton, { params: this.props.params }),
 	        React.createElement(
 	          'div',
@@ -32939,210 +33170,17 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 255 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	var _users = [],
-	    Store = __webpack_require__(220).Store,
-	    UserConstants = __webpack_require__(216),
-	    CommentConstants = __webpack_require__(237),
-	    CurrentUserConstants = __webpack_require__(218),
-	    PostConstants = __webpack_require__(209),
-	    PostStore = __webpack_require__(219),
-	    AppDispatcher = __webpack_require__(210),
-	    UserStore = new Store(AppDispatcher);
-	
-	UserStore.all = function () {
-	  return _users.slice(0);
-	};
-	
-	UserStore.resetUsers = function (users) {
-	  _users = users;
-	  this.__emitChange();
-	};
-	
-	UserStore._addUser = function (user) {
-	  var _usersIds = [];
-	  for (var i = 0; i < _users.length; i++) {
-	    _usersIds.push(_users[i].id);
-	  }
-	  var idx = _usersIds.indexOf(user.id);
-	  if (idx == -1) {
-	    _users.push(user);
-	  }
-	  this.__emitChange();
-	};
-	
-	UserStore._findUserById = function (id) {
-	  id = parseInt(id);
-	  users = UserStore.all();
-	  for (var i = 0; i < users.length; i++) {
-	    if (users[i].id == id) {
-	      return users[i];
-	    }
-	  }
-	};
-	
-	UserStore._addPost = function (post) {
-	  var user = this._findUserById(post.profile_id);
-	  user.received_posts.push(post);
-	  this.__emitChange();
-	};
-	
-	UserStore._removePost = function (post) {
-	  var _postsIds = [];
-	  var user = this._findUserById(post.profile_id);
-	  for (var i = 0; i < user.received_posts.length; i++) {
-	    _postsIds.push(user.received_posts[i].id);
-	  }
-	  var idx = _postsIds.indexOf(post.id);
-	  if (idx != -1) {
-	    user.received_posts.splice(idx, 1);
-	    this.__emitChange();
-	  }
-	};
-	
-	UserStore.addNewFriend = function (friend) {
-	  a = UserStore._findUserById(parseInt(friend.requester_id));
-	  a.requested_friends.push({ requestee_id: friend.requestee_id });
-	  b = UserStore._findUserById(parseInt(friend.requestee_id));
-	  b.received_friends.push({ requester_id: friend.requester_id });
-	};
-	
-	//
-	// UserStore._removeUser = function (user) {
-	//   var idx = _users.indexOf(user);
-	//   if (idx != -1) {
-	//     _users.splice(idx, 1);
-	//     this.__emitChange();
-	//   }
-	// };
-	
-	UserStore._findPostById = function (id) {
-	  id = parseInt(id);
-	  posts = PostStore.all();
-	  for (var i = 0; i < posts.length; i++) {
-	    if (posts[i].id == id) {
-	      return posts[i];
-	    }
-	  }
-	};
-	
-	UserStore._addComment = function (comment) {
-	  var postInd;
-	  var post = this._findPostById(comment.commentable_id);
-	  var user = this._findUserById(post.profile_id);
-	
-	  for (var i = 0; i < user.received_posts.length; i++) {
-	    if (user.received_posts[i].id == post.id) {
-	      postInd = i;
-	    }
-	  }
-	
-	  user.received_posts[postInd].comments.push(comment);
-	  this.__emitChange();
-	};
-	//
-	UserStore._removeComment = function (comment) {
-	  var _commentsIds = [],
-	      postind;
-	  var post = this._findPostById(comment.commentable_id);
-	  var user = this._findUserById(post.profile_id);
-	
-	  for (var i = 0; i < user.received_posts.length; i++) {
-	    if (user.received_posts[i].id == post.id) {
-	      postind = i;
-	    }
-	  }
-	
-	  for (var x = 0; x < user.received_posts[postind].comments.length; x++) {
-	    _commentsIds.push(user.received_posts[postind].comments[x].id);
-	  }
-	  var idx = _commentsIds.indexOf(comment.id);
-	  if (idx != -1) {
-	    user.received_posts[postind].comments.splice(idx, 1);
-	    this.__emitChange();
-	  }
-	};
-	
-	UserStore._addImage = function (photo) {
-	  var user = this._findUserById(photo.user_id);
-	  user.photos.push(photo);
-	  this.__emitChange();
-	};
-	
-	UserStore._removeImage = function (image) {
-	  var _imagesIds = [];
-	  var user = this._findUserById(image.user_id);
-	  for (var i = 0; i < user.images.length; i++) {
-	    _imagesIds.push(user.images[i].id);
-	  }
-	  var idx = _imagesIds.indexOf(image.id);
-	  if (idx != -1) {
-	    user.images.splice(idx, 1);
-	    this.__emitChange();
-	  }
-	};
-	
-	UserStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case UserConstants.RECEIVE_USERS:
-	      UserStore.resetUsers(payload.users);
-	      break;
-	    case UserConstants.RECEIVE_USER:
-	      UserStore._addUser(payload.user);
-	      break;
-	    case PostConstants.CREATE_POST:
-	      UserStore._addPost(payload.post);
-	      break;
-	    case PostConstants.DELETE_POST:
-	      UserStore._removePost(payload.post);
-	      break;
-	    case CurrentUserConstants.RECEIVE_CURRENT_USER:
-	      UserStore._addUser(payload.currentUser);
-	      break;
-	    case CommentConstants.DELETE_COMMENT:
-	      UserStore._removeComment(payload.comment);
-	      break;
-	    case CommentConstants.CREATE_COMMENT:
-	      UserStore._addComment(payload.comment);
-	      break;
-	    case UserConstants.RECEIVE_PHOTO:
-	      UserStore._addImage(payload.photo);
-	      break;
-	    case UserConstants.FRIEND_RECEIVED:
-	      UserStore.addNewFriend(payload.friend);
-	      UserStore.__emitChange();
-	      break;
-	    case UserConstants.FRIENDS_RECEIVED:
-	      // var result = resetFriends(payload.friends);
-	      // FriendStore.__emitChange();
-	      break;
-	    case UserConstants.FRIEND_REMOVED:
-	    // var result = resetFriends(payload.friends);
-	    // FriendStore.__emitChange();
-	  }
-	
-	  // case ImageConstants.DELETE_IMAGE:
-	  //   UserStore._removeImage(payload.image);
-	  //   break;
-	};
-	
-	module.exports = UserStore;
-
-/***/ },
 /* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var PostStore = __webpack_require__(219);
-	var CurrentUserStore = __webpack_require__(246);
-	var CommentsApiUtil = __webpack_require__(242);
+	var CurrentUserStore = __webpack_require__(247);
+	var CommentsApiUtil = __webpack_require__(243);
 	var PostsApiUtil = __webpack_require__(207);
 	var FriendApiUtil = __webpack_require__(257);
-	var UserStore = __webpack_require__(255);
+	var UserStore = __webpack_require__(238);
 	var UserApiUtil = __webpack_require__(214);
 	
 	var FriendRequestItem = React.createClass({
@@ -33201,6 +33239,7 @@
 	
 	    var userprofile = this._findUserById(this.props.params.userId);
 	    var currentUser = this._findUserById(CurrentUserStore.user().id);
+	
 	    var profileid = parseInt(this.props.params.userId);
 	
 	    var button = React.createElement("div", null);
@@ -33230,7 +33269,7 @@
 	      button = React.createElement(
 	        "button",
 	        { className: "friend-button", onClick: this.handleFriend },
-	        "Send Friendship"
+	        "Send Request"
 	      );
 	    } else if (rec_friends.indexOf(profileid) == -1 && req_friends.indexOf(profileid) !== -1) {
 	      button = React.createElement(
@@ -33333,6 +33372,7 @@
 
 	var React = __webpack_require__(1);
 	var UsersApiUtil = __webpack_require__(214);
+	var ImageApiUtil = __webpack_require__(262);
 	
 	var UserCoverForm = React.createClass({
 	  displayName: 'UserCoverForm',
@@ -33353,11 +33393,11 @@
 	          null,
 	          React.createElement('input', { type: 'file', onChange: this.changeFile })
 	        ),
-	        React.createElement('img', { className: 'preview-image', src: this.state.imageUrl }),
+	        React.createElement('img', { className: 'preview-image-cover', src: this.state.imageUrl }),
 	        React.createElement(
 	          'button',
 	          null,
-	          'Upload Cover Photo'
+	          'Upload'
 	        )
 	      )
 	    );
@@ -33382,7 +33422,11 @@
 	    e.preventDefault();
 	    var formData = new FormData();
 	    formData.append("user[cover_pic]", this.state.imageFile);
+	    var file = this.state.imageFile;
+	    var formData2 = new FormData();
+	    formData2.append("photo[photo]", file);
 	    UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
+	    ImageApiUtil.createImage(formData2);
 	  },
 	
 	  resetForm: function () {
@@ -33398,6 +33442,7 @@
 
 	var React = __webpack_require__(1);
 	var UsersApiUtil = __webpack_require__(214);
+	var ImageApiUtil = __webpack_require__(262);
 	
 	var UserProfileForm = React.createClass({
 	  displayName: 'UserProfileForm',
@@ -33418,11 +33463,11 @@
 	          null,
 	          React.createElement('input', { type: 'file', onChange: this.changeFile })
 	        ),
-	        React.createElement('img', { className: 'preview-image', src: this.state.imageUrl }),
+	        React.createElement('img', { className: 'preview-image-cover', src: this.state.imageUrl }),
 	        React.createElement(
 	          'button',
 	          null,
-	          'Upload Profile Photo'
+	          'Upload'
 	        )
 	      )
 	    );
@@ -33447,7 +33492,11 @@
 	    e.preventDefault();
 	    var formData = new FormData();
 	    formData.append("user[profile_pic]", this.state.imageFile);
+	    var file = this.state.imageFile;
+	    var formData2 = new FormData();
+	    formData2.append("photo[photo]", file);
 	    UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
+	    ImageApiUtil.createImage(formData2);
 	  },
 	
 	  resetForm: function () {
@@ -33466,9 +33515,9 @@
 	var PhotoIndexItem = __webpack_require__(264);
 	var ImageForm = __webpack_require__(265);
 	var Navbar = __webpack_require__(266);
-	var UserStore = __webpack_require__(255);
+	var UserStore = __webpack_require__(238);
 	var UserApiUtil = __webpack_require__(214);
-	var CurrentUserStore = __webpack_require__(246);
+	var CurrentUserStore = __webpack_require__(247);
 	
 	var PhotoIndex = React.createClass({
 	  displayName: 'PhotoIndex',
@@ -33618,7 +33667,7 @@
 	var React = __webpack_require__(1);
 	var ImageApiUtil = __webpack_require__(262);
 	var UserApiUtil = __webpack_require__(214);
-	var CurrentUserStore = __webpack_require__(246);
+	var CurrentUserStore = __webpack_require__(247);
 	
 	var ImageForm = React.createClass({
 	  displayName: 'ImageForm',
@@ -33691,7 +33740,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(246);
+	var CurrentUserStore = __webpack_require__(247);
 	var SessionsApiUtil = __webpack_require__(267);
 	var Search = __webpack_require__(268);
 	var History = __webpack_require__(159).History;
@@ -33699,6 +33748,7 @@
 	var CoverForm = __webpack_require__(259);
 	var ProfileForm = __webpack_require__(260);
 	var FriendButton = __webpack_require__(256);
+	var LocalStorageMixin = __webpack_require__(280);
 	
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
@@ -33719,6 +33769,7 @@
 	
 	    if (this.props.user) {
 	      fname = this.props.user.fname;
+	      lname = this.props.user.lname;
 	      cover_pic = React.createElement('img', { className: 'cover-image', src: this.props.user.cover_pic });
 	      profile_pic = React.createElement('img', { className: 'profile-image', src: this.props.user.profile_pic });
 	    }
@@ -33738,7 +33789,9 @@
 	        React.createElement(
 	          'h3',
 	          null,
-	          fname
+	          fname,
+	          ' ',
+	          lname
 	        ),
 	        React.createElement(
 	          'ul',
@@ -33828,9 +33881,9 @@
 	var React = __webpack_require__(1);
 	var SearchResultsStore = __webpack_require__(269);
 	var SearchApiUtil = __webpack_require__(271);
-	var UserProfile = __webpack_require__(254);
-	var PostIndexItem = __webpack_require__(240);
-	var CommentIndexItem = __webpack_require__(244);
+	var UserProfile = __webpack_require__(255);
+	var PostIndexItem = __webpack_require__(241);
+	var CommentIndexItem = __webpack_require__(245);
 	var Link = __webpack_require__(159).Link;
 	
 	var Search = React.createClass({
@@ -33888,25 +33941,23 @@
 	      } else if (searchResult._type === "Post") {
 	        return React.createElement(
 	          'li',
-	          null,
+	          { onClick: this.reset },
 	          React.createElement(PostIndexItem, { post: searchResult })
 	        );
 	      } else {
 	        return React.createElement(
 	          'li',
-	          null,
+	          { onClick: this.reset },
 	          React.createElement(CommentIndexItem, { comment: searchResult })
 	        );
 	      }
 	    });
 	
-	    // Displaying {SearchResultsStore.all().length} of
-	    // {SearchResultsStore.meta().totalCount}
 	    return React.createElement(
 	      'div',
 	      { className: 'search' },
 	      React.createElement('h1', { className: 'title' }),
-	      React.createElement('input', { className: 'search-input', type: 'text', placeholder: 'Search', onKeyUp: this.search }),
+	      React.createElement('input', { className: 'search-input', type: 'text', placeholder: 'Search for a User', onKeyUp: this.search }),
 	      React.createElement('button', { onClick: this.nextPage }),
 	      React.createElement(
 	        'ul',
@@ -34016,7 +34067,7 @@
 	var React = __webpack_require__(1),
 	    Header = __webpack_require__(274),
 	    SessionsApiUtil = __webpack_require__(267),
-	    CurrentUserStore = __webpack_require__(246);
+	    CurrentUserStore = __webpack_require__(247);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -34056,11 +34107,12 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(246);
+	var CurrentUserStore = __webpack_require__(247);
 	var SessionsApiUtil = __webpack_require__(267);
 	var Search = __webpack_require__(268);
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
+	var UserApiUtil = __webpack_require__(214);
 	
 	var Header = React.createClass({
 	  displayName: 'Header',
@@ -34068,6 +34120,7 @@
 	  mixins: [History],
 	
 	  getInitialState: function () {
+	
 	    return {
 	      currentUser: CurrentUserStore.currentUser()
 	    };
@@ -34081,8 +34134,14 @@
 	    this.listener.remove();
 	  },
 	
+	  componentWillReceiveProps: function () {
+	    this._onChange();
+	  },
+	
 	  _onChange: function () {
-	    this.setState({ currentUser: CurrentUserStore.currentUser() });
+	    UserApiUtil.fetchUser(parseInt(CurrentUserStore.user().id), function (user) {
+	      this.setState({ currentUser: user });
+	    }.bind(this));
 	  },
 	
 	  logout: function (e) {
@@ -34533,7 +34592,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var UsersStore = __webpack_require__(255);
+	var UsersStore = __webpack_require__(238);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var UsersIndex = React.createClass({
@@ -34595,11 +34654,11 @@
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(255);
+	var UserStore = __webpack_require__(238);
 	var PostStore = __webpack_require__(219);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var PostIndexItem = __webpack_require__(240);
+	var PostIndexItem = __webpack_require__(241);
 	var PostsForm = __webpack_require__(206);
 	var CoverForm = __webpack_require__(259);
 	var ProfileForm = __webpack_require__(260);
@@ -34721,11 +34780,11 @@
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(255);
+	var UserStore = __webpack_require__(238);
 	var PostStore = __webpack_require__(219);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var PostIndexItem = __webpack_require__(240);
+	var PostIndexItem = __webpack_require__(241);
 	var PostsForm = __webpack_require__(206);
 	var CoverForm = __webpack_require__(259);
 	var ProfileForm = __webpack_require__(260);
@@ -34850,6 +34909,199 @@
 	
 	});
 	module.exports = Friends;
+
+/***/ },
+/* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global, process) {'use strict';
+	var React = __webpack_require__(1);
+	var warn = __webpack_require__(281);
+	var hasLocalStorage = 'localStorage' in global;
+	var ls, testKey;
+	
+	if (hasLocalStorage) {
+	  testKey = 'react-localstorage.mixin.test-key';
+	  try {
+	    // Access to global `localStorage` property must be guarded as it
+	    // fails under iOS private session mode.
+	    ls = global.localStorage;
+	    ls.setItem(testKey, 'foo');
+	    ls.removeItem(testKey);
+	  } catch (e) {
+	    hasLocalStorage = false;
+	  }
+	}
+	
+	// Warn if localStorage cannot be found or accessed.
+	if (process.browser) {
+	  warn(
+	    hasLocalStorage,
+	    'localStorage not found. Component state will not be stored to localStorage.'
+	  );
+	}
+	
+	var Mixin = module.exports = {
+	  /**
+	   * Error checking. On update, ensure that the last state stored in localStorage is equal
+	   * to the state on the component. We skip the check the first time around as state is left
+	   * alone until mount to keep server rendering working.
+	   *
+	   * If it is not consistent, we know that someone else is modifying localStorage out from under us, so we throw
+	   * an error.
+	   *
+	   * There are a lot of ways this can happen, so it is worth throwing the error.
+	   */
+	  componentWillUpdate: function(nextProps, nextState) {
+	    if (!hasLocalStorage || !this.__stateLoadedFromLS) return;
+	    var key = getLocalStorageKey(this);
+	    var prevStoredState = ls.getItem(key);
+	    if (prevStoredState && process.env.NODE_ENV !== "production") {
+	      warn(
+	        prevStoredState === JSON.stringify(getSyncState(this, this.state)),
+	        'While component ' + getDisplayName(this) + ' was saving state to localStorage, ' +
+	        'the localStorage entry was modified by another actor. This can happen when multiple ' +
+	        'components are using the same localStorage key. Set the property `localStorageKey` ' +
+	        'on ' + getDisplayName(this) + '.'
+	      );
+	    }
+	    // Since setState() can't be called in CWU, it's a fine time to save the state.
+	    ls.setItem(key, JSON.stringify(getSyncState(this, nextState)));
+	  },
+	
+	  /**
+	   * Load data.
+	   * This seems odd to do this on componentDidMount, but it prevents server checksum errors.
+	   * This is because the server has no way to know what is in your localStorage. So instead
+	   * of breaking the checksum and causing a full rerender, we instead change the component after mount
+	   * for an efficient diff.
+	   */
+	  componentDidMount: function () {
+	    if (!hasLocalStorage) return;
+	    var me = this;
+	    loadStateFromLocalStorage(this, function() {
+	      // After setting state, mirror back to localstorage.
+	      // This prevents invariants if the developer has changed the initial state of the component.
+	      ls.setItem(getLocalStorageKey(me), JSON.stringify(getSyncState(me, me.state)));
+	    });
+	  }
+	};
+	
+	function loadStateFromLocalStorage(component, cb) {
+	  if (!ls) return;
+	  var key = getLocalStorageKey(component);
+	  var settingState = false;
+	  try {
+	    var storedState = JSON.parse(ls.getItem(key));
+	    if (storedState) {
+	      settingState = true;
+	      component.setState(storedState, done);
+	    }
+	  } catch(e) {
+	    if (console) console.warn("Unable to load state for", getDisplayName(component), "from localStorage.");
+	  }
+	  // If we didn't set state, run the callback right away.
+	  if (!settingState) done();
+	
+	  function done() {
+	    // Flag this component as loaded.
+	    component.__stateLoadedFromLS = true;
+	    cb();
+	  }
+	}
+	
+	function getDisplayName(component) {
+	  // at least, we cannot get displayname
+	  // via this.displayname in react 0.12
+	  return component.displayName || component.constructor.displayName || component.constructor.name;
+	}
+	
+	function getLocalStorageKey(component) {
+	  if (component.getLocalStorageKey) {
+	    return component.getLocalStorageKey();
+	  }
+	  return component.props.localStorageKey || getDisplayName(component) || 'react-localstorage';
+	}
+	
+	function getStateFilterKeys(component) {
+	  if (component.getStateFilterKeys) {
+	    return typeof component.getStateFilterKeys() === 'string' ?
+	      [component.getStateFilterKeys()] : component.getStateFilterKeys();
+	  }
+	  return typeof component.props.stateFilterKeys === 'string' ?
+	    [component.props.stateFilterKeys] : component.props.stateFilterKeys;
+	}
+	
+	/**
+	* Filters state to only save keys defined in stateFilterKeys.
+	* If stateFilterKeys is not set, returns full state.
+	*/
+	function getSyncState(component, state) {
+	  var stateFilterKeys = getStateFilterKeys(component);
+	  if (!stateFilterKeys) return state;
+	  var result = {};
+	  stateFilterKeys.forEach(function(sk) {
+	    for (var key in state) {
+	      if (state.hasOwnProperty(key) && sk === key) result[key] = state[key];
+	    }
+	  });
+	  return result;
+	}
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(4)))
+
+/***/ },
+/* 281 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule warning
+	 */
+	
+	"use strict";
+	
+	/**
+	 * Similar to invariant but only logs a warning if the condition is not met.
+	 * This can be used to log issues in development environments in critical
+	 * paths. Removing the logging code for production environments will keep the
+	 * same logic and follow the same code paths.
+	 */
+	
+	var warning = function() {};
+	
+	if ("production" !== process.env.NODE_ENV) {
+	  warning = function(condition, format ) {var args=Array.prototype.slice.call(arguments,2);
+	    if (format === undefined) {
+	      throw new Error(
+	        '`warning(condition, format, ...args)` requires a warning ' +
+	        'message argument'
+	      );
+	    }
+	
+	    if (!condition) {
+	      var argIndex = 0;
+	      console.warn('Warning: ' + format.replace(/%s/g, function()  {return args[argIndex++];}));
+	    }
+	  };
+	}
+	
+	module.exports = warning;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }
 /******/ ]);

@@ -8,6 +8,7 @@ var PostsForm = require('./PostsForm');
 var CommentsForm = require('./CommentsForm');
 var CommentsIndexItem = require('./CommentsIndexItem');
 var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+var  Header = require("./header");
 
 
 

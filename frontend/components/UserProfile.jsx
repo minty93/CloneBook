@@ -15,10 +15,15 @@ var ImageForm = require('./photos/image_form');
 var Navbar = require('./navbar');
 var CoverForm = require('./user_cover_form');
 var ProfileForm = require('./user_profile_form');
+var Header = require("./header");
+var CurrentUserStore = require('./../stores/current_user_store');
+
 
 
 
 var UserProfile = React.createClass({
+
+
 
   _findUserById: function(id) {
     id = parseInt(id);
@@ -32,15 +37,15 @@ var UserProfile = React.createClass({
 
   getInitialState: function(){
     var userId = this.props.userId || this.props.params.userId;
-    var user = this._findUserById(userId);
+    UserApiUtil.fetchUser(parseInt(userId));
+    if(this._findUserById(userId) != undefined){var user = this._findUserById(userId)};
     return { user: user};
   },
 
   componentDidMount: function () {
     var userId = (this.props.userId || this.props.params.userId);
     this.listener = UserStore.addListener(this._onChange);
-    // this.listener = PostStore.addListener(this._onChange);
-    // this.listener = CommentStore.addListener(this._onChange);
+
     UserApiUtil.fetchUser(parseInt(userId));
   },
 
@@ -57,24 +62,36 @@ var UserProfile = React.createClass({
 
   _onChange: function () {
     var userId = this.props.params.userId;
-    var user = this._findUserById(userId);
-    if (this.isMounted()) {
-    this.setState({ user: user});
-    }
+    var user;
+    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user){
+        this.setState({ user: user});
+      }.bind(this)
+    );
+    // this._findUserById(userId);
  },
 
   render: function() {
+    
     var received_posts;
-
+    var navbar;
+    var cover_form;
+    var profile_form;
 
     if (this.state.user) {
       if(this.state.user.received_posts){
       received_posts = this.state.user.received_posts.slice(0);
       fname = this.state.user.fname;
+      navbar =  <Navbar params={this.props.params} user={this.state.user}/>;
       received_posts = received_posts.reverse().map(function(post) {
         return (<PostIndexItem post={post} key={post.id}/>);
       });
     }
+    if (this.state.user.id == CurrentUserStore.user().id){
+      cover_form = <CoverForm className="fullpage" params={this.props.params}/>
+      profile_form = <ProfileForm className="fullpage" params={this.props.params}/>
+
+    }
+
       cover_pic =   <img className="cover-image" src={this.state.user.cover_pic} />;
       profile_pic =   <img className="profile-image" src={this.state.user.profile_pic} />;
     }
@@ -82,16 +99,16 @@ var UserProfile = React.createClass({
 
     return (
       <div >
-      <CoverForm className="fullpage" params={this.props.params}/>
-      <ProfileForm className="fullpage" params={this.props.params}/>
-      <div className="profile-page">
-      <Navbar params={this.props.params} user={this.state.user}/>
-      <FriendButton params={this.props.params}/>
-      <div className="posts-index-profilefeed">
-      <PostsForm params={this.props.params} placeholder="Post Something"/>
-      {received_posts}
-      </div>
-      </div>
+        {cover_form}
+        {profile_form}
+        {navbar}
+        <div className="profile-page">
+        <FriendButton params={this.props.params}/>
+            <div className="posts-index-profilefeed">
+            <PostsForm params={this.props.params} placeholder="Post Something"/>
+            {received_posts}
+            </div>
+        </div>
       </div>
     );
 

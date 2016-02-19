@@ -31,6 +31,8 @@ var Search = React.createClass({
     this.setState({page: 1, query: query});
   },
 
+
+
   nextPage: function () {
     var nextPage = this.state.page + 1;
     SearchApiUtil.search(this.state.query, nextPage);
@@ -49,21 +51,20 @@ var Search = React.createClass({
         return (<li><Link to={`users/${searchResult.id}`}><img className="searchimage" src={searchResult.profile_pic_url}/>{searchResult.fname}</Link></li>)
 
       } else if (searchResult._type === "Post") {
-        return <li><PostIndexItem post={searchResult} /></li>;
+        return <li onClick={this.reset}><PostIndexItem post={searchResult} /></li>;
       }
       else {
-        return <li><CommentIndexItem comment={searchResult}/></li>;
+        return <li onClick={this.reset}><CommentIndexItem comment={searchResult}/></li>;
       }
     });
 
-    // Displaying {SearchResultsStore.all().length} of
-    // {SearchResultsStore.meta().totalCount}
+
     return (
       <div className="search">
         <h1 className="title"></h1>
-        <input className="search-input" type="text" placeholder="Search" onKeyUp={ this.search } />
+        <input className="search-input" type="text" placeholder="Search for a User" onKeyUp={ this.search } />
         <button onClick={this.nextPage}></button>
-        <ul className="users-index">{ searchResults }</ul>
+        <ul className="users-index">{searchResults}</ul>
       </div>
     );
   },

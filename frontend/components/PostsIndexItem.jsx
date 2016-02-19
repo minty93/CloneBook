@@ -8,48 +8,45 @@ var TimeAgo = require("react-timeago");
 var Link = require('react-router').Link;
 var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 var CurrentUserStore = require('./../stores/current_user_store');
+var UserStore = require('./../stores//UserStore');
 
 
 
 var PostsIndexItems = React.createClass({
 
- //  getInitialState: function(){
- //    var postId = this.props.post.id;
- //    var post = this._findPostById(postId) || {} ;
- //    return { post: post };
- //  },
+  _findPostById: function (id) {
+    var res;
+    PostStore.all().forEach(function (post) {
+      if (id == post.id) {
+        res = post;
+      }
+    }.bind(this));
+    return res;
+  },
+
+  getInitialState: function(){
+    var postId = this.props.post.id;
+    var post = this._findPostById(postId) || {} ;
+    return { post_image: post.profile_pic };
+  },
  //
- //  _findPostById: function (id) {
- //     var res;
- //     PostStore.all().forEach(function (post) {
- //      if (id == post.id) {
- //        res = post;
- //      }
- //    }.bind(this));
- //     return res;
- //  },
  //
-  //  componentDidMount: function () {
-  //    var elem = this.getDOMNode();
-  //    // Set the opacity of the element to 0
-  //    elem.style.opacity = 0;
-  //    window.requestAnimationFrame(function() {
-  //        // Now set a transition on the opacity
-  //        elem.style.transition = "opacity 250ms";
-  //        // and set the opacity to 1
-  //        elem.style.opacity = 1;
-  //    });
-  // },
+   componentDidMount: function () {
+     this.listener = UserStore.addListener(this._onChange);
+  },
+
  //
- //  componentWillUnmount: function () {
- //    this.listener.remove();
- //  },
- //
- //  _onChange: function () {
- //   var postId = this.props.post.postId;
- //   var post = this._findPostById(this.state.post.id);
- //   this.setState({ post: post });
- // },
+  componentWillUnmount: function () {
+    this.listener.remove();
+  },
+
+  _onChange: function () {
+   var postId = this.props.post.postId;
+   var post = this._findPostById(this.state.post.id);
+   UserApiUtil.fetchUser(parseInt(this.props.post.profile_id), function(user){
+     this.setState({post_image: user.profile_pic})
+   }.bind(this));
+ },
 
  //
  // if(this.props.post.author && this.props.post.author.profile_pic_url){
@@ -77,13 +74,19 @@ var PostsIndexItems = React.createClass({
     var comments;
     var profile_pic;
     var to;
+    var profile_person;
+    var post_image;
+
+    var profile_pic_url;
 
 
-    var deletebutton = <div></div>;
-    var profile_person = <Link className="username" to={'users/' + this.props.post.profile_id}>{this.props.post.profile_name}</Link>
-    debugger
+    var deletebutton;
+    if(this.props.post.profile_id !== this.props.post.author_id){
+    profile_person = <Link to={'users/' + this.props.post.profile_id}>{this.props.post.profile_name}</Link>
+    to = <span> to </span>}
+
+
     if (this.props.post.author_id == CurrentUserStore.user().id){
-
       deletebutton = <button onClick={this.handleDelete}>Delete Post</button>
     }
 
@@ -107,9 +110,8 @@ var PostsIndexItems = React.createClass({
       <div >
         <ul className="post-index-items group">
           <li>{deletebutton}</li>
-          <img className="small-image" src={this.props.post.profile_pic} />
-          <Link className="username" to={'users/' + this.props.post.author_id}>{this.props.post.author_name} posted {profile_person}</Link>
-
+          <Link className="username" to={'users/' + this.props.post.author_id}>{this.props.post.author_name}</Link> {to}{profile_person}
+          <img className="small-image" src={this.state.post_image} />
           <h1 className="timeago">Created<TimeAgo date={this.props.post.created_at} /></h1>
           <li className="actual-post">{this.props.post.body}</li>
         </ul>

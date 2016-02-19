@@ -1,5 +1,7 @@
 var React = require('react');
 var UsersApiUtil = require('../util/users_api_util.js');
+var ImageApiUtil = require('../util/images_api_util');
+
 
 var UserCoverForm = React.createClass({
   getInitialState: function() {
@@ -14,8 +16,8 @@ var UserCoverForm = React.createClass({
             <input type="file" onChange={this.changeFile} />
           </label>
 
-          <img className="preview-image" src={this.state.imageUrl}/>
-          <button>Upload Cover Photo</button>
+          <img className="preview-image-cover" src={this.state.imageUrl}/>
+          <button>Upload</button>
         </form>
 
       </div>
@@ -41,7 +43,11 @@ var UserCoverForm = React.createClass({
     e.preventDefault();
     var formData = new FormData();
     formData.append("user[cover_pic]", this.state.imageFile);
+    var file = this.state.imageFile;
+    var formData2 = new FormData();
+    formData2.append("photo[photo]", file);
     UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
+    ImageApiUtil.createImage(formData2);
   },
 
   resetForm: function() {

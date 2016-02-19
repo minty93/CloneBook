@@ -33068,8 +33068,6 @@
 	var Navbar = __webpack_require__(266);
 	var CoverForm = __webpack_require__(259);
 	var ProfileForm = __webpack_require__(260);
-	var Header = __webpack_require__(274);
-	var CurrentUserStore = __webpack_require__(247);
 	
 	var UserProfile = React.createClass({
 	  displayName: 'UserProfile',
@@ -33087,17 +33085,15 @@
 	
 	  getInitialState: function () {
 	    var userId = this.props.userId || this.props.params.userId;
-	    UserApiUtil.fetchUser(parseInt(userId));
-	    if (this._findUserById(userId) != undefined) {
-	      var user = this._findUserById(userId);
-	    };
+	    var user = this._findUserById(userId);
 	    return { user: user };
 	  },
 	
 	  componentDidMount: function () {
 	    var userId = this.props.userId || this.props.params.userId;
 	    this.listener = UserStore.addListener(this._onChange);
-	
+	    // this.listener = PostStore.addListener(this._onChange);
+	    // this.listener = CommentStore.addListener(this._onChange);
 	    UserApiUtil.fetchUser(parseInt(userId));
 	  },
 	
@@ -33114,34 +33110,23 @@
 	
 	  _onChange: function () {
 	    var userId = this.props.params.userId;
-	    var user;
-	    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user) {
+	    var user = this._findUserById(userId);
+	    if (this.isMounted()) {
 	      this.setState({ user: user });
-	    }.bind(this));
-	    // this._findUserById(userId);
+	    }
 	  },
 	
 	  render: function () {
-	
 	    var received_posts;
-	    var navbar;
-	    var cover_form;
-	    var profile_form;
 	
 	    if (this.state.user) {
 	      if (this.state.user.received_posts) {
 	        received_posts = this.state.user.received_posts.slice(0);
 	        fname = this.state.user.fname;
-	        navbar = React.createElement(Navbar, { params: this.props.params, user: this.state.user });
 	        received_posts = received_posts.reverse().map(function (post) {
 	          return React.createElement(PostIndexItem, { post: post, key: post.id });
 	        });
 	      }
-	      if (this.state.user.id == CurrentUserStore.user().id) {
-	        cover_form = React.createElement(CoverForm, { className: 'fullpage', params: this.props.params });
-	        profile_form = React.createElement(ProfileForm, { className: 'fullpage', params: this.props.params });
-	      }
-	
 	      cover_pic = React.createElement('img', { className: 'cover-image', src: this.state.user.cover_pic });
 	      profile_pic = React.createElement('img', { className: 'profile-image', src: this.state.user.profile_pic });
 	    }
@@ -33149,12 +33134,12 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      cover_form,
-	      profile_form,
-	      navbar,
+	      React.createElement(CoverForm, { className: 'fullpage', params: this.props.params }),
+	      React.createElement(ProfileForm, { className: 'fullpage', params: this.props.params }),
 	      React.createElement(
 	        'div',
 	        { className: 'profile-page' },
+	        React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
 	        React.createElement(FriendButton, { params: this.props.params }),
 	        React.createElement(
 	          'div',

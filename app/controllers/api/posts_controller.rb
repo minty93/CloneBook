@@ -26,7 +26,7 @@ class Api::PostsController < ApplicationController
     @post.profile_name ||= current_user.fname + " " + current_user.lname
     @post.profile_id ||= current_user.id
     @post.author_id = current_user.id
-    @post.profile_pic = current_user.profile_pic.url
+    # @post.profile_pic = current_user.profile_pic.url
     @post.author_name = current_user.fname + " " + current_user.lname
       if @post.save
         render json: @post

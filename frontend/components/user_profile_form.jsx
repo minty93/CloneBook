@@ -15,8 +15,8 @@ var UserProfileForm = React.createClass({
             <input type="file" onChange={this.changeFile} />
           </label>
 
+          <button className="preview-image-button">Upload Profile</button>
           <img className="preview-image-cover" src={this.state.imageUrl}/>
-          <button>Upload</button>
         </form>
 
       </div>

@@ -33,6 +33,9 @@ var PostsIndexItems = React.createClass({
  //
    componentDidMount: function () {
      this.listener = UserStore.addListener(this._onChange);
+     UserApiUtil.fetchUser(parseInt(this.props.post.author_id), function(user){
+       this.setState({post_image: user.profile_pic})
+     }.bind(this));
   },
 
  //
@@ -42,8 +45,8 @@ var PostsIndexItems = React.createClass({
 
   _onChange: function () {
    var postId = this.props.post.postId;
-   var post = this._findPostById(this.state.post.id);
-   UserApiUtil.fetchUser(parseInt(this.props.post.profile_id), function(user){
+   var post = this._findPostById(postId);
+   UserApiUtil.fetchUser(parseInt(this.props.post.author_id), function(user){
      this.setState({post_image: user.profile_pic})
    }.bind(this));
  },

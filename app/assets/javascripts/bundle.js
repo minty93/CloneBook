@@ -52,17 +52,17 @@
 	var IndexRoute = ReactRouter.IndexRoute;
 	var PostsForm = __webpack_require__(206);
 	var PostsIndex = __webpack_require__(239);
-	var UserProfile = __webpack_require__(255);
+	var UserProfile = __webpack_require__(262);
 	var CommentsForm = __webpack_require__(242);
-	var App = __webpack_require__(273);
-	var SessionForm = __webpack_require__(275);
-	var UserForm = __webpack_require__(276);
+	var App = __webpack_require__(276);
+	var SessionForm = __webpack_require__(277);
+	var UserForm = __webpack_require__(278);
 	var CurrentUserStore = __webpack_require__(247);
-	var SessionsApiUtil = __webpack_require__(267);
-	var UsersIndex = __webpack_require__(277);
-	var About = __webpack_require__(278);
-	var Friends = __webpack_require__(279);
-	var PhotoIndex = __webpack_require__(261);
+	var SessionsApiUtil = __webpack_require__(256);
+	var UsersIndex = __webpack_require__(279);
+	var About = __webpack_require__(280);
+	var Friends = __webpack_require__(281);
+	var PhotoIndex = __webpack_require__(270);
 	
 	// var App = React.createClass({
 	//   render: function(){
@@ -31530,7 +31530,7 @@
 	var CommentsForm = __webpack_require__(242);
 	var CommentsIndexItem = __webpack_require__(245);
 	var ReactCSSTransitionGroup = __webpack_require__(248);
-	var Header = __webpack_require__(274);
+	var Header = __webpack_require__(255);
 	
 	var PostsIndex = React.createClass({
 	  displayName: "PostsIndex",
@@ -31714,6 +31714,9 @@
 	  //
 	  componentDidMount: function () {
 	    this.listener = UserStore.addListener(this._onChange);
+	    UserApiUtil.fetchUser(parseInt(this.props.post.author_id), function (user) {
+	      this.setState({ post_image: user.profile_pic });
+	    }.bind(this));
 	  },
 	
 	  //
@@ -31723,8 +31726,8 @@
 	
 	  _onChange: function () {
 	    var postId = this.props.post.postId;
-	    var post = this._findPostById(this.state.post.id);
-	    UserApiUtil.fetchUser(parseInt(this.props.post.profile_id), function (user) {
+	    var post = this._findPostById(postId);
+	    UserApiUtil.fetchUser(parseInt(this.props.post.author_id), function (user) {
 	      this.setState({ post_image: user.profile_pic });
 	    }.bind(this));
 	  },
@@ -33052,6 +33055,358 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var CurrentUserStore = __webpack_require__(247);
+	var SessionsApiUtil = __webpack_require__(256);
+	var Search = __webpack_require__(257);
+	var History = __webpack_require__(159).History;
+	var Link = __webpack_require__(159).Link;
+	var UserApiUtil = __webpack_require__(214);
+	
+	var Header = React.createClass({
+	  displayName: 'Header',
+	
+	  mixins: [History],
+	
+	  getInitialState: function () {
+	
+	    return {
+	      currentUser: CurrentUserStore.currentUser()
+	    };
+	  },
+	
+	  componentDidMount: function () {
+	    this.listener = CurrentUserStore.addListener(this._onChange);
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.listener.remove();
+	  },
+	
+	  componentWillReceiveProps: function () {
+	    this._onChange();
+	  },
+	
+	  _onChange: function () {
+	    UserApiUtil.fetchUser(parseInt(CurrentUserStore.user().id), function (user) {
+	      this.setState({ currentUser: user });
+	    }.bind(this));
+	  },
+	
+	  logout: function (e) {
+	    e.preventDefault();
+	    SessionsApiUtil.logout(function () {
+	      this.history.pushState({}, "/login");
+	    }.bind(this));
+	  },
+	
+	  render: function () {
+	
+	    if (CurrentUserStore.isLoggedIn()) {
+	      currentUser = CurrentUserStore.user();
+	      return React.createElement(
+	        'div',
+	        { className: 'main-header group' },
+	        React.createElement(
+	          Link,
+	          { className: 'link', to: `/` },
+	          React.createElement('img', { src: 'http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png', className: 'side-logo' })
+	        ),
+	        React.createElement(
+	          'ul',
+	          { className: 'main-links group' },
+	          React.createElement(
+	            'li',
+	            { className: 'searchbar' },
+	            React.createElement(Search, { className: 'search' })
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            React.createElement(
+	              Link,
+	              { className: 'link', to: `/` },
+	              'Home'
+	            )
+	          ),
+	          React.createElement(
+	            'li',
+	            { className: 'logged-in' },
+	            React.createElement(
+	              Link,
+	              { className: 'link', to: `users/${ currentUser.id }` },
+	              React.createElement('img', { src: this.state.currentUser.profile_pic }),
+	              currentUser.fname
+	            )
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            React.createElement(
+	              'button',
+	              { onClick: this.logout },
+	              ' Log Out'
+	            )
+	          )
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'a',
+	          { href: '#/login' },
+	          'Login'
+	        )
+	      );
+	    }
+	  }
+	
+	});
+	
+	module.exports = Header;
+
+/***/ },
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var CurrentUserActions = __webpack_require__(217);
+	var SessionsApiUtil = {
+	  login: function (credentials, success) {
+	
+	    $.ajax({
+	      url: '/api/session',
+	      type: 'POST',
+	      dataType: 'json',
+	      data: credentials,
+	      success: function (currentUser) {
+	        CurrentUserActions.receiveCurrentUser(currentUser);
+	        success && success();
+	      }
+	
+	    });
+	  },
+	
+	  logout: function (cb) {
+	    $.ajax({
+	      url: '/api/session',
+	      type: 'DELETE',
+	      dataType: 'json',
+	      success: function () {
+	        CurrentUserActions.logOut();
+	        cb && cb();
+	      }
+	    });
+	  },
+	
+	  fetchCurrentUser: function (cb) {
+	    $.ajax({
+	      url: '/api/session',
+	      type: 'GET',
+	      dataType: 'json',
+	      success: function (currentUser) {
+	        console.log("fetched current user!");
+	        CurrentUserActions.receiveCurrentUser(currentUser);
+	        cb && cb(currentUser);
+	      }
+	    });
+	  }
+	
+	};
+	
+	module.exports = SessionsApiUtil;
+
+/***/ },
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SearchResultsStore = __webpack_require__(258);
+	var SearchApiUtil = __webpack_require__(260);
+	var UserProfile = __webpack_require__(262);
+	var PostIndexItem = __webpack_require__(241);
+	var CommentIndexItem = __webpack_require__(245);
+	var Link = __webpack_require__(159).Link;
+	
+	var Search = React.createClass({
+	  displayName: 'Search',
+	
+	
+	  componentDidMount: function () {
+	    this.listener = SearchResultsStore.addListener(this._onChange);
+	  },
+	
+	  getInitialState: function () {
+	    return { page: 1, query: "" };
+	  },
+	
+	  _onChange: function () {
+	    this.forceUpdate();
+	  },
+	
+	  reset: function () {
+	    this.setState({ page: 1, query: "" });
+	  },
+	
+	  search: function (e) {
+	    var query = e.target.value;
+	    SearchApiUtil.search(query, 1);
+	
+	    this.setState({ page: 1, query: query });
+	  },
+	
+	  nextPage: function () {
+	    var nextPage = this.state.page + 1;
+	    SearchApiUtil.search(this.state.query, nextPage);
+	
+	    this.setState({ page: nextPage });
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.listener.remove();
+	  },
+	
+	  render: function () {
+	
+	    var searchResults = SearchResultsStore.all().map(function (searchResult) {
+	      if (searchResult._type === "User") {
+	        return React.createElement(
+	          'li',
+	          null,
+	          React.createElement(
+	            Link,
+	            { to: `users/${ searchResult.id }` },
+	            React.createElement('img', { className: 'searchimage', src: searchResult.profile_pic_url }),
+	            searchResult.fname
+	          )
+	        );
+	      } else if (searchResult._type === "Post") {
+	        return React.createElement(
+	          'li',
+	          { onClick: this.reset },
+	          React.createElement(PostIndexItem, { post: searchResult })
+	        );
+	      } else {
+	        return React.createElement(
+	          'li',
+	          { onClick: this.reset },
+	          React.createElement(CommentIndexItem, { comment: searchResult })
+	        );
+	      }
+	    });
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'search' },
+	      React.createElement('h1', { className: 'title' }),
+	      React.createElement('input', { className: 'search-input', type: 'text', placeholder: 'Search for a User', onKeyUp: this.search }),
+	      React.createElement('button', { onClick: this.nextPage }),
+	      React.createElement(
+	        'ul',
+	        { className: 'users-index' },
+	        searchResults
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Search;
+
+/***/ },
+/* 258 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(220).Store;
+	var AppDispatcher = __webpack_require__(210);
+	var SearchConstants = __webpack_require__(259);
+	
+	var _searchResults = [];
+	var _meta = {};
+	
+	var SearchResultsStore = new Store(AppDispatcher);
+	
+	SearchResultsStore.all = function () {
+	  return _searchResults.slice();
+	};
+	
+	SearchResultsStore.meta = function () {
+	  return _meta;
+	};
+	
+	SearchResultsStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	
+	    case SearchConstants.RECEIVE_SEARCH_RESULTS:
+	      _searchResults = payload.searchResults;
+	      _meta = payload.meta;
+	      SearchResultsStore.__emitChange();
+	      break;
+	
+	  }
+	};
+	
+	module.exports = SearchResultsStore;
+
+/***/ },
+/* 259 */
+/***/ function(module, exports) {
+
+	var SearchConstants = {
+	  RECEIVE_SEARCH_RESULTS: "RECEIVE_SEARCH_RESULTS"
+	};
+	
+	module.exports = SearchConstants;
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var SearchActions = __webpack_require__(261);
+	
+	var SearchApiUtil = {
+	
+	  search: function (query, page) {
+	    $.ajax({
+	      url: '/api/search',
+	      type: 'GET',
+	      dataType: 'json',
+	      data: { query: query, page: page },
+	      success: function (data) {
+	        SearchActions.receiveResults(data);
+	      }
+	    });
+	  }
+	
+	};
+	
+	module.exports = SearchApiUtil;
+
+/***/ },
+/* 261 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var SearchConstants = __webpack_require__(259);
+	var AppDispatcher = __webpack_require__(210);
+	
+	var SearchActions = {
+	  receiveResults: function (data) {
+	    AppDispatcher.dispatch({
+	      actionType: SearchConstants.RECEIVE_SEARCH_RESULTS,
+	      searchResults: data.results,
+	      meta: { totalCount: data.total_count }
+	    });
+	  }
+	
+	};
+	
+	module.exports = SearchActions;
+
+/***/ },
+/* 262 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
 	var UserStore = __webpack_require__(238);
@@ -33060,14 +33415,16 @@
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(241);
 	var PostsForm = __webpack_require__(206);
-	var FriendButton = __webpack_require__(256);
-	var CoverForm = __webpack_require__(259);
-	var ProfileForm = __webpack_require__(260);
-	var PhotoIndex = __webpack_require__(261);
-	var ImageForm = __webpack_require__(265);
-	var Navbar = __webpack_require__(266);
-	var CoverForm = __webpack_require__(259);
-	var ProfileForm = __webpack_require__(260);
+	var FriendButton = __webpack_require__(263);
+	var CoverForm = __webpack_require__(266);
+	var ProfileForm = __webpack_require__(269);
+	var PhotoIndex = __webpack_require__(270);
+	var ImageForm = __webpack_require__(272);
+	var Navbar = __webpack_require__(273);
+	var CoverForm = __webpack_require__(266);
+	var ProfileForm = __webpack_require__(269);
+	var Header = __webpack_require__(255);
+	var CurrentUserStore = __webpack_require__(247);
 	
 	var UserProfile = React.createClass({
 	  displayName: 'UserProfile',
@@ -33085,21 +33442,24 @@
 	
 	  getInitialState: function () {
 	    var userId = this.props.userId || this.props.params.userId;
-	    var user = this._findUserById(userId);
+	    UserApiUtil.fetchUser(parseInt(userId));
+	    if (this._findUserById(userId) != undefined) {
+	      var user = this._findUserById(userId);
+	    };
 	    return { user: user };
 	  },
 	
 	  componentDidMount: function () {
 	    var userId = this.props.userId || this.props.params.userId;
 	    this.listener = UserStore.addListener(this._onChange);
-	    // this.listener = PostStore.addListener(this._onChange);
-	    // this.listener = CommentStore.addListener(this._onChange);
+	
 	    UserApiUtil.fetchUser(parseInt(userId));
 	  },
 	
 	  componentWillReceiveProps: function (newProps) {
-	    UserApiUtil.fetchUser(parseInt(newProps.params.userId));
-	    this.forceUpdate();
+	    UserApiUtil.fetchUser(parseInt(newProps.params.userId), function (user) {
+	      this.setState({ user: user });
+	    }.bind(this));
 	  },
 	
 	  componentWillUnmount: function () {
@@ -33110,23 +33470,34 @@
 	
 	  _onChange: function () {
 	    var userId = this.props.params.userId;
-	    var user = this._findUserById(userId);
-	    if (this.isMounted()) {
+	    var user;
+	    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user) {
 	      this.setState({ user: user });
-	    }
+	    }.bind(this));
+	    // this._findUserById(userId);
 	  },
 	
 	  render: function () {
+	
 	    var received_posts;
+	    var navbar;
+	    var cover_form;
+	    var profile_form;
 	
 	    if (this.state.user) {
 	      if (this.state.user.received_posts) {
 	        received_posts = this.state.user.received_posts.slice(0);
 	        fname = this.state.user.fname;
+	        navbar = React.createElement(Navbar, { params: this.props.params, user: this.state.user });
 	        received_posts = received_posts.reverse().map(function (post) {
 	          return React.createElement(PostIndexItem, { post: post, key: post.id });
 	        });
 	      }
+	      if (this.state.user.id == CurrentUserStore.user().id) {
+	        cover_form = React.createElement(CoverForm, { className: 'fullpage', params: this.props.params });
+	        profile_form = React.createElement(ProfileForm, { className: 'fullpage', params: this.props.params });
+	      }
+	
 	      cover_pic = React.createElement('img', { className: 'cover-image', src: this.state.user.cover_pic });
 	      profile_pic = React.createElement('img', { className: 'profile-image', src: this.state.user.profile_pic });
 	    }
@@ -33134,12 +33505,12 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      React.createElement(CoverForm, { className: 'fullpage', params: this.props.params }),
-	      React.createElement(ProfileForm, { className: 'fullpage', params: this.props.params }),
+	      cover_form,
+	      profile_form,
+	      navbar,
 	      React.createElement(
 	        'div',
 	        { className: 'profile-page' },
-	        React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
 	        React.createElement(FriendButton, { params: this.props.params }),
 	        React.createElement(
 	          'div',
@@ -33155,7 +33526,7 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 256 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33164,7 +33535,7 @@
 	var CurrentUserStore = __webpack_require__(247);
 	var CommentsApiUtil = __webpack_require__(243);
 	var PostsApiUtil = __webpack_require__(207);
-	var FriendApiUtil = __webpack_require__(257);
+	var FriendApiUtil = __webpack_require__(264);
 	var UserStore = __webpack_require__(238);
 	var UserApiUtil = __webpack_require__(214);
 	
@@ -33276,10 +33647,10 @@
 	module.exports = FriendRequestItem;
 
 /***/ },
-/* 257 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var FriendActions = __webpack_require__(258);
+	var FriendActions = __webpack_require__(265);
 	
 	var FriendApiUtil = {
 	
@@ -33319,7 +33690,7 @@
 	module.exports = FriendApiUtil;
 
 /***/ },
-/* 258 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -33352,12 +33723,12 @@
 	module.exports = FriendActions;
 
 /***/ },
-/* 259 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var UsersApiUtil = __webpack_require__(214);
-	var ImageApiUtil = __webpack_require__(262);
+	var ImageApiUtil = __webpack_require__(267);
 	
 	var UserCoverForm = React.createClass({
 	  displayName: 'UserCoverForm',
@@ -33378,12 +33749,12 @@
 	          null,
 	          React.createElement('input', { type: 'file', onChange: this.changeFile })
 	        ),
-	        React.createElement('img', { className: 'preview-image-cover', src: this.state.imageUrl }),
 	        React.createElement(
 	          'button',
-	          null,
-	          'Upload'
-	        )
+	          { className: 'preview-image-button' },
+	          'Upload Cover'
+	        ),
+	        React.createElement('img', { className: 'preview-image-cover', src: this.state.imageUrl })
 	      )
 	    );
 	  },
@@ -33422,12 +33793,58 @@
 	module.exports = UserCoverForm;
 
 /***/ },
-/* 260 */
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var PhotoApiActions = __webpack_require__(268);
+	
+	var ImagesApiUtil = {
+	
+	  createImage: function (formData, callback) {
+	    $.ajax({
+	      url: "api/photos/",
+	      type: 'POST',
+	      data: formData,
+	      processData: false,
+	      contentType: false,
+	      dataType: 'json',
+	      success: function (photo) {
+	        PhotoApiActions.receivePhoto(photo);
+	        callback && callback();
+	      }
+	    });
+	  }
+	};
+	
+	module.exports = ImagesApiUtil;
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(210);
+	var UserConstants = __webpack_require__(216);
+	
+	var PhotoActions = {
+	
+	  receivePhoto: function (photo) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_PHOTO,
+	      photo: photo
+	    });
+	  }
+	
+	};
+	
+	module.exports = PhotoActions;
+
+/***/ },
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var UsersApiUtil = __webpack_require__(214);
-	var ImageApiUtil = __webpack_require__(262);
+	var ImageApiUtil = __webpack_require__(267);
 	
 	var UserProfileForm = React.createClass({
 	  displayName: 'UserProfileForm',
@@ -33448,12 +33865,12 @@
 	          null,
 	          React.createElement('input', { type: 'file', onChange: this.changeFile })
 	        ),
-	        React.createElement('img', { className: 'preview-image-cover', src: this.state.imageUrl }),
 	        React.createElement(
 	          'button',
-	          null,
-	          'Upload'
-	        )
+	          { className: 'preview-image-button' },
+	          'Upload Profile'
+	        ),
+	        React.createElement('img', { className: 'preview-image-cover', src: this.state.imageUrl })
 	      )
 	    );
 	  },
@@ -33492,14 +33909,14 @@
 	module.exports = UserProfileForm;
 
 /***/ },
-/* 261 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImagesApiUtil = __webpack_require__(262);
-	var PhotoIndexItem = __webpack_require__(264);
-	var ImageForm = __webpack_require__(265);
-	var Navbar = __webpack_require__(266);
+	var ImagesApiUtil = __webpack_require__(267);
+	var PhotoIndexItem = __webpack_require__(271);
+	var ImageForm = __webpack_require__(272);
+	var Navbar = __webpack_require__(273);
 	var UserStore = __webpack_require__(238);
 	var UserApiUtil = __webpack_require__(214);
 	var CurrentUserStore = __webpack_require__(247);
@@ -33577,57 +33994,11 @@
 	module.exports = PhotoIndex;
 
 /***/ },
-/* 262 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var PhotoApiActions = __webpack_require__(263);
-	
-	var ImagesApiUtil = {
-	
-	  createImage: function (formData, callback) {
-	    $.ajax({
-	      url: "api/photos/",
-	      type: 'POST',
-	      data: formData,
-	      processData: false,
-	      contentType: false,
-	      dataType: 'json',
-	      success: function (photo) {
-	        PhotoApiActions.receivePhoto(photo);
-	        callback && callback();
-	      }
-	    });
-	  }
-	};
-	
-	module.exports = ImagesApiUtil;
-
-/***/ },
-/* 263 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(210);
-	var UserConstants = __webpack_require__(216);
-	
-	var PhotoActions = {
-	
-	  receivePhoto: function (photo) {
-	    AppDispatcher.dispatch({
-	      actionType: UserConstants.RECEIVE_PHOTO,
-	      photo: photo
-	    });
-	  }
-	
-	};
-	
-	module.exports = PhotoActions;
-
-/***/ },
-/* 264 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImagesApiUtil = __webpack_require__(262);
+	var ImagesApiUtil = __webpack_require__(267);
 	
 	var PhotoIndexItem = React.createClass({
 	  displayName: "PhotoIndexItem",
@@ -33646,11 +34017,11 @@
 	module.exports = PhotoIndexItem;
 
 /***/ },
-/* 265 */
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImageApiUtil = __webpack_require__(262);
+	var ImageApiUtil = __webpack_require__(267);
 	var UserApiUtil = __webpack_require__(214);
 	var CurrentUserStore = __webpack_require__(247);
 	
@@ -33721,19 +34092,19 @@
 	module.exports = ImageForm;
 
 /***/ },
-/* 266 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var CurrentUserStore = __webpack_require__(247);
-	var SessionsApiUtil = __webpack_require__(267);
-	var Search = __webpack_require__(268);
+	var SessionsApiUtil = __webpack_require__(256);
+	var Search = __webpack_require__(257);
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
-	var CoverForm = __webpack_require__(259);
-	var ProfileForm = __webpack_require__(260);
-	var FriendButton = __webpack_require__(256);
-	var LocalStorageMixin = __webpack_require__(280);
+	var CoverForm = __webpack_require__(266);
+	var ProfileForm = __webpack_require__(269);
+	var FriendButton = __webpack_require__(263);
+	var LocalStorageMixin = __webpack_require__(274);
 	
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
@@ -33810,248 +34181,205 @@
 	module.exports = Navbar;
 
 /***/ },
-/* 267 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CurrentUserActions = __webpack_require__(217);
-	var SessionsApiUtil = {
-	  login: function (credentials, success) {
-	
-	    $.ajax({
-	      url: '/api/session',
-	      type: 'POST',
-	      dataType: 'json',
-	      data: credentials,
-	      success: function (currentUser) {
-	        CurrentUserActions.receiveCurrentUser(currentUser);
-	        success && success();
-	      }
-	
-	    });
-	  },
-	
-	  logout: function (cb) {
-	    $.ajax({
-	      url: '/api/session',
-	      type: 'DELETE',
-	      dataType: 'json',
-	      success: function () {
-	        CurrentUserActions.logOut();
-	        cb && cb();
-	      }
-	    });
-	  },
-	
-	  fetchCurrentUser: function (cb) {
-	    $.ajax({
-	      url: '/api/session',
-	      type: 'GET',
-	      dataType: 'json',
-	      success: function (currentUser) {
-	        console.log("fetched current user!");
-	        CurrentUserActions.receiveCurrentUser(currentUser);
-	        cb && cb(currentUser);
-	      }
-	    });
-	  }
-	
-	};
-	
-	module.exports = SessionsApiUtil;
-
-/***/ },
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
+	/* WEBPACK VAR INJECTION */(function(global, process) {'use strict';
 	var React = __webpack_require__(1);
-	var SearchResultsStore = __webpack_require__(269);
-	var SearchApiUtil = __webpack_require__(271);
-	var UserProfile = __webpack_require__(255);
-	var PostIndexItem = __webpack_require__(241);
-	var CommentIndexItem = __webpack_require__(245);
-	var Link = __webpack_require__(159).Link;
+	var warn = __webpack_require__(275);
+	var hasLocalStorage = 'localStorage' in global;
+	var ls, testKey;
 	
-	var Search = React.createClass({
-	  displayName: 'Search',
+	if (hasLocalStorage) {
+	  testKey = 'react-localstorage.mixin.test-key';
+	  try {
+	    // Access to global `localStorage` property must be guarded as it
+	    // fails under iOS private session mode.
+	    ls = global.localStorage;
+	    ls.setItem(testKey, 'foo');
+	    ls.removeItem(testKey);
+	  } catch (e) {
+	    hasLocalStorage = false;
+	  }
+	}
 	
+	// Warn if localStorage cannot be found or accessed.
+	if (process.browser) {
+	  warn(
+	    hasLocalStorage,
+	    'localStorage not found. Component state will not be stored to localStorage.'
+	  );
+	}
 	
+	var Mixin = module.exports = {
+	  /**
+	   * Error checking. On update, ensure that the last state stored in localStorage is equal
+	   * to the state on the component. We skip the check the first time around as state is left
+	   * alone until mount to keep server rendering working.
+	   *
+	   * If it is not consistent, we know that someone else is modifying localStorage out from under us, so we throw
+	   * an error.
+	   *
+	   * There are a lot of ways this can happen, so it is worth throwing the error.
+	   */
+	  componentWillUpdate: function(nextProps, nextState) {
+	    if (!hasLocalStorage || !this.__stateLoadedFromLS) return;
+	    var key = getLocalStorageKey(this);
+	    var prevStoredState = ls.getItem(key);
+	    if (prevStoredState && process.env.NODE_ENV !== "production") {
+	      warn(
+	        prevStoredState === JSON.stringify(getSyncState(this, this.state)),
+	        'While component ' + getDisplayName(this) + ' was saving state to localStorage, ' +
+	        'the localStorage entry was modified by another actor. This can happen when multiple ' +
+	        'components are using the same localStorage key. Set the property `localStorageKey` ' +
+	        'on ' + getDisplayName(this) + '.'
+	      );
+	    }
+	    // Since setState() can't be called in CWU, it's a fine time to save the state.
+	    ls.setItem(key, JSON.stringify(getSyncState(this, nextState)));
+	  },
+	
+	  /**
+	   * Load data.
+	   * This seems odd to do this on componentDidMount, but it prevents server checksum errors.
+	   * This is because the server has no way to know what is in your localStorage. So instead
+	   * of breaking the checksum and causing a full rerender, we instead change the component after mount
+	   * for an efficient diff.
+	   */
 	  componentDidMount: function () {
-	    this.listener = SearchResultsStore.addListener(this._onChange);
-	  },
-	
-	  getInitialState: function () {
-	    return { page: 1, query: "" };
-	  },
-	
-	  _onChange: function () {
-	    this.forceUpdate();
-	  },
-	
-	  reset: function () {
-	    this.setState({ page: 1, query: "" });
-	  },
-	
-	  search: function (e) {
-	    var query = e.target.value;
-	    SearchApiUtil.search(query, 1);
-	
-	    this.setState({ page: 1, query: query });
-	  },
-	
-	  nextPage: function () {
-	    var nextPage = this.state.page + 1;
-	    SearchApiUtil.search(this.state.query, nextPage);
-	
-	    this.setState({ page: nextPage });
-	  },
-	
-	  componentWillUnmount: function () {
-	    this.listener.remove();
-	  },
-	
-	  render: function () {
-	
-	    var searchResults = SearchResultsStore.all().map(function (searchResult) {
-	      if (searchResult._type === "User") {
-	        return React.createElement(
-	          'li',
-	          null,
-	          React.createElement(
-	            Link,
-	            { to: `users/${ searchResult.id }` },
-	            React.createElement('img', { className: 'searchimage', src: searchResult.profile_pic_url }),
-	            searchResult.fname
-	          )
-	        );
-	      } else if (searchResult._type === "Post") {
-	        return React.createElement(
-	          'li',
-	          { onClick: this.reset },
-	          React.createElement(PostIndexItem, { post: searchResult })
-	        );
-	      } else {
-	        return React.createElement(
-	          'li',
-	          { onClick: this.reset },
-	          React.createElement(CommentIndexItem, { comment: searchResult })
-	        );
-	      }
-	    });
-	
-	    return React.createElement(
-	      'div',
-	      { className: 'search' },
-	      React.createElement('h1', { className: 'title' }),
-	      React.createElement('input', { className: 'search-input', type: 'text', placeholder: 'Search for a User', onKeyUp: this.search }),
-	      React.createElement('button', { onClick: this.nextPage }),
-	      React.createElement(
-	        'ul',
-	        { className: 'users-index' },
-	        searchResults
-	      )
-	    );
-	  }
-	
-	});
-	
-	module.exports = Search;
-
-/***/ },
-/* 269 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Store = __webpack_require__(220).Store;
-	var AppDispatcher = __webpack_require__(210);
-	var SearchConstants = __webpack_require__(270);
-	
-	var _searchResults = [];
-	var _meta = {};
-	
-	var SearchResultsStore = new Store(AppDispatcher);
-	
-	SearchResultsStore.all = function () {
-	  return _searchResults.slice();
-	};
-	
-	SearchResultsStore.meta = function () {
-	  return _meta;
-	};
-	
-	SearchResultsStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	
-	    case SearchConstants.RECEIVE_SEARCH_RESULTS:
-	      _searchResults = payload.searchResults;
-	      _meta = payload.meta;
-	      SearchResultsStore.__emitChange();
-	      break;
-	
-	  }
-	};
-	
-	module.exports = SearchResultsStore;
-
-/***/ },
-/* 270 */
-/***/ function(module, exports) {
-
-	var SearchConstants = {
-	  RECEIVE_SEARCH_RESULTS: "RECEIVE_SEARCH_RESULTS"
-	};
-	
-	module.exports = SearchConstants;
-
-/***/ },
-/* 271 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SearchActions = __webpack_require__(272);
-	
-	var SearchApiUtil = {
-	
-	  search: function (query, page) {
-	    $.ajax({
-	      url: '/api/search',
-	      type: 'GET',
-	      dataType: 'json',
-	      data: { query: query, page: page },
-	      success: function (data) {
-	        SearchActions.receiveResults(data);
-	      }
+	    if (!hasLocalStorage) return;
+	    var me = this;
+	    loadStateFromLocalStorage(this, function() {
+	      // After setting state, mirror back to localstorage.
+	      // This prevents invariants if the developer has changed the initial state of the component.
+	      ls.setItem(getLocalStorageKey(me), JSON.stringify(getSyncState(me, me.state)));
 	    });
 	  }
-	
 	};
 	
-	module.exports = SearchApiUtil;
+	function loadStateFromLocalStorage(component, cb) {
+	  if (!ls) return;
+	  var key = getLocalStorageKey(component);
+	  var settingState = false;
+	  try {
+	    var storedState = JSON.parse(ls.getItem(key));
+	    if (storedState) {
+	      settingState = true;
+	      component.setState(storedState, done);
+	    }
+	  } catch(e) {
+	    if (console) console.warn("Unable to load state for", getDisplayName(component), "from localStorage.");
+	  }
+	  // If we didn't set state, run the callback right away.
+	  if (!settingState) done();
+	
+	  function done() {
+	    // Flag this component as loaded.
+	    component.__stateLoadedFromLS = true;
+	    cb();
+	  }
+	}
+	
+	function getDisplayName(component) {
+	  // at least, we cannot get displayname
+	  // via this.displayname in react 0.12
+	  return component.displayName || component.constructor.displayName || component.constructor.name;
+	}
+	
+	function getLocalStorageKey(component) {
+	  if (component.getLocalStorageKey) {
+	    return component.getLocalStorageKey();
+	  }
+	  return component.props.localStorageKey || getDisplayName(component) || 'react-localstorage';
+	}
+	
+	function getStateFilterKeys(component) {
+	  if (component.getStateFilterKeys) {
+	    return typeof component.getStateFilterKeys() === 'string' ?
+	      [component.getStateFilterKeys()] : component.getStateFilterKeys();
+	  }
+	  return typeof component.props.stateFilterKeys === 'string' ?
+	    [component.props.stateFilterKeys] : component.props.stateFilterKeys;
+	}
+	
+	/**
+	* Filters state to only save keys defined in stateFilterKeys.
+	* If stateFilterKeys is not set, returns full state.
+	*/
+	function getSyncState(component, state) {
+	  var stateFilterKeys = getStateFilterKeys(component);
+	  if (!stateFilterKeys) return state;
+	  var result = {};
+	  stateFilterKeys.forEach(function(sk) {
+	    for (var key in state) {
+	      if (state.hasOwnProperty(key) && sk === key) result[key] = state[key];
+	    }
+	  });
+	  return result;
+	}
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(4)))
 
 /***/ },
-/* 272 */
+/* 275 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var SearchConstants = __webpack_require__(270);
-	var AppDispatcher = __webpack_require__(210);
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014 Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule warning
+	 */
 	
-	var SearchActions = {
-	  receiveResults: function (data) {
-	    AppDispatcher.dispatch({
-	      actionType: SearchConstants.RECEIVE_SEARCH_RESULTS,
-	      searchResults: data.results,
-	      meta: { totalCount: data.total_count }
-	    });
-	  }
+	"use strict";
 	
-	};
+	/**
+	 * Similar to invariant but only logs a warning if the condition is not met.
+	 * This can be used to log issues in development environments in critical
+	 * paths. Removing the logging code for production environments will keep the
+	 * same logic and follow the same code paths.
+	 */
 	
-	module.exports = SearchActions;
+	var warning = function() {};
+	
+	if ("production" !== process.env.NODE_ENV) {
+	  warning = function(condition, format ) {var args=Array.prototype.slice.call(arguments,2);
+	    if (format === undefined) {
+	      throw new Error(
+	        '`warning(condition, format, ...args)` requires a warning ' +
+	        'message argument'
+	      );
+	    }
+	
+	    if (!condition) {
+	      var argIndex = 0;
+	      console.warn('Warning: ' + format.replace(/%s/g, function()  {return args[argIndex++];}));
+	    }
+	  };
+	}
+	
+	module.exports = warning;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 273 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1),
-	    Header = __webpack_require__(274),
-	    SessionsApiUtil = __webpack_require__(267),
+	    Header = __webpack_require__(255),
+	    SessionsApiUtil = __webpack_require__(256),
 	    CurrentUserStore = __webpack_require__(247);
 	
 	var App = React.createClass({
@@ -34088,128 +34416,12 @@
 	module.exports = App;
 
 /***/ },
-/* 274 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(247);
-	var SessionsApiUtil = __webpack_require__(267);
-	var Search = __webpack_require__(268);
-	var History = __webpack_require__(159).History;
-	var Link = __webpack_require__(159).Link;
-	var UserApiUtil = __webpack_require__(214);
-	
-	var Header = React.createClass({
-	  displayName: 'Header',
-	
-	  mixins: [History],
-	
-	  getInitialState: function () {
-	
-	    return {
-	      currentUser: CurrentUserStore.currentUser()
-	    };
-	  },
-	
-	  componentDidMount: function () {
-	    this.listener = CurrentUserStore.addListener(this._onChange);
-	  },
-	
-	  componentWillUnmount: function () {
-	    this.listener.remove();
-	  },
-	
-	  componentWillReceiveProps: function () {
-	    this._onChange();
-	  },
-	
-	  _onChange: function () {
-	    UserApiUtil.fetchUser(parseInt(CurrentUserStore.user().id), function (user) {
-	      this.setState({ currentUser: user });
-	    }.bind(this));
-	  },
-	
-	  logout: function (e) {
-	    e.preventDefault();
-	    SessionsApiUtil.logout(function () {
-	      this.history.pushState({}, "/login");
-	    }.bind(this));
-	  },
-	
-	  render: function () {
-	
-	    if (CurrentUserStore.isLoggedIn()) {
-	      currentUser = CurrentUserStore.user();
-	      return React.createElement(
-	        'div',
-	        { className: 'main-header group' },
-	        React.createElement(
-	          Link,
-	          { className: 'link', to: `/` },
-	          React.createElement('img', { src: 'http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png', className: 'side-logo' })
-	        ),
-	        React.createElement(
-	          'ul',
-	          { className: 'main-links group' },
-	          React.createElement(
-	            'li',
-	            { className: 'searchbar' },
-	            React.createElement(Search, { className: 'search' })
-	          ),
-	          React.createElement(
-	            'li',
-	            null,
-	            React.createElement(
-	              Link,
-	              { className: 'link', to: `/` },
-	              'Home'
-	            )
-	          ),
-	          React.createElement(
-	            'li',
-	            { className: 'logged-in' },
-	            React.createElement(
-	              Link,
-	              { className: 'link', to: `users/${ currentUser.id }` },
-	              React.createElement('img', { src: this.state.currentUser.profile_pic }),
-	              currentUser.fname
-	            )
-	          ),
-	          React.createElement(
-	            'li',
-	            null,
-	            React.createElement(
-	              'button',
-	              { onClick: this.logout },
-	              ' Log Out'
-	            )
-	          )
-	        )
-	      );
-	    } else {
-	      return React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          'a',
-	          { href: '#/login' },
-	          'Login'
-	        )
-	      );
-	    }
-	  }
-	
-	});
-	
-	module.exports = Header;
-
-/***/ },
-/* 275 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(267);
+	var SessionsApiUtil = __webpack_require__(256);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var SessionForm = React.createClass({
@@ -34393,12 +34605,12 @@
 	module.exports = SessionForm;
 
 /***/ },
-/* 276 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(267);
+	var SessionsApiUtil = __webpack_require__(256);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var UserForm = React.createClass({
@@ -34573,7 +34785,7 @@
 	module.exports = UserForm;
 
 /***/ },
-/* 277 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -34633,7 +34845,7 @@
 	module.exports = UsersIndex;
 
 /***/ },
-/* 278 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -34645,9 +34857,9 @@
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(241);
 	var PostsForm = __webpack_require__(206);
-	var CoverForm = __webpack_require__(259);
-	var ProfileForm = __webpack_require__(260);
-	var Navbar = __webpack_require__(266);
+	var CoverForm = __webpack_require__(266);
+	var ProfileForm = __webpack_require__(269);
+	var Navbar = __webpack_require__(273);
 	
 	var About = React.createClass({
 	  displayName: 'About',
@@ -34759,7 +34971,7 @@
 	module.exports = About;
 
 /***/ },
-/* 279 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -34771,11 +34983,11 @@
 	var PostsForm = __webpack_require__(206);
 	var PostIndexItem = __webpack_require__(241);
 	var PostsForm = __webpack_require__(206);
-	var CoverForm = __webpack_require__(259);
-	var ProfileForm = __webpack_require__(260);
-	var Navbar = __webpack_require__(266);
+	var CoverForm = __webpack_require__(266);
+	var ProfileForm = __webpack_require__(269);
+	var Navbar = __webpack_require__(273);
 	var Link = __webpack_require__(159).Link;
-	var FriendButton = __webpack_require__(256);
+	var FriendButton = __webpack_require__(263);
 	
 	var Friends = React.createClass({
 	  displayName: 'Friends',
@@ -34894,199 +35106,6 @@
 	
 	});
 	module.exports = Friends;
-
-/***/ },
-/* 280 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(global, process) {'use strict';
-	var React = __webpack_require__(1);
-	var warn = __webpack_require__(281);
-	var hasLocalStorage = 'localStorage' in global;
-	var ls, testKey;
-	
-	if (hasLocalStorage) {
-	  testKey = 'react-localstorage.mixin.test-key';
-	  try {
-	    // Access to global `localStorage` property must be guarded as it
-	    // fails under iOS private session mode.
-	    ls = global.localStorage;
-	    ls.setItem(testKey, 'foo');
-	    ls.removeItem(testKey);
-	  } catch (e) {
-	    hasLocalStorage = false;
-	  }
-	}
-	
-	// Warn if localStorage cannot be found or accessed.
-	if (process.browser) {
-	  warn(
-	    hasLocalStorage,
-	    'localStorage not found. Component state will not be stored to localStorage.'
-	  );
-	}
-	
-	var Mixin = module.exports = {
-	  /**
-	   * Error checking. On update, ensure that the last state stored in localStorage is equal
-	   * to the state on the component. We skip the check the first time around as state is left
-	   * alone until mount to keep server rendering working.
-	   *
-	   * If it is not consistent, we know that someone else is modifying localStorage out from under us, so we throw
-	   * an error.
-	   *
-	   * There are a lot of ways this can happen, so it is worth throwing the error.
-	   */
-	  componentWillUpdate: function(nextProps, nextState) {
-	    if (!hasLocalStorage || !this.__stateLoadedFromLS) return;
-	    var key = getLocalStorageKey(this);
-	    var prevStoredState = ls.getItem(key);
-	    if (prevStoredState && process.env.NODE_ENV !== "production") {
-	      warn(
-	        prevStoredState === JSON.stringify(getSyncState(this, this.state)),
-	        'While component ' + getDisplayName(this) + ' was saving state to localStorage, ' +
-	        'the localStorage entry was modified by another actor. This can happen when multiple ' +
-	        'components are using the same localStorage key. Set the property `localStorageKey` ' +
-	        'on ' + getDisplayName(this) + '.'
-	      );
-	    }
-	    // Since setState() can't be called in CWU, it's a fine time to save the state.
-	    ls.setItem(key, JSON.stringify(getSyncState(this, nextState)));
-	  },
-	
-	  /**
-	   * Load data.
-	   * This seems odd to do this on componentDidMount, but it prevents server checksum errors.
-	   * This is because the server has no way to know what is in your localStorage. So instead
-	   * of breaking the checksum and causing a full rerender, we instead change the component after mount
-	   * for an efficient diff.
-	   */
-	  componentDidMount: function () {
-	    if (!hasLocalStorage) return;
-	    var me = this;
-	    loadStateFromLocalStorage(this, function() {
-	      // After setting state, mirror back to localstorage.
-	      // This prevents invariants if the developer has changed the initial state of the component.
-	      ls.setItem(getLocalStorageKey(me), JSON.stringify(getSyncState(me, me.state)));
-	    });
-	  }
-	};
-	
-	function loadStateFromLocalStorage(component, cb) {
-	  if (!ls) return;
-	  var key = getLocalStorageKey(component);
-	  var settingState = false;
-	  try {
-	    var storedState = JSON.parse(ls.getItem(key));
-	    if (storedState) {
-	      settingState = true;
-	      component.setState(storedState, done);
-	    }
-	  } catch(e) {
-	    if (console) console.warn("Unable to load state for", getDisplayName(component), "from localStorage.");
-	  }
-	  // If we didn't set state, run the callback right away.
-	  if (!settingState) done();
-	
-	  function done() {
-	    // Flag this component as loaded.
-	    component.__stateLoadedFromLS = true;
-	    cb();
-	  }
-	}
-	
-	function getDisplayName(component) {
-	  // at least, we cannot get displayname
-	  // via this.displayname in react 0.12
-	  return component.displayName || component.constructor.displayName || component.constructor.name;
-	}
-	
-	function getLocalStorageKey(component) {
-	  if (component.getLocalStorageKey) {
-	    return component.getLocalStorageKey();
-	  }
-	  return component.props.localStorageKey || getDisplayName(component) || 'react-localstorage';
-	}
-	
-	function getStateFilterKeys(component) {
-	  if (component.getStateFilterKeys) {
-	    return typeof component.getStateFilterKeys() === 'string' ?
-	      [component.getStateFilterKeys()] : component.getStateFilterKeys();
-	  }
-	  return typeof component.props.stateFilterKeys === 'string' ?
-	    [component.props.stateFilterKeys] : component.props.stateFilterKeys;
-	}
-	
-	/**
-	* Filters state to only save keys defined in stateFilterKeys.
-	* If stateFilterKeys is not set, returns full state.
-	*/
-	function getSyncState(component, state) {
-	  var stateFilterKeys = getStateFilterKeys(component);
-	  if (!stateFilterKeys) return state;
-	  var result = {};
-	  stateFilterKeys.forEach(function(sk) {
-	    for (var key in state) {
-	      if (state.hasOwnProperty(key) && sk === key) result[key] = state[key];
-	    }
-	  });
-	  return result;
-	}
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(4)))
-
-/***/ },
-/* 281 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014 Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule warning
-	 */
-	
-	"use strict";
-	
-	/**
-	 * Similar to invariant but only logs a warning if the condition is not met.
-	 * This can be used to log issues in development environments in critical
-	 * paths. Removing the logging code for production environments will keep the
-	 * same logic and follow the same code paths.
-	 */
-	
-	var warning = function() {};
-	
-	if ("production" !== process.env.NODE_ENV) {
-	  warning = function(condition, format ) {var args=Array.prototype.slice.call(arguments,2);
-	    if (format === undefined) {
-	      throw new Error(
-	        '`warning(condition, format, ...args)` requires a warning ' +
-	        'message argument'
-	      );
-	    }
-	
-	    if (!condition) {
-	      var argIndex = 0;
-	      console.warn('Warning: ' + format.replace(/%s/g, function()  {return args[argIndex++];}));
-	    }
-	  };
-	}
-	
-	module.exports = warning;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }
 /******/ ]);

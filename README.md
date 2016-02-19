@@ -5,7 +5,7 @@
 ##Description
 A social networking website for inspired by Facebook to connect to the Galaxies and Beyond!
 
-![Alt text](./images/img1.png)
+![Alt text](./images/img2.png)
 
 ##Features
 Rails back end, React.js and Flux front end
@@ -16,7 +16,7 @@ Search for users through PG_Search
 Facebook login supported through OmniAuth
 
 
-![Alt text](./app/assets/images/img5.png)
+![Alt text](./app/assets/images/img1.png)
 ![Alt text](./app/assets/images/img2.png)
 ![Alt text](./app/assets/images/img4.png)
 ![Alt text](./app/assets/images/img3.png)

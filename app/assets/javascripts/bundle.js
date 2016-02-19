@@ -33452,8 +33452,9 @@
 	  componentDidMount: function () {
 	    var userId = this.props.userId || this.props.params.userId;
 	    this.listener = UserStore.addListener(this._onChange);
-	
-	    UserApiUtil.fetchUser(parseInt(userId));
+	    UserApiUtil.fetchUser(parseInt(userId), function (user) {
+	      this.setState({ user: user });
+	    }.bind(this));
 	  },
 	
 	  componentWillReceiveProps: function (newProps) {

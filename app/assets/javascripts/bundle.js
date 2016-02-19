@@ -51,18 +51,18 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var PostsForm = __webpack_require__(206);
-	var PostsIndex = __webpack_require__(238);
-	var UserProfile = __webpack_require__(254);
-	var CommentsForm = __webpack_require__(241);
-	var App = __webpack_require__(273);
-	var SessionForm = __webpack_require__(275);
-	var UserForm = __webpack_require__(276);
-	var CurrentUserStore = __webpack_require__(246);
-	var SessionsApiUtil = __webpack_require__(267);
-	var UsersIndex = __webpack_require__(277);
-	var About = __webpack_require__(278);
-	var Friends = __webpack_require__(279);
-	var PhotoIndex = __webpack_require__(261);
+	var PostsIndex = __webpack_require__(239);
+	var UserProfile = __webpack_require__(262);
+	var CommentsForm = __webpack_require__(242);
+	var App = __webpack_require__(276);
+	var SessionForm = __webpack_require__(277);
+	var UserForm = __webpack_require__(278);
+	var CurrentUserStore = __webpack_require__(247);
+	var SessionsApiUtil = __webpack_require__(256);
+	var UsersIndex = __webpack_require__(279);
+	var About = __webpack_require__(280);
+	var Friends = __webpack_require__(281);
+	var PhotoIndex = __webpack_require__(270);
 	
 	// var App = React.createClass({
 	//   render: function(){
@@ -24073,7 +24073,7 @@
 	var PostsApiUtil = __webpack_require__(207);
 	var UserApiUtil = __webpack_require__(214);
 	var PostStore = __webpack_require__(219);
-	var UserStore = __webpack_require__(255);
+	var UserStore = __webpack_require__(238);
 	
 	var PostForm = React.createClass({
 	  displayName: 'PostForm',
@@ -31313,16 +31313,209 @@
 /* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
+	
+	var _users = [],
+	    Store = __webpack_require__(220).Store,
+	    UserConstants = __webpack_require__(216),
+	    CommentConstants = __webpack_require__(237),
+	    CurrentUserConstants = __webpack_require__(218),
+	    PostConstants = __webpack_require__(209),
+	    PostStore = __webpack_require__(219),
+	    AppDispatcher = __webpack_require__(210),
+	    UserStore = new Store(AppDispatcher);
+	
+	UserStore.all = function () {
+	  return _users.slice(0);
+	};
+	
+	UserStore.resetUsers = function (users) {
+	  _users = users;
+	  this.__emitChange();
+	};
+	
+	UserStore._addUser = function (user) {
+	  var _usersIds = [];
+	  for (var i = 0; i < _users.length; i++) {
+	    _usersIds.push(_users[i].id);
+	  }
+	  var idx = _usersIds.indexOf(user.id);
+	  if (idx == -1) {
+	    _users.push(user);
+	  }
+	  this.__emitChange();
+	};
+	
+	UserStore._findUserById = function (id) {
+	  id = parseInt(id);
+	  users = UserStore.all();
+	  for (var i = 0; i < users.length; i++) {
+	    if (users[i].id == id) {
+	      return users[i];
+	    }
+	  }
+	};
+	
+	UserStore._addPost = function (post) {
+	  var user = this._findUserById(post.profile_id);
+	  user.received_posts.push(post);
+	  this.__emitChange();
+	};
+	
+	UserStore._removePost = function (post) {
+	  var _postsIds = [];
+	  var user = this._findUserById(post.profile_id);
+	  for (var i = 0; i < user.received_posts.length; i++) {
+	    _postsIds.push(user.received_posts[i].id);
+	  }
+	  var idx = _postsIds.indexOf(post.id);
+	  if (idx != -1) {
+	    user.received_posts.splice(idx, 1);
+	    this.__emitChange();
+	  }
+	};
+	
+	UserStore.addNewFriend = function (friend) {
+	  a = UserStore._findUserById(parseInt(friend.requester_id));
+	  a.requested_friends.push({ requestee_id: friend.requestee_id });
+	  b = UserStore._findUserById(parseInt(friend.requestee_id));
+	  b.received_friends.push({ requester_id: friend.requester_id });
+	};
+	
+	//
+	// UserStore._removeUser = function (user) {
+	//   var idx = _users.indexOf(user);
+	//   if (idx != -1) {
+	//     _users.splice(idx, 1);
+	//     this.__emitChange();
+	//   }
+	// };
+	
+	UserStore._findPostById = function (id) {
+	  id = parseInt(id);
+	  posts = PostStore.all();
+	  for (var i = 0; i < posts.length; i++) {
+	    if (posts[i].id == id) {
+	      return posts[i];
+	    }
+	  }
+	};
+	
+	UserStore._addComment = function (comment) {
+	  var postInd;
+	  var post = this._findPostById(comment.commentable_id);
+	  var user = this._findUserById(post.profile_id);
+	
+	  for (var i = 0; i < user.received_posts.length; i++) {
+	    if (user.received_posts[i].id == post.id) {
+	      postInd = i;
+	    }
+	  }
+	
+	  user.received_posts[postInd].comments.push(comment);
+	  this.__emitChange();
+	};
+	//
+	UserStore._removeComment = function (comment) {
+	  var _commentsIds = [],
+	      postind;
+	  var post = this._findPostById(comment.commentable_id);
+	  var user = this._findUserById(post.profile_id);
+	
+	  for (var i = 0; i < user.received_posts.length; i++) {
+	    if (user.received_posts[i].id == post.id) {
+	      postind = i;
+	    }
+	  }
+	
+	  for (var x = 0; x < user.received_posts[postind].comments.length; x++) {
+	    _commentsIds.push(user.received_posts[postind].comments[x].id);
+	  }
+	  var idx = _commentsIds.indexOf(comment.id);
+	  if (idx != -1) {
+	    user.received_posts[postind].comments.splice(idx, 1);
+	    this.__emitChange();
+	  }
+	};
+	
+	UserStore._addImage = function (photo) {
+	  var user = this._findUserById(photo.user_id);
+	  user.photos.push(photo);
+	  this.__emitChange();
+	};
+	
+	UserStore._removeImage = function (image) {
+	  var _imagesIds = [];
+	  var user = this._findUserById(image.user_id);
+	  for (var i = 0; i < user.images.length; i++) {
+	    _imagesIds.push(user.images[i].id);
+	  }
+	  var idx = _imagesIds.indexOf(image.id);
+	  if (idx != -1) {
+	    user.images.splice(idx, 1);
+	    this.__emitChange();
+	  }
+	};
+	
+	UserStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case UserConstants.RECEIVE_USERS:
+	      UserStore.resetUsers(payload.users);
+	      break;
+	    case UserConstants.RECEIVE_USER:
+	      UserStore._addUser(payload.user);
+	      break;
+	    case PostConstants.CREATE_POST:
+	      UserStore._addPost(payload.post);
+	      break;
+	    case PostConstants.DELETE_POST:
+	      UserStore._removePost(payload.post);
+	      break;
+	    case CurrentUserConstants.RECEIVE_CURRENT_USER:
+	      UserStore._addUser(payload.currentUser);
+	      break;
+	    case CommentConstants.DELETE_COMMENT:
+	      UserStore._removeComment(payload.comment);
+	      break;
+	    case CommentConstants.CREATE_COMMENT:
+	      UserStore._addComment(payload.comment);
+	      break;
+	    case UserConstants.RECEIVE_PHOTO:
+	      UserStore._addImage(payload.photo);
+	      break;
+	    case UserConstants.FRIEND_RECEIVED:
+	      UserStore.addNewFriend(payload.friend);
+	      UserStore.__emitChange();
+	      break;
+	    case UserConstants.FRIENDS_RECEIVED:
+	      // var result = resetFriends(payload.friends);
+	      // FriendStore.__emitChange();
+	      break;
+	    case UserConstants.FRIEND_REMOVED:
+	    // var result = resetFriends(payload.friends);
+	    // FriendStore.__emitChange();
+	  }
+	
+	  // case ImageConstants.DELETE_IMAGE:
+	  //   UserStore._removeImage(payload.image);
+	  //   break;
+	};
+	
+	module.exports = UserStore;
+
+/***/ },
+/* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1);
 	var PostStore = __webpack_require__(219);
-	var CommentStore = __webpack_require__(239);
-	var PostsIndexItem = __webpack_require__(240);
+	var CommentStore = __webpack_require__(240);
+	var PostsIndexItem = __webpack_require__(241);
 	var PostsApiUtil = __webpack_require__(207);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsForm = __webpack_require__(206);
-	var CommentsForm = __webpack_require__(241);
-	var CommentsIndexItem = __webpack_require__(244);
-	var ReactCSSTransitionGroup = __webpack_require__(247);
+	var CommentsForm = __webpack_require__(242);
+	var CommentsIndexItem = __webpack_require__(245);
+	var ReactCSSTransitionGroup = __webpack_require__(248);
 	
 	var PostsIndex = React.createClass({
 	  displayName: "PostsIndex",
@@ -31407,7 +31600,7 @@
 	module.exports = PostsIndex;
 
 /***/ },
-/* 239 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -31468,19 +31661,19 @@
 	module.exports = CommentStore;
 
 /***/ },
-/* 240 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var PostStore = __webpack_require__(219);
 	var PostsApiUtil = __webpack_require__(207);
-	var CommentsForm = __webpack_require__(241);
-	var CommentsIndexItem = __webpack_require__(244);
+	var CommentsForm = __webpack_require__(242);
+	var CommentsIndexItem = __webpack_require__(245);
 	var UserApiUtil = __webpack_require__(214);
-	var TimeAgo = __webpack_require__(245);
+	var TimeAgo = __webpack_require__(246);
 	var Link = __webpack_require__(159).Link;
-	var ReactCSSTransitionGroup = __webpack_require__(247);
-	var CurrentUserStore = __webpack_require__(246);
+	var ReactCSSTransitionGroup = __webpack_require__(248);
+	var CurrentUserStore = __webpack_require__(247);
 	
 	var PostsIndexItems = React.createClass({
 	  displayName: "PostsIndexItems",
@@ -31629,13 +31822,13 @@
 	module.exports = PostsIndexItems;
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CommentsApiUtil = __webpack_require__(242);
+	var CommentsApiUtil = __webpack_require__(243);
 	var PostsApiUtil = __webpack_require__(207);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var UserApiUtil = __webpack_require__(214);
 	
 	var CommentForm = React.createClass({
@@ -31685,10 +31878,10 @@
 	module.exports = CommentForm;
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var CommentApiActions = __webpack_require__(243);
+	var CommentApiActions = __webpack_require__(244);
 	
 	var CommentApiUtil = {
 	  fetchSingleComment: function (id) {
@@ -31742,7 +31935,7 @@
 	module.exports = CommentApiUtil;
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var CommentConstants = __webpack_require__(237);
@@ -31782,18 +31975,18 @@
 	module.exports = CommentApiActions;
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var PostStore = __webpack_require__(219);
-	var CommentsApiUtil = __webpack_require__(242);
+	var CommentsApiUtil = __webpack_require__(243);
 	var PostsApiUtil = __webpack_require__(207);
 	var UserApiUtil = __webpack_require__(214);
-	var TimeAgo = __webpack_require__(245);
+	var TimeAgo = __webpack_require__(246);
 	var Link = __webpack_require__(159).Link;
-	var CurrentUserStore = __webpack_require__(246);
+	var CurrentUserStore = __webpack_require__(247);
 	
 	var CommentsIndexItem = React.createClass({
 	  displayName: "CommentsIndexItem",
@@ -31857,7 +32050,7 @@
 	module.exports = CommentsIndexItem;
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
@@ -31990,7 +32183,7 @@
 
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
@@ -32038,13 +32231,13 @@
 	module.exports = CurrentUserStore;
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(248);
+	module.exports = __webpack_require__(249);
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32065,8 +32258,8 @@
 	
 	var assign = __webpack_require__(39);
 	
-	var ReactTransitionGroup = __webpack_require__(249);
-	var ReactCSSTransitionGroupChild = __webpack_require__(251);
+	var ReactTransitionGroup = __webpack_require__(250);
+	var ReactCSSTransitionGroupChild = __webpack_require__(252);
 	
 	function createTransitionTimeoutPropValidator(transitionType) {
 	  var timeoutPropName = 'transition' + transitionType + 'Timeout';
@@ -32132,7 +32325,7 @@
 	module.exports = ReactCSSTransitionGroup;
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32149,7 +32342,7 @@
 	'use strict';
 	
 	var React = __webpack_require__(2);
-	var ReactTransitionChildMapping = __webpack_require__(250);
+	var ReactTransitionChildMapping = __webpack_require__(251);
 	
 	var assign = __webpack_require__(39);
 	var emptyFunction = __webpack_require__(15);
@@ -32342,7 +32535,7 @@
 	module.exports = ReactTransitionGroup;
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32445,7 +32638,7 @@
 	module.exports = ReactTransitionChildMapping;
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32465,8 +32658,8 @@
 	var React = __webpack_require__(2);
 	var ReactDOM = __webpack_require__(3);
 	
-	var CSSCore = __webpack_require__(252);
-	var ReactTransitionEvents = __webpack_require__(253);
+	var CSSCore = __webpack_require__(253);
+	var ReactTransitionEvents = __webpack_require__(254);
 	
 	var onlyChild = __webpack_require__(156);
 	
@@ -32615,7 +32808,7 @@
 	module.exports = ReactCSSTransitionGroupChild;
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -32718,7 +32911,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32832,26 +33025,372 @@
 	module.exports = ReactTransitionEvents;
 
 /***/ },
-/* 254 */
+/* 255 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var CurrentUserStore = __webpack_require__(247);
+	var SessionsApiUtil = __webpack_require__(256);
+	var Search = __webpack_require__(257);
+	var History = __webpack_require__(159).History;
+	var Link = __webpack_require__(159).Link;
+	
+	var Header = React.createClass({
+	  displayName: 'Header',
+	
+	  mixins: [History],
+	
+	  getInitialState: function () {
+	    return {
+	      currentUser: CurrentUserStore.currentUser()
+	    };
+	  },
+	
+	  componentDidMount: function () {
+	    this.listener = CurrentUserStore.addListener(this._onChange);
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.listener.remove();
+	  },
+	
+	  _onChange: function () {
+	    this.setState({ currentUser: CurrentUserStore.currentUser() });
+	  },
+	
+	  logout: function (e) {
+	    e.preventDefault();
+	    SessionsApiUtil.logout(function () {
+	      this.history.pushState({}, "/login");
+	    }.bind(this));
+	  },
+	
+	  render: function () {
+	
+	    if (CurrentUserStore.isLoggedIn()) {
+	      currentUser = CurrentUserStore.user();
+	      return React.createElement(
+	        'div',
+	        { className: 'main-header group' },
+	        React.createElement(
+	          Link,
+	          { className: 'link', to: `/` },
+	          React.createElement('img', { src: 'http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png', className: 'side-logo' })
+	        ),
+	        React.createElement(
+	          'ul',
+	          { className: 'main-links group' },
+	          React.createElement(
+	            'li',
+	            { className: 'searchbar' },
+	            React.createElement(Search, { className: 'search' })
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            React.createElement(
+	              Link,
+	              { className: 'link', to: `/` },
+	              'Home'
+	            )
+	          ),
+	          React.createElement(
+	            'li',
+	            { className: 'logged-in' },
+	            React.createElement(
+	              Link,
+	              { className: 'link', to: `users/${ currentUser.id }` },
+	              React.createElement('img', { src: this.state.currentUser.profile_pic }),
+	              currentUser.fname
+	            )
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            React.createElement(
+	              'button',
+	              { onClick: this.logout },
+	              ' Log Out'
+	            )
+	          )
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'a',
+	          { href: '#/login' },
+	          'Login'
+	        )
+	      );
+	    }
+	  }
+	
+	});
+	
+	module.exports = Header;
+
+/***/ },
+/* 256 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var CurrentUserActions = __webpack_require__(217);
+	var SessionsApiUtil = {
+	  login: function (credentials, success) {
+	
+	    $.ajax({
+	      url: '/api/session',
+	      type: 'POST',
+	      dataType: 'json',
+	      data: credentials,
+	      success: function (currentUser) {
+	        CurrentUserActions.receiveCurrentUser(currentUser);
+	        success && success();
+	      }
+	
+	    });
+	  },
+	
+	  logout: function (cb) {
+	    $.ajax({
+	      url: '/api/session',
+	      type: 'DELETE',
+	      dataType: 'json',
+	      success: function () {
+	        CurrentUserActions.logOut();
+	        cb && cb();
+	      }
+	    });
+	  },
+	
+	  fetchCurrentUser: function (cb) {
+	    $.ajax({
+	      url: '/api/session',
+	      type: 'GET',
+	      dataType: 'json',
+	      success: function (currentUser) {
+	        console.log("fetched current user!");
+	        CurrentUserActions.receiveCurrentUser(currentUser);
+	        cb && cb(currentUser);
+	      }
+	    });
+	  }
+	
+	};
+	
+	module.exports = SessionsApiUtil;
+
+/***/ },
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var SearchResultsStore = __webpack_require__(258);
+	var SearchApiUtil = __webpack_require__(260);
+	var UserProfile = __webpack_require__(262);
+	var PostIndexItem = __webpack_require__(241);
+	var CommentIndexItem = __webpack_require__(245);
+	var Link = __webpack_require__(159).Link;
+	
+	var Search = React.createClass({
+	  displayName: 'Search',
+	
+	
+	  componentDidMount: function () {
+	    this.listener = SearchResultsStore.addListener(this._onChange);
+	  },
+	
+	  getInitialState: function () {
+	    return { page: 1, query: "" };
+	  },
+	
+	  _onChange: function () {
+	    this.forceUpdate();
+	  },
+	
+	  reset: function () {
+	    this.setState({ page: 1, query: "" });
+	  },
+	
+	  search: function (e) {
+	    var query = e.target.value;
+	    SearchApiUtil.search(query, 1);
+	
+	    this.setState({ page: 1, query: query });
+	  },
+	
+	  nextPage: function () {
+	    var nextPage = this.state.page + 1;
+	    SearchApiUtil.search(this.state.query, nextPage);
+	
+	    this.setState({ page: nextPage });
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.listener.remove();
+	  },
+	
+	  render: function () {
+	
+	    var searchResults = SearchResultsStore.all().map(function (searchResult) {
+	      if (searchResult._type === "User") {
+	        return React.createElement(
+	          'li',
+	          null,
+	          React.createElement(
+	            Link,
+	            { to: `users/${ searchResult.id }` },
+	            React.createElement('img', { className: 'searchimage', src: searchResult.profile_pic_url }),
+	            searchResult.fname
+	          )
+	        );
+	      } else if (searchResult._type === "Post") {
+	        return React.createElement(
+	          'li',
+	          null,
+	          React.createElement(PostIndexItem, { post: searchResult })
+	        );
+	      } else {
+	        return React.createElement(
+	          'li',
+	          null,
+	          React.createElement(CommentIndexItem, { comment: searchResult })
+	        );
+	      }
+	    });
+	
+	    // Displaying {SearchResultsStore.all().length} of
+	    // {SearchResultsStore.meta().totalCount}
+	    return React.createElement(
+	      'div',
+	      { className: 'search' },
+	      React.createElement('h1', { className: 'title' }),
+	      React.createElement('input', { className: 'search-input', type: 'text', placeholder: 'Search', onKeyUp: this.search }),
+	      React.createElement('button', { onClick: this.nextPage }),
+	      React.createElement(
+	        'ul',
+	        { className: 'users-index' },
+	        searchResults
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Search;
+
+/***/ },
+/* 258 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(220).Store;
+	var AppDispatcher = __webpack_require__(210);
+	var SearchConstants = __webpack_require__(259);
+	
+	var _searchResults = [];
+	var _meta = {};
+	
+	var SearchResultsStore = new Store(AppDispatcher);
+	
+	SearchResultsStore.all = function () {
+	  return _searchResults.slice();
+	};
+	
+	SearchResultsStore.meta = function () {
+	  return _meta;
+	};
+	
+	SearchResultsStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	
+	    case SearchConstants.RECEIVE_SEARCH_RESULTS:
+	      _searchResults = payload.searchResults;
+	      _meta = payload.meta;
+	      SearchResultsStore.__emitChange();
+	      break;
+	
+	  }
+	};
+	
+	module.exports = SearchResultsStore;
+
+/***/ },
+/* 259 */
+/***/ function(module, exports) {
+
+	var SearchConstants = {
+	  RECEIVE_SEARCH_RESULTS: "RECEIVE_SEARCH_RESULTS"
+	};
+	
+	module.exports = SearchConstants;
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var SearchActions = __webpack_require__(261);
+	
+	var SearchApiUtil = {
+	
+	  search: function (query, page) {
+	    $.ajax({
+	      url: '/api/search',
+	      type: 'GET',
+	      dataType: 'json',
+	      data: { query: query, page: page },
+	      success: function (data) {
+	        SearchActions.receiveResults(data);
+	      }
+	    });
+	  }
+	
+	};
+	
+	module.exports = SearchApiUtil;
+
+/***/ },
+/* 261 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var SearchConstants = __webpack_require__(259);
+	var AppDispatcher = __webpack_require__(210);
+	
+	var SearchActions = {
+	  receiveResults: function (data) {
+	    AppDispatcher.dispatch({
+	      actionType: SearchConstants.RECEIVE_SEARCH_RESULTS,
+	      searchResults: data.results,
+	      meta: { totalCount: data.total_count }
+	    });
+	  }
+	
+	};
+	
+	module.exports = SearchActions;
+
+/***/ },
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(255);
+	var UserStore = __webpack_require__(238);
 	var PostStore = __webpack_require__(219);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var PostIndexItem = __webpack_require__(240);
+	var PostIndexItem = __webpack_require__(241);
 	var PostsForm = __webpack_require__(206);
-	var FriendButton = __webpack_require__(256);
-	var CoverForm = __webpack_require__(259);
-	var ProfileForm = __webpack_require__(260);
-	var PhotoIndex = __webpack_require__(261);
-	var ImageForm = __webpack_require__(265);
-	var Navbar = __webpack_require__(266);
-	var CoverForm = __webpack_require__(259);
-	var ProfileForm = __webpack_require__(260);
+	var FriendButton = __webpack_require__(263);
+	var CoverForm = __webpack_require__(266);
+	var ProfileForm = __webpack_require__(269);
+	var PhotoIndex = __webpack_require__(270);
+	var ImageForm = __webpack_require__(272);
+	var Navbar = __webpack_require__(273);
+	var CoverForm = __webpack_require__(266);
+	var ProfileForm = __webpack_require__(269);
 	
 	var UserProfile = React.createClass({
 	  displayName: 'UserProfile',
@@ -32939,210 +33478,17 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 255 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	var _users = [],
-	    Store = __webpack_require__(220).Store,
-	    UserConstants = __webpack_require__(216),
-	    CommentConstants = __webpack_require__(237),
-	    CurrentUserConstants = __webpack_require__(218),
-	    PostConstants = __webpack_require__(209),
-	    PostStore = __webpack_require__(219),
-	    AppDispatcher = __webpack_require__(210),
-	    UserStore = new Store(AppDispatcher);
-	
-	UserStore.all = function () {
-	  return _users.slice(0);
-	};
-	
-	UserStore.resetUsers = function (users) {
-	  _users = users;
-	  this.__emitChange();
-	};
-	
-	UserStore._addUser = function (user) {
-	  var _usersIds = [];
-	  for (var i = 0; i < _users.length; i++) {
-	    _usersIds.push(_users[i].id);
-	  }
-	  var idx = _usersIds.indexOf(user.id);
-	  if (idx == -1) {
-	    _users.push(user);
-	  }
-	  this.__emitChange();
-	};
-	
-	UserStore._findUserById = function (id) {
-	  id = parseInt(id);
-	  users = UserStore.all();
-	  for (var i = 0; i < users.length; i++) {
-	    if (users[i].id == id) {
-	      return users[i];
-	    }
-	  }
-	};
-	
-	UserStore._addPost = function (post) {
-	  var user = this._findUserById(post.profile_id);
-	  user.received_posts.push(post);
-	  this.__emitChange();
-	};
-	
-	UserStore._removePost = function (post) {
-	  var _postsIds = [];
-	  var user = this._findUserById(post.profile_id);
-	  for (var i = 0; i < user.received_posts.length; i++) {
-	    _postsIds.push(user.received_posts[i].id);
-	  }
-	  var idx = _postsIds.indexOf(post.id);
-	  if (idx != -1) {
-	    user.received_posts.splice(idx, 1);
-	    this.__emitChange();
-	  }
-	};
-	
-	UserStore.addNewFriend = function (friend) {
-	  a = UserStore._findUserById(parseInt(friend.requester_id));
-	  a.requested_friends.push({ requestee_id: friend.requestee_id });
-	  b = UserStore._findUserById(parseInt(friend.requestee_id));
-	  b.received_friends.push({ requester_id: friend.requester_id });
-	};
-	
-	//
-	// UserStore._removeUser = function (user) {
-	//   var idx = _users.indexOf(user);
-	//   if (idx != -1) {
-	//     _users.splice(idx, 1);
-	//     this.__emitChange();
-	//   }
-	// };
-	
-	UserStore._findPostById = function (id) {
-	  id = parseInt(id);
-	  posts = PostStore.all();
-	  for (var i = 0; i < posts.length; i++) {
-	    if (posts[i].id == id) {
-	      return posts[i];
-	    }
-	  }
-	};
-	
-	UserStore._addComment = function (comment) {
-	  var postInd;
-	  var post = this._findPostById(comment.commentable_id);
-	  var user = this._findUserById(post.profile_id);
-	
-	  for (var i = 0; i < user.received_posts.length; i++) {
-	    if (user.received_posts[i].id == post.id) {
-	      postInd = i;
-	    }
-	  }
-	
-	  user.received_posts[postInd].comments.push(comment);
-	  this.__emitChange();
-	};
-	//
-	UserStore._removeComment = function (comment) {
-	  var _commentsIds = [],
-	      postind;
-	  var post = this._findPostById(comment.commentable_id);
-	  var user = this._findUserById(post.profile_id);
-	
-	  for (var i = 0; i < user.received_posts.length; i++) {
-	    if (user.received_posts[i].id == post.id) {
-	      postind = i;
-	    }
-	  }
-	
-	  for (var x = 0; x < user.received_posts[postind].comments.length; x++) {
-	    _commentsIds.push(user.received_posts[postind].comments[x].id);
-	  }
-	  var idx = _commentsIds.indexOf(comment.id);
-	  if (idx != -1) {
-	    user.received_posts[postind].comments.splice(idx, 1);
-	    this.__emitChange();
-	  }
-	};
-	
-	UserStore._addImage = function (photo) {
-	  var user = this._findUserById(photo.user_id);
-	  user.photos.push(photo);
-	  this.__emitChange();
-	};
-	
-	UserStore._removeImage = function (image) {
-	  var _imagesIds = [];
-	  var user = this._findUserById(image.user_id);
-	  for (var i = 0; i < user.images.length; i++) {
-	    _imagesIds.push(user.images[i].id);
-	  }
-	  var idx = _imagesIds.indexOf(image.id);
-	  if (idx != -1) {
-	    user.images.splice(idx, 1);
-	    this.__emitChange();
-	  }
-	};
-	
-	UserStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case UserConstants.RECEIVE_USERS:
-	      UserStore.resetUsers(payload.users);
-	      break;
-	    case UserConstants.RECEIVE_USER:
-	      UserStore._addUser(payload.user);
-	      break;
-	    case PostConstants.CREATE_POST:
-	      UserStore._addPost(payload.post);
-	      break;
-	    case PostConstants.DELETE_POST:
-	      UserStore._removePost(payload.post);
-	      break;
-	    case CurrentUserConstants.RECEIVE_CURRENT_USER:
-	      UserStore._addUser(payload.currentUser);
-	      break;
-	    case CommentConstants.DELETE_COMMENT:
-	      UserStore._removeComment(payload.comment);
-	      break;
-	    case CommentConstants.CREATE_COMMENT:
-	      UserStore._addComment(payload.comment);
-	      break;
-	    case UserConstants.RECEIVE_PHOTO:
-	      UserStore._addImage(payload.photo);
-	      break;
-	    case UserConstants.FRIEND_RECEIVED:
-	      UserStore.addNewFriend(payload.friend);
-	      UserStore.__emitChange();
-	      break;
-	    case UserConstants.FRIENDS_RECEIVED:
-	      // var result = resetFriends(payload.friends);
-	      // FriendStore.__emitChange();
-	      break;
-	    case UserConstants.FRIEND_REMOVED:
-	    // var result = resetFriends(payload.friends);
-	    // FriendStore.__emitChange();
-	  }
-	
-	  // case ImageConstants.DELETE_IMAGE:
-	  //   UserStore._removeImage(payload.image);
-	  //   break;
-	};
-	
-	module.exports = UserStore;
-
-/***/ },
-/* 256 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var PostStore = __webpack_require__(219);
-	var CurrentUserStore = __webpack_require__(246);
-	var CommentsApiUtil = __webpack_require__(242);
+	var CurrentUserStore = __webpack_require__(247);
+	var CommentsApiUtil = __webpack_require__(243);
 	var PostsApiUtil = __webpack_require__(207);
-	var FriendApiUtil = __webpack_require__(257);
-	var UserStore = __webpack_require__(255);
+	var FriendApiUtil = __webpack_require__(264);
+	var UserStore = __webpack_require__(238);
 	var UserApiUtil = __webpack_require__(214);
 	
 	var FriendRequestItem = React.createClass({
@@ -33252,10 +33598,10 @@
 	module.exports = FriendRequestItem;
 
 /***/ },
-/* 257 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var FriendActions = __webpack_require__(258);
+	var FriendActions = __webpack_require__(265);
 	
 	var FriendApiUtil = {
 	
@@ -33295,7 +33641,7 @@
 	module.exports = FriendApiUtil;
 
 /***/ },
-/* 258 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -33328,7 +33674,7 @@
 	module.exports = FriendActions;
 
 /***/ },
-/* 259 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33393,7 +33739,53 @@
 	module.exports = UserCoverForm;
 
 /***/ },
-/* 260 */
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var PhotoApiActions = __webpack_require__(268);
+	
+	var ImagesApiUtil = {
+	
+	  createImage: function (formData, callback) {
+	    $.ajax({
+	      url: "api/photos/",
+	      type: 'POST',
+	      data: formData,
+	      processData: false,
+	      contentType: false,
+	      dataType: 'json',
+	      success: function (photo) {
+	        PhotoApiActions.receivePhoto(photo);
+	        callback && callback();
+	      }
+	    });
+	  }
+	};
+	
+	module.exports = ImagesApiUtil;
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(210);
+	var UserConstants = __webpack_require__(216);
+	
+	var PhotoActions = {
+	
+	  receivePhoto: function (photo) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_PHOTO,
+	      photo: photo
+	    });
+	  }
+	
+	};
+	
+	module.exports = PhotoActions;
+
+/***/ },
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33458,17 +33850,17 @@
 	module.exports = UserProfileForm;
 
 /***/ },
-/* 261 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImagesApiUtil = __webpack_require__(262);
-	var PhotoIndexItem = __webpack_require__(264);
-	var ImageForm = __webpack_require__(265);
-	var Navbar = __webpack_require__(266);
-	var UserStore = __webpack_require__(255);
+	var ImagesApiUtil = __webpack_require__(267);
+	var PhotoIndexItem = __webpack_require__(271);
+	var ImageForm = __webpack_require__(272);
+	var Navbar = __webpack_require__(273);
+	var UserStore = __webpack_require__(238);
 	var UserApiUtil = __webpack_require__(214);
-	var CurrentUserStore = __webpack_require__(246);
+	var CurrentUserStore = __webpack_require__(247);
 	
 	var PhotoIndex = React.createClass({
 	  displayName: 'PhotoIndex',
@@ -33543,57 +33935,11 @@
 	module.exports = PhotoIndex;
 
 /***/ },
-/* 262 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var PhotoApiActions = __webpack_require__(263);
-	
-	var ImagesApiUtil = {
-	
-	  createImage: function (formData, callback) {
-	    $.ajax({
-	      url: "api/photos/",
-	      type: 'POST',
-	      data: formData,
-	      processData: false,
-	      contentType: false,
-	      dataType: 'json',
-	      success: function (photo) {
-	        PhotoApiActions.receivePhoto(photo);
-	        callback && callback();
-	      }
-	    });
-	  }
-	};
-	
-	module.exports = ImagesApiUtil;
-
-/***/ },
-/* 263 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(210);
-	var UserConstants = __webpack_require__(216);
-	
-	var PhotoActions = {
-	
-	  receivePhoto: function (photo) {
-	    AppDispatcher.dispatch({
-	      actionType: UserConstants.RECEIVE_PHOTO,
-	      photo: photo
-	    });
-	  }
-	
-	};
-	
-	module.exports = PhotoActions;
-
-/***/ },
-/* 264 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImagesApiUtil = __webpack_require__(262);
+	var ImagesApiUtil = __webpack_require__(267);
 	
 	var PhotoIndexItem = React.createClass({
 	  displayName: "PhotoIndexItem",
@@ -33612,13 +33958,13 @@
 	module.exports = PhotoIndexItem;
 
 /***/ },
-/* 265 */
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImageApiUtil = __webpack_require__(262);
+	var ImageApiUtil = __webpack_require__(267);
 	var UserApiUtil = __webpack_require__(214);
-	var CurrentUserStore = __webpack_require__(246);
+	var CurrentUserStore = __webpack_require__(247);
 	
 	var ImageForm = React.createClass({
 	  displayName: 'ImageForm',
@@ -33687,18 +34033,18 @@
 	module.exports = ImageForm;
 
 /***/ },
-/* 266 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(246);
-	var SessionsApiUtil = __webpack_require__(267);
-	var Search = __webpack_require__(268);
+	var CurrentUserStore = __webpack_require__(247);
+	var SessionsApiUtil = __webpack_require__(256);
+	var Search = __webpack_require__(257);
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
-	var CoverForm = __webpack_require__(259);
-	var ProfileForm = __webpack_require__(260);
-	var FriendButton = __webpack_require__(256);
+	var CoverForm = __webpack_require__(266);
+	var ProfileForm = __webpack_require__(269);
+	var FriendButton = __webpack_require__(263);
 	
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
@@ -33772,251 +34118,15 @@
 	module.exports = Navbar;
 
 /***/ },
-/* 267 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var CurrentUserActions = __webpack_require__(217);
-	var SessionsApiUtil = {
-	  login: function (credentials, success) {
-	
-	    $.ajax({
-	      url: '/api/session',
-	      type: 'POST',
-	      dataType: 'json',
-	      data: credentials,
-	      success: function (currentUser) {
-	        CurrentUserActions.receiveCurrentUser(currentUser);
-	        success && success();
-	      }
-	
-	    });
-	  },
-	
-	  logout: function (cb) {
-	    $.ajax({
-	      url: '/api/session',
-	      type: 'DELETE',
-	      dataType: 'json',
-	      success: function () {
-	        CurrentUserActions.logOut();
-	        cb && cb();
-	      }
-	    });
-	  },
-	
-	  fetchCurrentUser: function (cb) {
-	    $.ajax({
-	      url: '/api/session',
-	      type: 'GET',
-	      dataType: 'json',
-	      success: function (currentUser) {
-	        console.log("fetched current user!");
-	        CurrentUserActions.receiveCurrentUser(currentUser);
-	        cb && cb(currentUser);
-	      }
-	    });
-	  }
-	
-	};
-	
-	module.exports = SessionsApiUtil;
-
-/***/ },
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var SearchResultsStore = __webpack_require__(269);
-	var SearchApiUtil = __webpack_require__(271);
-	var UserProfile = __webpack_require__(254);
-	var PostIndexItem = __webpack_require__(240);
-	var CommentIndexItem = __webpack_require__(244);
-	var Link = __webpack_require__(159).Link;
-	
-	var Search = React.createClass({
-	  displayName: 'Search',
-	
-	
-	  componentDidMount: function () {
-	    this.listener = SearchResultsStore.addListener(this._onChange);
-	  },
-	
-	  getInitialState: function () {
-	    return { page: 1, query: "" };
-	  },
-	
-	  _onChange: function () {
-	    this.forceUpdate();
-	  },
-	
-	  reset: function () {
-	    this.setState({ page: 1, query: "" });
-	  },
-	
-	  search: function (e) {
-	    var query = e.target.value;
-	    SearchApiUtil.search(query, 1);
-	
-	    this.setState({ page: 1, query: query });
-	  },
-	
-	  nextPage: function () {
-	    var nextPage = this.state.page + 1;
-	    SearchApiUtil.search(this.state.query, nextPage);
-	
-	    this.setState({ page: nextPage });
-	  },
-	
-	  componentWillUnmount: function () {
-	    this.listener.remove();
-	  },
-	
-	  render: function () {
-	
-	    var searchResults = SearchResultsStore.all().map(function (searchResult) {
-	      if (searchResult._type === "User") {
-	        return React.createElement(
-	          'li',
-	          null,
-	          React.createElement(
-	            Link,
-	            { to: `users/${ searchResult.id }` },
-	            React.createElement('img', { className: 'searchimage', src: searchResult.profile_pic_url }),
-	            searchResult.fname
-	          )
-	        );
-	      } else if (searchResult._type === "Post") {
-	        return React.createElement(
-	          'li',
-	          null,
-	          React.createElement(PostIndexItem, { post: searchResult })
-	        );
-	      } else {
-	        return React.createElement(
-	          'li',
-	          null,
-	          React.createElement(CommentIndexItem, { comment: searchResult })
-	        );
-	      }
-	    });
-	
-	    // Displaying {SearchResultsStore.all().length} of
-	    // {SearchResultsStore.meta().totalCount}
-	    return React.createElement(
-	      'div',
-	      { className: 'search' },
-	      React.createElement('h1', { className: 'title' }),
-	      React.createElement('input', { className: 'search-input', type: 'text', placeholder: 'Search', onKeyUp: this.search }),
-	      React.createElement('button', { onClick: this.nextPage }),
-	      React.createElement(
-	        'ul',
-	        { className: 'users-index' },
-	        searchResults
-	      )
-	    );
-	  }
-	
-	});
-	
-	module.exports = Search;
-
-/***/ },
-/* 269 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Store = __webpack_require__(220).Store;
-	var AppDispatcher = __webpack_require__(210);
-	var SearchConstants = __webpack_require__(270);
-	
-	var _searchResults = [];
-	var _meta = {};
-	
-	var SearchResultsStore = new Store(AppDispatcher);
-	
-	SearchResultsStore.all = function () {
-	  return _searchResults.slice();
-	};
-	
-	SearchResultsStore.meta = function () {
-	  return _meta;
-	};
-	
-	SearchResultsStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	
-	    case SearchConstants.RECEIVE_SEARCH_RESULTS:
-	      _searchResults = payload.searchResults;
-	      _meta = payload.meta;
-	      SearchResultsStore.__emitChange();
-	      break;
-	
-	  }
-	};
-	
-	module.exports = SearchResultsStore;
-
-/***/ },
-/* 270 */
-/***/ function(module, exports) {
-
-	var SearchConstants = {
-	  RECEIVE_SEARCH_RESULTS: "RECEIVE_SEARCH_RESULTS"
-	};
-	
-	module.exports = SearchConstants;
-
-/***/ },
-/* 271 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SearchActions = __webpack_require__(272);
-	
-	var SearchApiUtil = {
-	
-	  search: function (query, page) {
-	    $.ajax({
-	      url: '/api/search',
-	      type: 'GET',
-	      dataType: 'json',
-	      data: { query: query, page: page },
-	      success: function (data) {
-	        SearchActions.receiveResults(data);
-	      }
-	    });
-	  }
-	
-	};
-	
-	module.exports = SearchApiUtil;
-
-/***/ },
-/* 272 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var SearchConstants = __webpack_require__(270);
-	var AppDispatcher = __webpack_require__(210);
-	
-	var SearchActions = {
-	  receiveResults: function (data) {
-	    AppDispatcher.dispatch({
-	      actionType: SearchConstants.RECEIVE_SEARCH_RESULTS,
-	      searchResults: data.results,
-	      meta: { totalCount: data.total_count }
-	    });
-	  }
-	
-	};
-	
-	module.exports = SearchActions;
-
-/***/ },
-/* 273 */
+/* 274 */,
+/* 275 */,
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1),
-	    Header = __webpack_require__(274),
-	    SessionsApiUtil = __webpack_require__(267),
-	    CurrentUserStore = __webpack_require__(246);
+	    Header = __webpack_require__(255),
+	    SessionsApiUtil = __webpack_require__(256),
+	    CurrentUserStore = __webpack_require__(247);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -34052,120 +34162,12 @@
 	module.exports = App;
 
 /***/ },
-/* 274 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var CurrentUserStore = __webpack_require__(246);
-	var SessionsApiUtil = __webpack_require__(267);
-	var Search = __webpack_require__(268);
-	var History = __webpack_require__(159).History;
-	var Link = __webpack_require__(159).Link;
-	
-	var Header = React.createClass({
-	  displayName: 'Header',
-	
-	  mixins: [History],
-	
-	  getInitialState: function () {
-	    return {
-	      currentUser: CurrentUserStore.currentUser()
-	    };
-	  },
-	
-	  componentDidMount: function () {
-	    this.listener = CurrentUserStore.addListener(this._onChange);
-	  },
-	
-	  componentWillUnmount: function () {
-	    this.listener.remove();
-	  },
-	
-	  _onChange: function () {
-	    this.setState({ currentUser: CurrentUserStore.currentUser() });
-	  },
-	
-	  logout: function (e) {
-	    e.preventDefault();
-	    SessionsApiUtil.logout(function () {
-	      this.history.pushState({}, "/login");
-	    }.bind(this));
-	  },
-	
-	  render: function () {
-	
-	    if (CurrentUserStore.isLoggedIn()) {
-	      currentUser = CurrentUserStore.user();
-	      return React.createElement(
-	        'div',
-	        { className: 'main-header group' },
-	        React.createElement(
-	          Link,
-	          { className: 'link', to: `/` },
-	          React.createElement('img', { src: 'http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png', className: 'side-logo' })
-	        ),
-	        React.createElement(
-	          'ul',
-	          { className: 'main-links group' },
-	          React.createElement(
-	            'li',
-	            { className: 'searchbar' },
-	            React.createElement(Search, { className: 'search' })
-	          ),
-	          React.createElement(
-	            'li',
-	            null,
-	            React.createElement(
-	              Link,
-	              { className: 'link', to: `/` },
-	              'Home'
-	            )
-	          ),
-	          React.createElement(
-	            'li',
-	            { className: 'logged-in' },
-	            React.createElement(
-	              Link,
-	              { className: 'link', to: `users/${ currentUser.id }` },
-	              React.createElement('img', { src: this.state.currentUser.profile_pic }),
-	              currentUser.fname
-	            )
-	          ),
-	          React.createElement(
-	            'li',
-	            null,
-	            React.createElement(
-	              'button',
-	              { onClick: this.logout },
-	              ' Log Out'
-	            )
-	          )
-	        )
-	      );
-	    } else {
-	      return React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          'a',
-	          { href: '#/login' },
-	          'Login'
-	        )
-	      );
-	    }
-	  }
-	
-	});
-	
-	module.exports = Header;
-
-/***/ },
-/* 275 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(267);
+	var SessionsApiUtil = __webpack_require__(256);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var SessionForm = React.createClass({
@@ -34349,12 +34351,12 @@
 	module.exports = SessionForm;
 
 /***/ },
-/* 276 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var SessionsApiUtil = __webpack_require__(267);
+	var SessionsApiUtil = __webpack_require__(256);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var UserForm = React.createClass({
@@ -34529,11 +34531,11 @@
 	module.exports = UserForm;
 
 /***/ },
-/* 277 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var UsersStore = __webpack_require__(255);
+	var UsersStore = __webpack_require__(238);
 	var UsersApiUtil = __webpack_require__(214);
 	
 	var UsersIndex = React.createClass({
@@ -34589,21 +34591,21 @@
 	module.exports = UsersIndex;
 
 /***/ },
-/* 278 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(255);
+	var UserStore = __webpack_require__(238);
 	var PostStore = __webpack_require__(219);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var PostIndexItem = __webpack_require__(240);
+	var PostIndexItem = __webpack_require__(241);
 	var PostsForm = __webpack_require__(206);
-	var CoverForm = __webpack_require__(259);
-	var ProfileForm = __webpack_require__(260);
-	var Navbar = __webpack_require__(266);
+	var CoverForm = __webpack_require__(266);
+	var ProfileForm = __webpack_require__(269);
+	var Navbar = __webpack_require__(273);
 	
 	var About = React.createClass({
 	  displayName: 'About',
@@ -34715,23 +34717,23 @@
 	module.exports = About;
 
 /***/ },
-/* 279 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
-	var UserStore = __webpack_require__(255);
+	var UserStore = __webpack_require__(238);
 	var PostStore = __webpack_require__(219);
-	var CommentStore = __webpack_require__(239);
+	var CommentStore = __webpack_require__(240);
 	var PostsForm = __webpack_require__(206);
-	var PostIndexItem = __webpack_require__(240);
+	var PostIndexItem = __webpack_require__(241);
 	var PostsForm = __webpack_require__(206);
-	var CoverForm = __webpack_require__(259);
-	var ProfileForm = __webpack_require__(260);
-	var Navbar = __webpack_require__(266);
+	var CoverForm = __webpack_require__(266);
+	var ProfileForm = __webpack_require__(269);
+	var Navbar = __webpack_require__(273);
 	var Link = __webpack_require__(159).Link;
-	var FriendButton = __webpack_require__(256);
+	var FriendButton = __webpack_require__(263);
 	
 	var Friends = React.createClass({
 	  displayName: 'Friends',

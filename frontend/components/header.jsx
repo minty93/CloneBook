@@ -4,6 +4,8 @@ var SessionsApiUtil = require('./../util/sessions_api_util');
 var Search = require('./search');
 var History = require('react-router').History;
 var Link = require('react-router').Link;
+var UserApiUtil = require('../util/users_api_util');
+
 
 
 
@@ -11,6 +13,7 @@ var Header = React.createClass({
   mixins: [History],
 
   getInitialState: function () {
+
     return {
       currentUser: CurrentUserStore.currentUser()
     };
@@ -24,9 +27,16 @@ var Header = React.createClass({
     this.listener.remove();
  },
 
+ componentWillReceiveProps: function(){
+   this._onChange();
+ },
+
 
   _onChange: function () {
-    this.setState({currentUser: CurrentUserStore.currentUser()});
+    UserApiUtil.fetchUser(parseInt(CurrentUserStore.user().id), function (user){
+        this.setState({currentUser: user});
+      }.bind(this)
+    );
   },
 
   logout: function (e) {
@@ -38,7 +48,7 @@ var Header = React.createClass({
 
 
   render: function() {
-
+    
     if (CurrentUserStore.isLoggedIn()) {
       currentUser = CurrentUserStore.user()
       return (

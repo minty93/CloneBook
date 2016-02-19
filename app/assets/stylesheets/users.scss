@@ -261,3 +261,25 @@
 .btn-facebook:hover{
    opacity: 0.75;
 }
+
+.preview-image-cover {
+  background: #E9EAED;
+  border: none;
+}
+
+.preview-image-button {
+  font-size: 10px;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  background: -webkit-gradient(linear, center bottom, center top, from(#405D9B), to(#6384C8));
+  border: 1px solid lightgray;
+  border-radius: 5%;
+  opacity: 1;
+  padding: 2px;
+}
+
+.preview-image-button:hover{
+   opacity: 0.75;
+}

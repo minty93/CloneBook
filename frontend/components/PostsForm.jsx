@@ -34,11 +34,14 @@ var PostForm = React.createClass({
 
   handleSubmit: function(e){
     if(this.props.params.userId){
-    profile_user = UserStore._findUserById(this.props.params.userId)}
-    
+    var profile_user = UserStore._findUserById(this.props.params.userId)}
+    if (profile_user){
+      var profile_name = profile_user.fname + " " + profile_user.lname
+    }
+
     e.preventDefault();
     var that = this;
-    var post = {body: this.state.body, profile_id: this.props.params.userId, profile_name: profile_user.fname + " " + profile_user.lname};
+    var post = {body: this.state.body, profile_id: this.props.params.userId, profile_name: profile_name};
     var callback = function(){
       that.setState({body: "" });
     };

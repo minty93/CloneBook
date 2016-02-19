@@ -18,13 +18,14 @@ fetchAllUsers: function(){
   });
 },
 
-fetchUser: function (id) {
+fetchUser: function (id, callback) {
    $.ajax({
      url: '/api/users/' + id,
      type: 'GET',
      dataType: 'json',
      success: function (user) {
        UserApiActions.receiveUser(user);
+       callback && callback(user);
      }
    });
  },

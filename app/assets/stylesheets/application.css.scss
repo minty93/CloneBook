@@ -309,7 +309,7 @@
 
 .friend-button {
   margin: 0 auto;
-  width: 100px;
+  width: 95px;
   height: 30px;
 }
 
@@ -349,7 +349,7 @@
 .friend-button {
   float: right;
   margin: 5px;
-  margin-right: 10px;
+  margin-right: 78px;
   border: 0 solid;
   box-shadow: inset 0 0 20px rgba(255, 255, 255, 0);
   outline: 1px solid;
@@ -361,6 +361,8 @@
   background: #F8F9F9;
   border-radius: 10%;
   text-align: center;
+  font-size: 11px;
+  padding: 1px;
 }
 
 
@@ -395,6 +397,16 @@
   // padding-top: 15px;
 }
 
+
+.main-links > li:hover {
+  background: darkblue;
+  cursor: pointer;
+}
+
+.main-links > li:first-child:hover {
+  background: white;
+}
+
 .main-links > li:first-child > img {
   float: right;
   padding: 0;
@@ -422,7 +434,7 @@
 }
 
 .searchbar > div > input {
-
+  width: 500px;
   color: black;
 }
 
@@ -576,15 +588,15 @@ float: left;
   position: absolute;
   margin: 5px;
   top: 500px;
-  left: 100px;
+  left: 96px;
 }
 
 .image-form2 {
   width: 30px;
   display: inline;
   position: absolute;
-  top: 700px;
-  left: 100px;
+  top: 600px;
+  left: 96px;
 }
 
 .image-form1 > label {
@@ -603,9 +615,9 @@ float: left;
 }
 
 .logged-in > a > img {
-  margin-top: 0px;
-  width: 40px;
-  height: 40px;
+  margin-top: 6px;
+  width: 30px;
+  height: 30px;
   float: left;
 }
 

@@ -35,8 +35,8 @@ var CommentsIndex = React.createClass({
             {
               this.state.comments.map(function(comment) {
               return(
-              <div>
-                <CommentsIndexItem key={comment.id} comment={comment} />
+              <div key={comment.id}>
+                <CommentsIndexItem comment={comment} />
               </div>);
             })
           }</li>

@@ -18,10 +18,11 @@
 
 
 .comment-form > form{
+  box-sizing: border-box;
   margin: 0 auto;
   border: 1px solid lightgrey;
   border-top: none;
-  width: 494px;
+  width: 496px;
   height: 55px;
   background: #F6F7F8;
   position: relative;
@@ -29,18 +30,19 @@
 
 .comment-form > form > button {
   display: none;
+  width: 496px;
 }
 
 .comment-index-items {
   align-self: center;
   margin: 0 auto;
   width: 494px;
-  height: 45px;
+  height: 59px;
   background: #F6F7F8;
   position: relative;
   border-left: 1px solid lightgrey;
   border-right: 1px solid lightgrey;
-  font-size: 12px;
+  font-size: 11px;
   color: darkgrey;
   position: relative;
   text-align:left;
@@ -64,8 +66,10 @@
 
 .actual-comment{
   margin-left: 40px;
-  display: inline-block;
+  // display: inline-block;
   float: left;
+  width: 300px;
+  overflow-y: auto;
 
 }
 

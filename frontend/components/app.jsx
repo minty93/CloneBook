@@ -13,6 +13,7 @@ var App = React.createClass({
 		this.Listener.remove();
 	},
 
+
   render: function() {
     if (!CurrentUserStore.userHasBeenFetched()) {
       return <p>PLEASE WAIT</p>;

@@ -48,7 +48,7 @@ var Header = React.createClass({
 
 
   render: function() {
-    
+
     if (CurrentUserStore.isLoggedIn()) {
       currentUser = CurrentUserStore.user()
       return (

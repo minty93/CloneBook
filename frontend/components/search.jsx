@@ -48,14 +48,15 @@ var Search = React.createClass({
 
     var searchResults = SearchResultsStore.all().map(function (searchResult, index) {
       if (searchResult._type === "User") {
-        return (<li key={index}><Link to={`users/${searchResult.id}`}><img className="searchimage" src={searchResult.profile_pic_url}/>{searchResult.fname}</Link></li>)
+        return (<li className="search-result" key={index}><Link to={`users/${searchResult.id}`}><img className="searchimage" src={searchResult.profile_pic_url}/>{searchResult.fname}</Link></li>)
 
-      } else if (searchResult._type === "Post") {
-        return <li onClick={this.reset}><PostIndexItem post={searchResult} /></li>;
       }
-      else {
-        return <li onClick={this.reset}><CommentIndexItem comment={searchResult}/></li>;
-      }
+      // else if (searchResult._type === "Post") {
+      //   return <li onClick={this.reset}><PostIndexItem post={searchResult} /></li>;
+      // }
+      // else {
+      //   return <li onClick={this.reset}><CommentIndexItem comment={searchResult}/></li>;
+      // }
     });
 
 

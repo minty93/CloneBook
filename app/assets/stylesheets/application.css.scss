@@ -660,3 +660,108 @@ float: left;
   width: 496px;
 
 }
+
+.image-formhide {
+   visibility: hidden;
+   width: 200px;
+}
+
+
+
+.fa-camera  {
+  padding: 5px;
+  padding-left: 20px;
+  padding-right: 38px;
+}
+
+
+
+
+.fa-camera:hover {
+  color: white;
+  background: black;
+  opacity: .8;
+  visibility: visible;
+  border-radius: 5%;
+}
+
+
+.preview-image-button{
+  position: absolute;
+  top: 3px;
+  left: 100px;
+}
+
+
+.image-form2 {
+  position:absolute;
+  top: 420px;
+  left: 100px;
+}
+
+
+.preview-image-cover {
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  top: -116px;
+  left: 5px;
+}
+
+
+.preview-image-button1{
+  position: absolute;
+  top: 3px;
+  left: 100px;
+}
+
+
+.image-form1 {
+  position:absolute;
+  top: 120px;
+  left: 100px;
+}
+
+
+.preview-image-cover1 {
+  width: 850px;
+  height: 313px;
+  position: absolute;
+  top: 117px;
+  left: 85px;
+}
+
+.search-result:first-child {
+  height: 35px;
+  padding: 2px;
+  border: 1px solid grey;
+}
+.search-result {
+  width: 585px;
+  height: 35px;
+  padding: 2px;
+  background: white;
+  border: 1px solid grey;
+  border-top: none;
+}
+
+.search-result > a {
+  padding: 2px;
+}
+
+.searchbar {
+  position: relative;
+}
+.users-index{
+  position: absolute;
+  z-index: 1;
+}
+
+.profile > h3 {
+   text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+   font-size: 25px;
+}
+
+.friend-list {
+  float: left;
+}

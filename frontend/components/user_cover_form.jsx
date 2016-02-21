@@ -9,16 +9,22 @@ var UserCoverForm = React.createClass({
   },
 
   render: function() {
+    var photo_upload;
+    var photo_upload2;
+    if(this.state.imageFile) {
+    photo_upload = <button className="preview-image-button preview-image-button1">Upload Cover</button>
+    photo_upload2 = <img className="preview-image-cover1" src={this.state.imageUrl}/> }
     return (
       <div>
-        <form onSubmit={this.handleSubmit} className="image-form1">
-          <label>
-            <input type="file" onChange={this.changeFile} />
-          </label>
-
-          <button className="preview-image-button">Upload Cover</button>
-          <img className="preview-image-cover" src={this.state.imageUrl}/>
-        </form>
+      {photo_upload2}
+      <form onSubmit={this.handleSubmit} className="image-form1 group" >
+        <label>
+          <i className="fa fa-camera fa-3x">
+          {photo_upload}
+          </i>
+          <input type="file" onChange={this.changeFile} className="image-formhide"/>
+        </label>
+      </form>
 
       </div>
     );

@@ -51,21 +51,24 @@ class User < ActiveRecord::Base
   def self.find_or_create_by_auth_hash(auth_hash)
   provider = auth_hash[:provider]
   uid = auth_hash[:uid]
+  name = auth_hash[:info][:name].split(" ")
+  lname = name[1]
+  fname = name[0]
+
 
   user = User.find_by(provider: provider, uid: uid)
 
   return user if user
-
   user = User.create!(
     provider: provider,
     uid: uid,
-    email: auth_hash[:info][:name],
+    email: auth_hash[:info][:email],
     password: SecureRandom::urlsafe_base64,
-    fname: auth_hash[:info][:name],
+    fname: fname,
     gender: "female",
     profile_pic: auth_hash[:info][:image],
     birthday: "01-01-2001",
-    lname: auth_hash[:info][:name]
+    lname: lname
   )
 
   end

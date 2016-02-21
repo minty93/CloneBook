@@ -7,11 +7,12 @@ var CommentStore = require("../stores/CommentStore");
 var PostsForm = require('./PostsForm');
 var PostIndexItem = require('./PostsIndexItem');
 var PostsForm = require('./PostsForm');
+var Link = require('react-router').Link;
+var FriendButton = require('./friend_request_item');
 var CoverForm = require('./user_cover_form');
 var ProfileForm = require('./user_profile_form');
 var Navbar = require('./navbar');
-var Link = require('react-router').Link;
-var FriendButton = require('./friend_request_item');
+var CurrentUserStore = require('./../stores/current_user_store');
 
 
 
@@ -52,11 +53,14 @@ var Friends = React.createClass({
   },
 
   _onChange: function () {
-    var userId = this.props.params.userId;
-    var user = this._findUserById(userId);
-    if (this.isMounted()) {
-    this.setState({ user: user});
-    }
+  var userId = this.props.params.userId;
+  var user;
+  UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user){
+      if (this.isMounted()) {
+      this.setState({ user: user});
+      }
+    }.bind(this)
+  );
  },
 
  //
@@ -69,6 +73,9 @@ var Friends = React.createClass({
  //   }
  // }
   render: function() {
+    var received_posts;
+    var cover_form;
+    var profile_form;
 
     var findfriends = [];
     var friends =[];
@@ -84,6 +91,12 @@ var Friends = React.createClass({
         req_friends.push(friend.requestee_id);
       }
     );
+
+    if (this.state.user.id == CurrentUserStore.user().id){
+      cover_form = <CoverForm className="fullpage" params={this.props.params}/>
+      profile_form = <ProfileForm className="fullpage" params={this.props.params}/>
+
+    }
 
     req_friends.forEach(function(friend_id)
       {
@@ -113,6 +126,8 @@ var Friends = React.createClass({
     return (
       <div className="friends group">
         <Navbar params={this.props.params} user={this.state.user}/>
+        {cover_form}
+        {profile_form}
         <div className="friends-header group"><i className="fa fa-users fa-3x"></i><h2>Friends</h2>
         </div>
         {friends}

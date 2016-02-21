@@ -8,15 +8,22 @@ var UserProfileForm = React.createClass({
   },
 
   render: function() {
+    var photo_upload;
+    var photo_upload2;
+    if(this.state.imageFile) {
+    photo_upload = <button className="preview-image-button">Upload Profile </button>;
+    photo_upload2 = <img className="preview-image-cover" src={this.state.imageUrl}/>;
+    }
     return (
       <div>
-        <form onSubmit={this.handleSubmit} className="image-form2">
+        <form onSubmit={this.handleSubmit} className="image-form2 group" >
+        {photo_upload2}
           <label>
-            <input type="file" onChange={this.changeFile} />
+            <i className="fa fa-camera fa-3x">
+            {photo_upload}
+            </i>
+            <input type="file" onChange={this.changeFile} className="image-formhide"/>
           </label>
-
-          <button className="preview-image-button">Upload Profile</button>
-          <img className="preview-image-cover" src={this.state.imageUrl}/>
         </form>
 
       </div>

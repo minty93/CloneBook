@@ -102,9 +102,9 @@ var UserProfile = React.createClass({
 
     return (
       <div >
-        {cover_form}
-        {profile_form}
-        {navbar}
+      {navbar}
+      {cover_form}
+      {profile_form}
         <div className="profile-page">
         <FriendButton params={this.props.params}/>
             <div className="posts-index-profilefeed">

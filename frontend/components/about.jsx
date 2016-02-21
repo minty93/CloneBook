@@ -10,6 +10,8 @@ var PostsForm = require('./PostsForm');
 var CoverForm = require('./user_cover_form');
 var ProfileForm = require('./user_profile_form');
 var Navbar = require('./navbar');
+var CurrentUserStore = require('./../stores/current_user_store');
+
 
 
 
@@ -40,7 +42,7 @@ var About = React.createClass({
   },
 
   componentWillReceiveProps: function(newProps){
-    UserApiUtil.fetchUser(parseInt(newProps.params.userId));
+    UserApiUtil.fetchAllUsers();
   },
 
   componentWillUnmount: function () {
@@ -49,14 +51,19 @@ var About = React.createClass({
 
   _onChange: function () {
     var userId = this.props.params.userId;
-    var user = this._findUserById(userId);
-    if (this.isMounted()) {
-    this.setState({ user: user});
-    }
+    var user;
+    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user){
+        if (this.isMounted()) {
+        this.setState({ user: user});
+        }
+      }.bind(this)
+    );
  },
 
   render: function() {
     var received_posts;
+    var cover_form;
+    var profile_form;
 
     if (this.state.user) {
       birthday = this.state.user.birthday;
@@ -68,10 +75,18 @@ var About = React.createClass({
 
     }
 
+    if (this.state.user.id == CurrentUserStore.user().id){
+      cover_form = <CoverForm className="fullpage" params={this.props.params}/>
+      profile_form = <ProfileForm className="fullpage" params={this.props.params}/>
+
+    }
+
 
     return (
       <div>
       <Navbar params={this.props.params} user={this.state.user}/>
+      {cover_form}
+      {profile_form}
       <ul className="about-feed">
 
         <div className="group"><i className="fa fa-user fa-3x"></i><h2>About</h2></div>

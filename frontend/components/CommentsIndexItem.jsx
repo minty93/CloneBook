@@ -7,17 +7,58 @@ var UserApiUtil = require('../util/users_api_util');
 var TimeAgo = require("react-timeago");
 var Link = require('react-router').Link;
 var CurrentUserStore = require('./../stores/current_user_store');
+var UserStore = require('./../stores//UserStore');
+
 
 
 var CommentsIndexItem = React.createClass({
+
+  _findCommentById: function (id) {
+    var res;
+    CommentStore.all().forEach(function (comment) {
+      if (id == comment.id) {
+        res = comment;
+      }
+    }.bind(this));
+    return res;
+  },
+
+  getInitialState: function(){
+    var commentId = this.props.comment.id;
+    var comment = this._findCommentById(commentId) || {} ;
+    return { comment_image: CurrentUserStore.user().profile_pic };
+  },
+ //
+ //
+   componentDidMount: function () {
+     this.listener = UserStore.addListener(this._onChange);
+     UserApiUtil.fetchUser(parseInt(this.props.comment.author_id), function(user){
+       this.setState({comment_image: user.profile_pic})
+     }.bind(this));
+  },
+
+ //
+  componentWillUnmount: function () {
+    this.listener.remove();
+  },
+
+  _onChange: function () {
+   var commentId = this.props.comment.commentId;
+   var comment = this._findCommentById(commentId);
+   UserApiUtil.fetchUser(parseInt(this.props.comment.author_id), function(user){
+     if (this.isMounted()) {
+       this.setState({comment_image: user.profile_pic})
+     }
+   }.bind(this));
+ },
 
 
 
   handleDelete: function(e){
     e.preventDefault();
     var that = this;
-    PostsApiUtil.fetchAllPosts();
     UserApiUtil.fetchAllUsers();
+    PostsApiUtil.fetchSinglePost(this.props.comment.commentable_id);
     CommentsApiUtil.destroyComment(this.props.comment.id);
   },
 
@@ -30,11 +71,12 @@ var CommentsIndexItem = React.createClass({
 
     if (this.props.comment.author_id == CurrentUserStore.user().id){
 
-      deletebutton = <button onClick={this.handleDelete}>Delete Comment</button>
+      deletebutton = <button className="commentdelete" onClick={this.handleDelete}>Delete Comment</button>
     }
 
     return (
       <div className="comment-index-items" >
+      <img className="small-image1" src={this.state.comment_image} />
         <ul className="comment-index-items-input">
         <Link className="comment-username" to={`users/${this.props.comment.author_id}`}>{this.props.comment.author_name}</Link>
           <li className="actual-comment">{this.props.comment.description}</li>

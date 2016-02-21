@@ -506,6 +506,8 @@
 
 .comment-index-items-input {
   padding: 5px;
+  position: absolute;
+  left: 35px;
 }
 
 .comment-index-items-input > a {
@@ -655,6 +657,9 @@ float: left;
 }
 
 .timeagosecond > span {
+  position: absolute;
+  top: 25px;
+  left: 42px;
   display: block !important;
   float: left;
   width: 496px;
@@ -764,4 +769,13 @@ float: left;
 
 .friend-list {
   float: left;
+}
+
+.small-image1{
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  float: left;
+  top: 10px;
+  left: 5px;
 }

@@ -28,15 +28,18 @@ var Header = React.createClass({
  },
 
  componentWillReceiveProps: function(){
-   this._onChange();
+  //  this._onChange();
  },
 
 
   _onChange: function () {
-    UserApiUtil.fetchUser(parseInt(CurrentUserStore.user().id), function (user){
-        this.setState({currentUser: user});
-      }.bind(this)
-    );
+    // if (this.isMounted()) {
+    //   UserApiUtil.fetchUser(parseInt(CurrentUserStore.user().id), function (user){
+    //     this.setState({currentUser: user});
+    //   }.bind(this)
+    // );
+    //
+    // }
   },
 
   logout: function (e) {

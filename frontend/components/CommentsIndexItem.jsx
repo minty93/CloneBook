@@ -32,9 +32,9 @@ var CommentsIndexItem = React.createClass({
  //
    componentDidMount: function () {
      this.listener = UserStore.addListener(this._onChange);
-     UserApiUtil.fetchUser(parseInt(this.props.comment.author_id), function(user){
-       this.setState({comment_image: user.profile_pic})
-     }.bind(this));
+    //  UserApiUtil.fetchUser(parseInt(this.props.comment.author_id), function(user){
+    //    this.setState({comment_image: user.profile_pic})
+    //  }.bind(this));
   },
 
  //

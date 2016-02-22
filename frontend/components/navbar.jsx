@@ -45,7 +45,13 @@ var Navbar = React.createClass({
   },
 
   componentWillReceiveProps: function(newProps){
-    UserApiUtil.fetchAllUsers();
+    var userId = (newProps.params.userId);
+    UserApiUtil.fetchUser(parseInt(userId), function (user){
+        if (this.isMounted()) {
+        this.setState({ user: user});
+        }
+      }.bind(this)
+    );
   },
 
   componentWillUnmount: function () {

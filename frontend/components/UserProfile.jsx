@@ -51,12 +51,12 @@ var UserProfile = React.createClass({
   },
 
   componentWillReceiveProps: function(newProps){
-    // UserApiUtil.fetchUser(parseInt(newProps.params.userId), function (user){
-    //   if (this.isMounted()) {
-    //   this.setState({ user: user});
-    //   }
-    //   }.bind(this)
-    // );
+    UserApiUtil.fetchUser(parseInt(newProps.params.userId), function (user){
+      if (this.isMounted()) {
+      this.setState({ user: user});
+      }
+      }.bind(this)
+    );
   },
 
   componentWillUnmount: function () {

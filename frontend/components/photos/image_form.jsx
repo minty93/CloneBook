@@ -8,7 +8,7 @@ var CurrentUserStore = require('../../stores/current_user_store');
 var ImageForm = React.createClass({
 
   getInitialState: function () {
-    return {url: "", file: null, description: ""};
+    return {url: "", file: null, description: "", saving: false, upload: "Upload Photo"};
   },
 
   changeFile: function(e) {
@@ -28,7 +28,7 @@ var ImageForm = React.createClass({
   },
 
   clearFields: function() {
-    this.setState({url: "", file: null, description: ""});
+    this.setState({url: "", file: null, description: "", saving: false, upload: "Upload Photo"});
   },
 
 
@@ -38,13 +38,16 @@ var ImageForm = React.createClass({
 
   handleSubmit: function (e) {
     e.preventDefault();
-    var file = this.state.file;
-    var formData = new FormData();
-    formData.append("photo[photo]", file);
-    formData.append("photo[description]", this.state.description);
-    ImageApiUtil.createImage(formData, this.clearFields);
-    UserApiUtil.fetchAllUsers();
-    this.clearFields();
+    if (!this.state.saving) {
+      var file = this.state.file;
+      this.setState({saving: true, upload: "Uploading"});
+      var formData = new FormData();
+      formData.append("photo[photo]", file);
+      formData.append("photo[description]", this.state.description);
+      ImageApiUtil.createImage(formData, this.clearFields);
+      UserApiUtil.fetchAllUsers();
+      this.clearFields();
+    }
 
 
   },
@@ -57,7 +60,7 @@ var ImageForm = React.createClass({
         <form onSubmit={this.handleSubmit}>
           <input className="file-upload" onChange={this.changeFile} type="file"/>
           <input placeholder="Add Description" className="file-des" onChange={this.changeDes} type="text"/>
-          <button className="upload-button">Upload Photo</button>
+          <button className="upload-button">{this.state.upload}</button>
         </form>
         <img className="photo-preview-image" src={this.state.url}/>
       </div>

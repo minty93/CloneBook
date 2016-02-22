@@ -33500,11 +33500,12 @@
 	  },
 	
 	  componentWillReceiveProps: function (newProps) {
-	    UserApiUtil.fetchUser(parseInt(newProps.params.userId), function (user) {
-	      if (this.isMounted()) {
-	        this.setState({ user: user });
-	      }
-	    }.bind(this));
+	    // UserApiUtil.fetchUser(parseInt(newProps.params.userId), function (user){
+	    //   if (this.isMounted()) {
+	    //   this.setState({ user: user});
+	    //   }
+	    //   }.bind(this)
+	    // );
 	  },
 	
 	  componentWillUnmount: function () {
@@ -33555,8 +33556,8 @@
 	      React.createElement(
 	        'div',
 	        { className: 'profile-page' },
-	        React.createElement(FriendButton, { params: this.props.params }),
 	        navbar,
+	        React.createElement(FriendButton, { params: this.props.params }),
 	        React.createElement(
 	          'div',
 	          { className: 'posts-index-profilefeed' },

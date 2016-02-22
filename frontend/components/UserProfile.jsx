@@ -51,12 +51,12 @@ var UserProfile = React.createClass({
   },
 
   componentWillReceiveProps: function(newProps){
-    UserApiUtil.fetchUser(parseInt(newProps.params.userId), function (user){
-      if (this.isMounted()) {
-      this.setState({ user: user});
-      }
-      }.bind(this)
-    );
+    // UserApiUtil.fetchUser(parseInt(newProps.params.userId), function (user){
+    //   if (this.isMounted()) {
+    //   this.setState({ user: user});
+    //   }
+    //   }.bind(this)
+    // );
   },
 
   componentWillUnmount: function () {
@@ -108,8 +108,8 @@ var UserProfile = React.createClass({
       <div >
 
         <div className="profile-page">
-        <FriendButton params={this.props.params}/>
         {navbar}
+        <FriendButton params={this.props.params}/>
             <div className="posts-index-profilefeed">
             <PostsForm params={this.props.params} placeholder="Post Something"/>
             {received_posts}

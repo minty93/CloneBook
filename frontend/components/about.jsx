@@ -85,8 +85,6 @@ var About = React.createClass({
     return (
       <div>
       <Navbar params={this.props.params} user={this.state.user}/>
-      {cover_form}
-      {profile_form}
       <ul className="about-feed">
 
         <div className="group"><i className="fa fa-user fa-3x"></i><h2>About</h2></div>

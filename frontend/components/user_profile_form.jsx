@@ -4,7 +4,7 @@ var ImageApiUtil = require('../util/images_api_util');
 
 var UserProfileForm = React.createClass({
   getInitialState: function() {
-    return {imageFile: null, imageUrl: ""};
+    return {imageFile: null, imageUrl: "", saving: false};
   },
 
   render: function() {
@@ -47,17 +47,20 @@ var UserProfileForm = React.createClass({
 
   handleSubmit: function(e) {
     e.preventDefault();
-    var formData = new FormData();
-    formData.append("user[profile_pic]", this.state.imageFile);
-    var file = this.state.imageFile;
-    var formData2 = new FormData();
-    formData2.append("photo[photo]", file);
-    UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
-    ImageApiUtil.createImage(formData2);
+    if (!this.state.saving) {
+      var formData = new FormData();
+      this.setState({saving: true});
+      formData.append("user[profile_pic]", this.state.imageFile);
+      var file = this.state.imageFile;
+      var formData2 = new FormData();
+      formData2.append("photo[photo]", file);
+      UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
+      ImageApiUtil.createImage(formData2);
+    }
   },
 
   resetForm: function() {
-    this.setState({imageFile: null, imageUrl: ""});
+    this.setState({imageFile: null, imageUrl: "", saving: false});
   }
 });
 

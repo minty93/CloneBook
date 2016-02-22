@@ -52,7 +52,9 @@ var UserProfile = React.createClass({
 
   componentWillReceiveProps: function(newProps){
     UserApiUtil.fetchUser(parseInt(newProps.params.userId), function (user){
-        this.setState({ user: user});
+      if (this.isMounted()) {
+      this.setState({ user: user});
+      }
       }.bind(this)
     );
   },
@@ -67,7 +69,9 @@ var UserProfile = React.createClass({
     var userId = this.props.params.userId;
     var user;
     UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user){
+        if (this.isMounted()) {
         this.setState({ user: user});
+        }
       }.bind(this)
     );
     // this._findUserById(userId);
@@ -102,11 +106,10 @@ var UserProfile = React.createClass({
 
     return (
       <div >
-      {navbar}
-      {cover_form}
-      {profile_form}
+
         <div className="profile-page">
         <FriendButton params={this.props.params}/>
+        {navbar}
             <div className="posts-index-profilefeed">
             <PostsForm params={this.props.params} placeholder="Post Something"/>
             {received_posts}

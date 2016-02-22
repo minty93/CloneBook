@@ -126,8 +126,7 @@ var Friends = React.createClass({
     return (
       <div className="friends group">
         <Navbar params={this.props.params} user={this.state.user}/>
-        {cover_form}
-        {profile_form}
+
         <div className="friends-header group"><i className="fa fa-users fa-3x"></i><h2>Friends</h2>
         </div>
         {friends}

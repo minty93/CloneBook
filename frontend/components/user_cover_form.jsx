@@ -5,17 +5,19 @@ var ImageApiUtil = require('../util/images_api_util');
 
 var UserCoverForm = React.createClass({
   getInitialState: function() {
-    return {imageFile: null, imageUrl: ""};
+    return {imageFile: null, imageUrl: "", saving: false};
   },
 
   render: function() {
     var photo_upload;
     var photo_upload2;
     if(this.state.imageFile) {
-    photo_upload = <button className="preview-image-button preview-image-button1">Upload Cover</button>
-    photo_upload2 = <img className="preview-image-cover1" src={this.state.imageUrl}/> }
+      photo_upload = <button className="preview-image-button preview-image-button1">Upload Cover</button>
+      photo_upload2 = <img className="preview-image-cover1" src={this.state.imageUrl}/>
+   }
+
     return (
-      <div>
+      <div className="div-form">
       {photo_upload2}
       <form onSubmit={this.handleSubmit} className="image-form1 group" >
         <label>
@@ -47,17 +49,22 @@ var UserCoverForm = React.createClass({
 
   handleSubmit: function(e) {
     e.preventDefault();
-    var formData = new FormData();
-    formData.append("user[cover_pic]", this.state.imageFile);
-    var file = this.state.imageFile;
-    var formData2 = new FormData();
-    formData2.append("photo[photo]", file);
-    UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
-    ImageApiUtil.createImage(formData2);
+
+
+    if (!this.state.saving) {
+      var formData = new FormData();
+      this.setState({saving: true});
+      formData.append("user[cover_pic]", this.state.imageFile);
+      var file = this.state.imageFile;
+      var formData2 = new FormData();
+      formData2.append("photo[photo]", file);
+      UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
+      ImageApiUtil.createImage(formData2);
+    }
   },
 
   resetForm: function() {
-    this.setState({imageFile: null, imageUrl: ""});
+    this.setState({imageFile: null, imageUrl: "", saving: false});
   }
 });
 

@@ -20,6 +20,11 @@ var Search = React.createClass({
     this.forceUpdate();
   },
 
+  componentWillReceiveProps: function(newProps){
+    this.setState({page: 1, query: ""});
+
+  },
+
   reset: function(){
     this.setState({page: 1, query: ""});
   },
@@ -45,7 +50,6 @@ var Search = React.createClass({
   },
 
   render: function() {
-
     var searchResults = SearchResultsStore.all().map(function (searchResult, index) {
       if (searchResult._type === "User") {
         return (<li className="search-result" key={index}><Link to={`users/${searchResult.id}`}><img className="searchimage" src={searchResult.profile_pic_url}/>{searchResult.fname}</Link></li>)

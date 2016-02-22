@@ -3485,6 +3485,8 @@ input.file-upload {
 /* line 749, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/application.css.scss */
 .search-result > a {
   padding: 2px;
+  width: 585px;
+  display: block;
 }
 
 /* line 753, /Users/aarushi/Desktop/CloneBook/app/assets/stylesheets/application.css.scss */

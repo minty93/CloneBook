@@ -598,16 +598,14 @@ float: left;
   position: absolute;
   margin: 5px;
   margin-left: 0px;
-  top: 500px;
-  left: 96px;
+  // top: 500px;
+  // left: 96px;
 }
 
 .image-form2 {
   width: 30px;
   display: inline;
   position: absolute;
-  top: 600px;
-  left: 96px;
   margin-left: 0px;
 }
 
@@ -693,15 +691,15 @@ float: left;
 
 .preview-image-button{
   position: absolute;
-  top: 3px;
-  left: 100px;
+  // top: 3px;
+  // left: 100px;
 }
 
 
 .image-form2 {
   position:absolute;
-  top: 420px;
-  left: 100px;
+  top: 330px;
+  left: 15px;
 }
 
 
@@ -709,7 +707,7 @@ float: left;
   width: 150px;
   height: 150px;
   position: absolute;
-  top: -116px;
+  top: -110px;
   left: 5px;
 }
 
@@ -723,8 +721,8 @@ float: left;
 
 .image-form1 {
   position:absolute;
-  top: 120px;
-  left: 100px;
+  top: 35px;
+  left: 15px;
 }
 
 
@@ -732,8 +730,7 @@ float: left;
   width: 850px;
   height: 313px;
   position: absolute;
-  top: 117px;
-  left: 85px;
+  top: 32px;
 }
 
 .search-result:first-child {
@@ -752,6 +749,9 @@ float: left;
 
 .search-result > a {
   padding: 2px;
+  width: 585px;
+  display: block;
+
 }
 
 .searchbar {

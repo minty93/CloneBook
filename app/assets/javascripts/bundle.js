@@ -31715,7 +31715,9 @@
 	  componentDidMount: function () {
 	    this.listener = UserStore.addListener(this._onChange);
 	    UserApiUtil.fetchUser(parseInt(this.props.post.author_id), function (user) {
-	      this.setState({ post_image: user.profile_pic });
+	      if (this.isMounted()) {
+	        this.setState({ post_image: user.profile_pic });
+	      }
 	    }.bind(this));
 	  },
 	
@@ -31728,7 +31730,9 @@
 	    var postId = this.props.post.postId;
 	    var post = this._findPostById(postId);
 	    UserApiUtil.fetchUser(parseInt(this.props.post.author_id), function (user) {
-	      this.setState({ post_image: user.profile_pic });
+	      if (this.isMounted()) {
+	        this.setState({ post_image: user.profile_pic });
+	      }
 	    }.bind(this));
 	  },
 	
@@ -33285,6 +33289,10 @@
 	    this.forceUpdate();
 	  },
 	
+	  componentWillReceiveProps: function (newProps) {
+	    this.setState({ page: 1, query: "" });
+	  },
+	
 	  reset: function () {
 	    this.setState({ page: 1, query: "" });
 	  },
@@ -33308,7 +33316,6 @@
 	  },
 	
 	  render: function () {
-	
 	    var searchResults = SearchResultsStore.all().map(function (searchResult, index) {
 	      if (searchResult._type === "User") {
 	        return React.createElement(
@@ -33452,12 +33459,12 @@
 	var PostsForm = __webpack_require__(206);
 	var FriendButton = __webpack_require__(263);
 	var CoverForm = __webpack_require__(266);
-	var ProfileForm = __webpack_require__(267);
+	var ProfileForm = __webpack_require__(269);
 	var PhotoIndex = __webpack_require__(270);
 	var ImageForm = __webpack_require__(272);
 	var Navbar = __webpack_require__(273);
 	var CoverForm = __webpack_require__(266);
-	var ProfileForm = __webpack_require__(267);
+	var ProfileForm = __webpack_require__(269);
 	var Header = __webpack_require__(255);
 	var CurrentUserStore = __webpack_require__(247);
 	
@@ -33494,7 +33501,9 @@
 	
 	  componentWillReceiveProps: function (newProps) {
 	    UserApiUtil.fetchUser(parseInt(newProps.params.userId), function (user) {
-	      this.setState({ user: user });
+	      if (this.isMounted()) {
+	        this.setState({ user: user });
+	      }
 	    }.bind(this));
 	  },
 	
@@ -33508,7 +33517,9 @@
 	    var userId = this.props.params.userId;
 	    var user;
 	    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user) {
-	      this.setState({ user: user });
+	      if (this.isMounted()) {
+	        this.setState({ user: user });
+	      }
 	    }.bind(this));
 	    // this._findUserById(userId);
 	  },
@@ -33541,13 +33552,11 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      navbar,
-	      cover_form,
-	      profile_form,
 	      React.createElement(
 	        'div',
 	        { className: 'profile-page' },
 	        React.createElement(FriendButton, { params: this.props.params }),
+	        navbar,
 	        React.createElement(
 	          'div',
 	          { className: 'posts-index-profilefeed' },
@@ -33764,13 +33773,13 @@
 
 	var React = __webpack_require__(1);
 	var UsersApiUtil = __webpack_require__(214);
-	var ImageApiUtil = __webpack_require__(268);
+	var ImageApiUtil = __webpack_require__(267);
 	
 	var UserCoverForm = React.createClass({
 	  displayName: 'UserCoverForm',
 	
 	  getInitialState: function () {
-	    return { imageFile: null, imageUrl: "" };
+	    return { imageFile: null, imageUrl: "", saving: false };
 	  },
 	
 	  render: function () {
@@ -33784,9 +33793,10 @@
 	      );
 	      photo_upload2 = React.createElement('img', { className: 'preview-image-cover1', src: this.state.imageUrl });
 	    }
+	
 	    return React.createElement(
 	      'div',
-	      null,
+	      { className: 'div-form' },
 	      photo_upload2,
 	      React.createElement(
 	        'form',
@@ -33822,17 +33832,21 @@
 	
 	  handleSubmit: function (e) {
 	    e.preventDefault();
-	    var formData = new FormData();
-	    formData.append("user[cover_pic]", this.state.imageFile);
-	    var file = this.state.imageFile;
-	    var formData2 = new FormData();
-	    formData2.append("photo[photo]", file);
-	    UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
-	    ImageApiUtil.createImage(formData2);
+	
+	    if (!this.state.saving) {
+	      var formData = new FormData();
+	      this.setState({ saving: true });
+	      formData.append("user[cover_pic]", this.state.imageFile);
+	      var file = this.state.imageFile;
+	      var formData2 = new FormData();
+	      formData2.append("photo[photo]", file);
+	      UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
+	      ImageApiUtil.createImage(formData2);
+	    }
 	  },
 	
 	  resetForm: function () {
-	    this.setState({ imageFile: null, imageUrl: "" });
+	    this.setState({ imageFile: null, imageUrl: "", saving: false });
 	  }
 	});
 	
@@ -33842,15 +33856,61 @@
 /* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var PhotoApiActions = __webpack_require__(268);
+	
+	var ImagesApiUtil = {
+	
+	  createImage: function (formData, callback) {
+	    $.ajax({
+	      url: "api/photos/",
+	      type: 'POST',
+	      data: formData,
+	      processData: false,
+	      contentType: false,
+	      dataType: 'json',
+	      success: function (photo) {
+	        PhotoApiActions.receivePhoto(photo);
+	        callback && callback();
+	      }
+	    });
+	  }
+	};
+	
+	module.exports = ImagesApiUtil;
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var AppDispatcher = __webpack_require__(210);
+	var UserConstants = __webpack_require__(216);
+	
+	var PhotoActions = {
+	
+	  receivePhoto: function (photo) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_PHOTO,
+	      photo: photo
+	    });
+	  }
+	
+	};
+	
+	module.exports = PhotoActions;
+
+/***/ },
+/* 269 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var React = __webpack_require__(1);
 	var UsersApiUtil = __webpack_require__(214);
-	var ImageApiUtil = __webpack_require__(268);
+	var ImageApiUtil = __webpack_require__(267);
 	
 	var UserProfileForm = React.createClass({
 	  displayName: 'UserProfileForm',
 	
 	  getInitialState: function () {
-	    return { imageFile: null, imageUrl: "" };
+	    return { imageFile: null, imageUrl: "", saving: false };
 	  },
 	
 	  render: function () {
@@ -33902,74 +33962,31 @@
 	
 	  handleSubmit: function (e) {
 	    e.preventDefault();
-	    var formData = new FormData();
-	    formData.append("user[profile_pic]", this.state.imageFile);
-	    var file = this.state.imageFile;
-	    var formData2 = new FormData();
-	    formData2.append("photo[photo]", file);
-	    UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
-	    ImageApiUtil.createImage(formData2);
+	    if (!this.state.saving) {
+	      var formData = new FormData();
+	      this.setState({ saving: true });
+	      formData.append("user[profile_pic]", this.state.imageFile);
+	      var file = this.state.imageFile;
+	      var formData2 = new FormData();
+	      formData2.append("photo[photo]", file);
+	      UsersApiUtil.updateUser(formData, this.props.params.userId, this.resetForm);
+	      ImageApiUtil.createImage(formData2);
+	    }
 	  },
 	
 	  resetForm: function () {
-	    this.setState({ imageFile: null, imageUrl: "" });
+	    this.setState({ imageFile: null, imageUrl: "", saving: false });
 	  }
 	});
 	
 	module.exports = UserProfileForm;
 
 /***/ },
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var PhotoApiActions = __webpack_require__(269);
-	
-	var ImagesApiUtil = {
-	
-	  createImage: function (formData, callback) {
-	    $.ajax({
-	      url: "api/photos/",
-	      type: 'POST',
-	      data: formData,
-	      processData: false,
-	      contentType: false,
-	      dataType: 'json',
-	      success: function (photo) {
-	        PhotoApiActions.receivePhoto(photo);
-	        callback && callback();
-	      }
-	    });
-	  }
-	};
-	
-	module.exports = ImagesApiUtil;
-
-/***/ },
-/* 269 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var AppDispatcher = __webpack_require__(210);
-	var UserConstants = __webpack_require__(216);
-	
-	var PhotoActions = {
-	
-	  receivePhoto: function (photo) {
-	    AppDispatcher.dispatch({
-	      actionType: UserConstants.RECEIVE_PHOTO,
-	      photo: photo
-	    });
-	  }
-	
-	};
-	
-	module.exports = PhotoActions;
-
-/***/ },
 /* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImagesApiUtil = __webpack_require__(268);
+	var ImagesApiUtil = __webpack_require__(267);
 	var PhotoIndexItem = __webpack_require__(271);
 	var ImageForm = __webpack_require__(272);
 	var Navbar = __webpack_require__(273);
@@ -33977,7 +33994,7 @@
 	var UserApiUtil = __webpack_require__(214);
 	var CurrentUserStore = __webpack_require__(247);
 	var CoverForm = __webpack_require__(266);
-	var ProfileForm = __webpack_require__(267);
+	var ProfileForm = __webpack_require__(269);
 	
 	var PhotoIndex = React.createClass({
 	  displayName: 'PhotoIndex',
@@ -34043,8 +34060,6 @@
 	      'div',
 	      { className: 'group' },
 	      React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
-	      cover_form,
-	      profile_form,
 	      React.createElement(
 	        'div',
 	        { className: 'cry' },
@@ -34067,7 +34082,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImagesApiUtil = __webpack_require__(268);
+	var ImagesApiUtil = __webpack_require__(267);
 	
 	var PhotoIndexItem = React.createClass({
 	  displayName: "PhotoIndexItem",
@@ -34090,7 +34105,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ImageApiUtil = __webpack_require__(268);
+	var ImageApiUtil = __webpack_require__(267);
 	var UserApiUtil = __webpack_require__(214);
 	var CurrentUserStore = __webpack_require__(247);
 	
@@ -34171,32 +34186,77 @@
 	var History = __webpack_require__(159).History;
 	var Link = __webpack_require__(159).Link;
 	var CoverForm = __webpack_require__(266);
-	var ProfileForm = __webpack_require__(267);
+	var ProfileForm = __webpack_require__(269);
 	var FriendButton = __webpack_require__(263);
 	var LocalStorageMixin = __webpack_require__(274);
+	var CoverForm = __webpack_require__(266);
+	var ProfileForm = __webpack_require__(269);
+	var Navbar = __webpack_require__(273);
+	var UserStore = __webpack_require__(238);
+	var UserApiUtil = __webpack_require__(214);
 	
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
 	
+	  _findUserById: function (id) {
+	    id = parseInt(id);
+	    users = UserStore.all();
+	    for (var i = 0; i < users.length; i++) {
+	      if (users[i].id == id) {
+	        return users[i];
+	      }
+	    }
+	  },
+	
+	  getInitialState: function () {
+	    var userId = this.props.userId || this.props.params.userId;
+	    var user = this._findUserById(userId);
+	    return { user: user };
+	  },
+	
+	  componentDidMount: function () {
+	    var userId = this.props.userId || this.props.params.userId;
+	    this.listener = UserStore.addListener(this._onChange);
+	    // this.listener = PostStore.addListener(this._onChange);
+	    // this.listener = CommentStore.addListener(this._onChange);
+	    UserApiUtil.fetchUser(parseInt(userId));
+	  },
 	
 	  componentWillReceiveProps: function (newProps) {
-	    this.forceUpdate();
+	    UserApiUtil.fetchAllUsers();
+	  },
+	
+	  componentWillUnmount: function () {
+	    this.listener.remove();
 	  },
 	
 	  _onChange: function () {
-	    this.forceUpdate();
+	    var userId = this.props.params.userId;
+	    var user;
+	    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user) {
+	      if (this.isMounted()) {
+	        this.setState({ user: user });
+	      }
+	    }.bind(this));
 	  },
 	
 	  render: function () {
 	    var fname;
 	    var cover_pic;
 	    var profile_pic;
+	    var cover_form;
+	    var profile_form;
 	
 	    if (this.props.user) {
 	      fname = this.props.user.fname;
 	      lname = this.props.user.lname;
 	      cover_pic = React.createElement('img', { className: 'cover-image', src: this.props.user.cover_pic });
 	      profile_pic = React.createElement('img', { className: 'profile-image', src: this.props.user.profile_pic });
+	    }
+	
+	    if (this.state.user.id == CurrentUserStore.user().id) {
+	      cover_form = React.createElement(CoverForm, { className: 'fullpage', params: this.props.params });
+	      profile_form = React.createElement(ProfileForm, { className: 'fullpage', params: this.props.params });
 	    }
 	
 	    return React.createElement(
@@ -34209,7 +34269,9 @@
 	          'div',
 	          { className: 'photo-form' },
 	          cover_pic,
-	          profile_pic
+	          profile_pic,
+	          cover_form,
+	          profile_form
 	        ),
 	        React.createElement(
 	          'h3',
@@ -34927,7 +34989,7 @@
 	var PostIndexItem = __webpack_require__(241);
 	var PostsForm = __webpack_require__(206);
 	var CoverForm = __webpack_require__(266);
-	var ProfileForm = __webpack_require__(267);
+	var ProfileForm = __webpack_require__(269);
 	var Navbar = __webpack_require__(273);
 	var CurrentUserStore = __webpack_require__(247);
 	
@@ -34999,8 +35061,6 @@
 	      'div',
 	      null,
 	      React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
-	      cover_form,
-	      profile_form,
 	      React.createElement(
 	        'ul',
 	        { className: 'about-feed' },
@@ -35067,7 +35127,7 @@
 	var Link = __webpack_require__(159).Link;
 	var FriendButton = __webpack_require__(263);
 	var CoverForm = __webpack_require__(266);
-	var ProfileForm = __webpack_require__(267);
+	var ProfileForm = __webpack_require__(269);
 	var Navbar = __webpack_require__(273);
 	var CurrentUserStore = __webpack_require__(247);
 	
@@ -35181,8 +35241,6 @@
 	        'div',
 	        { className: 'friends group' },
 	        React.createElement(Navbar, { params: this.props.params, user: this.state.user }),
-	        cover_form,
-	        profile_form,
 	        React.createElement(
 	          'div',
 	          { className: 'friends-header group' },

@@ -24615,9 +24615,6 @@
 	      dataType: "json",
 	      success: function (data) {
 	        UserApiActions.receiveUsers(data);
-	      },
-	      error: function () {
-	        alert("You have failed me");
 	      }
 	
 	    });

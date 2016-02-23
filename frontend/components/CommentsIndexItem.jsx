@@ -73,7 +73,7 @@ var CommentsIndexItem = React.createClass({
 
     if (this.props.comment.author_id == CurrentUserStore.user().id){
 
-      deletebutton = <button className="commentdelete" onClick={this.handleDelete}>Delete Comment</button>
+      deletebutton = <button className="commentdelete" onClick={this.handleDelete}>Delete</button>
     }
 
     return (

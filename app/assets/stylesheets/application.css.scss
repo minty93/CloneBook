@@ -282,7 +282,7 @@
 
 .friend-list > a {
   display: block;
-  width: 300px;
+  width: 285px;
   height: 100px;
   border: 1px solid lightgray;
   float: left;
@@ -778,4 +778,60 @@ float: left;
   float: left;
   top: 10px;
   left: 5px;
+}
+
+
+.notfriends{
+  padding-top: 5px;
+  align-self: center;
+  margin: 0 auto;
+  width: 496px;
+  height: 90px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+  border: 1px solid lightgrey;
+  background: #F6F7F8;
+  position: relative;
+  border-radius: 1%;
+
+}
+
+.notfriends > label {
+  padding: 20px;
+}
+
+.notfriends > div {
+  border-top: 1px solid lightgrey;
+  background: #FFFFFF;
+  padding: 20px;
+
+}
+
+.friend-button {
+  margin-top: 15px;
+
+}
+
+
+.new {
+  background: #66b62c;
+  color: white;
+}
+
+.fa-user-plus {
+  float: left;
+  color: white;
+}
+
+
+a:hover{
+  cursor: pointer;
+}
+
+button:hover{
+  cursor: pointer;
+}
+
+.radiobutton {
+  margin-left: 5px;
 }

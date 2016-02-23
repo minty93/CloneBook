@@ -72,7 +72,7 @@ handleDelete: function(){
 
     var userprofile = this._findUserById(this.props.params.userId);
     var currentUser = this._findUserById(CurrentUserStore.user().id);
-    
+
     var profileid = parseInt(this.props.params.userId);
 
     var button = (<div></div>);
@@ -88,13 +88,13 @@ handleDelete: function(){
     );
 
     if (rec_friends.indexOf(profileid) !== -1 && req_friends.indexOf(profileid) !== -1) {
-      button = <button className="friend-button" onClick={this.handleDelete}>Unfriend</button>;
+      button = <button className="friend-button" onClick={this.handleDelete}>Friends</button>;
     }
     else if (rec_friends.indexOf(profileid) !== -1 && req_friends.indexOf(profileid) == -1){
         button = <button className="friend-button" onClick={this.handleFriend}>Accept Friendship</button>;
     }
     else if(rec_friends.indexOf(profileid) == -1 && req_friends.indexOf(profileid) == -1 && profileid !== currentUser.id ) {
-      button = <button className="friend-button" onClick={this.handleFriend}>Send Request</button>;
+      button = <button className="friend-button new" onClick={this.handleFriend}><i className="fa fa-user-plus"/>Add Friend</button>;
     }
     else if(rec_friends.indexOf(profileid) == -1 && req_friends.indexOf(profileid) !== -1) {
       button = <button className="friend-button" onClick={this.handleFriend}>Pending</button>;

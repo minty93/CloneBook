@@ -3,13 +3,14 @@ var CurrentUserActions = require("../actions/current_user_actions");
 var UserActions = require("../actions/users_api_actions");
 
 var UsersApiUtil = {
-fetchAllUsers: function(){
+fetchAllUsers: function(cb){
   $.ajax({
     url: "api/users",
     type: "GET",
     dataType: "json",
     success: function(data){
       UserApiActions.receiveUsers(data);
+      cb && cb()
     },
 
   });

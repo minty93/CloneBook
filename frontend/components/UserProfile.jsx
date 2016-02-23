@@ -83,6 +83,7 @@ var UserProfile = React.createClass({
     var navbar;
     var cover_form;
     var profile_form;
+    var post_form;
 
     if (this.state.user) {
       if(this.state.user.received_posts){
@@ -92,6 +93,35 @@ var UserProfile = React.createClass({
       received_posts = received_posts.reverse().map(function(post) {
         return (<PostIndexItem post={post} key={post.id}/>);
       });
+
+      var rec_friends = [];
+      CurrentUserStore.user().received_friends.forEach(function(obj){
+        rec_friends.push(obj.requester_id)}
+      );
+
+
+
+      var req_friends = [];
+      CurrentUserStore.user().requested_friends.forEach(function(obj){
+        req_friends.push(obj.requestee_id)
+      });
+
+
+      var id = this.state.user.id;
+
+       if (rec_friends.indexOf(id) !== -1 && req_friends.indexOf(id) !== -1){
+         post_form = <PostsForm params={this.props.params} placeholder="Post Something"/>
+       }
+
+       else if (this.state.user.id == this.props.params.userId) {
+         post_form = <PostsForm params={this.props.params} placeholder="What's on your mind?"/>
+
+       }
+       else {
+         post_form = <div className="notfriends">
+         <label>Do you know {this.state.user.fname}?</label><br/>
+         <div>Send them a friend request to make posts! </div></div>
+       }
     }
     if (this.state.user.id == CurrentUserStore.user().id){
       cover_form = <CoverForm className="fullpage" params={this.props.params}/>
@@ -111,7 +141,7 @@ var UserProfile = React.createClass({
         {navbar}
         <FriendButton params={this.props.params}/>
             <div className="posts-index-profilefeed">
-            <PostsForm params={this.props.params} placeholder="Post Something"/>
+            {post_form}
             {received_posts}
             </div>
         </div>

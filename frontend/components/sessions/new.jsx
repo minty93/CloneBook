@@ -107,7 +107,7 @@ var SessionForm = React.createClass({
               Gender
               <div className="gender">
               <input  type="radio" name="gender" value="male"/> Male
-              <input type="radio" name="gender" value="female"/> Female
+              <input className="radiobutton"type="radio" name="gender" value="female"/> Female
               </div>
             </label>
 

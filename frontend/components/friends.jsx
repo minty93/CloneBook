@@ -40,6 +40,7 @@ var Friends = React.createClass({
     var userId = (this.props.userId || this.props.params.userId);
     this.listener = UserStore.addListener(this._onChange);
     UserApiUtil.fetchAllUsers();
+
   },
 
   componentWillReceiveProps: function(newProps){
@@ -112,9 +113,9 @@ var Friends = React.createClass({
     friends = findfriends.map(function(friend_id){
       friend = that._findUserById(friend_id);
       return (
-        <div className="friend-list group">
+        <div key={friend_id} className="friend-list group">
         <Link to={`users/${friend_id}`}>
-        <h2>{friend.fname}</h2>
+        <h2>{friend.fname} {friend.lname}</h2>
         <img src={friend.profile_pic} className="friend-image"/>
         </Link>
       </div>);

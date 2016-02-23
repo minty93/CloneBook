@@ -105,7 +105,7 @@ var UserForm = React.createClass({
             <label>
               Gender
               <input type="radio" name="user[gender]" value="male"/> Male
-              <input type="radio" name="user[gender]" value="female"/> Female<br/>
+              <input className="radiobutton" type="radio" name="user[gender]" value="female"/> Female<br/>
             </label>
 
             <input type="submit" value="Sign Up"/>

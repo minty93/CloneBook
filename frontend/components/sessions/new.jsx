@@ -2,6 +2,7 @@ var React = require('react');
 var History = require('react-router').History;
 var SessionsApiUtil = require('./../../util/sessions_api_util');
 var UsersApiUtil = require('./../../util/users_api_util');
+import SignUpForm from './sign_up';
 
 var SessionForm = React.createClass({
   mixins: [History],
@@ -15,15 +16,12 @@ var SessionForm = React.createClass({
     }.bind(this));
   },
 
-  userCreate: function (e) {
-    e.preventDefault();
-    var credentials = $(e.currentTarget).serializeJSON();
-    UsersApiUtil.createUser(credentials, function () {
+  userCreate: function (user) {
+    UsersApiUtil.createUser(user, function () {
       this.history.pushState({}, "/");
     }.bind(this));
     UsersApiUtil.fetchAllUsers();
   },
-
 
   render: function() {
 
@@ -75,45 +73,8 @@ var SessionForm = React.createClass({
           <section className="main-content group">
           <h3>Sign Up</h3>
 
-          <form onSubmit={this.userCreate} className="signup group">
+          <SignUpForm submit={this.userCreate} />
 
-            <label>
-              First Name
-              <input type="text" name="fname" />
-            </label>
-
-            <label>
-              Last Name
-              <input type="text" name="lname" />
-            </label>
-
-            <br/>
-
-            <label>
-              Email
-              <input type="text" name="email" />
-            </label>
-
-            <label>
-              Password
-              <input type="password" name="password"/>
-            </label>
-
-            <br/>
-
-            <label>Birthday<input type="date" name="birthday"/></label>
-            <br/>
-            <label>
-              Gender
-              <div className="gender">
-              <input  type="radio" name="gender" value="male"/> Male
-              <input className="radiobutton"type="radio" name="gender" value="female"/> Female
-              </div>
-            </label>
-
-            <input className="signbutton" type="submit" value="Sign Up"/>
-            <a className="btn-facebook" href="/auth/facebook">Login with Facebook</a>
-          </form>
           </section>
 
         </div>

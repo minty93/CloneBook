@@ -53,7 +53,7 @@ var Header = React.createClass({
   render: function() {
 
     if (CurrentUserStore.isLoggedIn()) {
-      currentUser = CurrentUserStore.user()
+      var currentUser = CurrentUserStore.user()
       return (
         <div className="main-header group">
           <Link className="link" to={`/`}>

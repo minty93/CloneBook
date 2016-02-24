@@ -16,7 +16,7 @@ var PhotoIndex = React.createClass({
 
   _findUserById: function(id) {
     id = parseInt(id);
-    users = UserStore.all();
+    var users = UserStore.all();
     for (var i = 0; i < users.length; i++) {
       if (users[i].id == id) {
         return users[i];
@@ -71,13 +71,13 @@ var PhotoIndex = React.createClass({
 
   }
 
-  if (currentUser.id == this.props.params.userId) {
+  if (this.state.user.id == CurrentUserStore.user().id) {
     photoform = <ImageForm className="photo-form" user={this.state.user}></ImageForm>;
   }
     return (
       <div className="group">
         <Navbar params={this.props.params} user={this.state.user}/>
-  
+
       <div className="cry">
         {photoform}
         <ul key={33} className="photo-index group">

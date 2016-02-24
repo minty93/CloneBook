@@ -22,7 +22,7 @@ var UserApiUtil = require('../util/users_api_util');
 var Navbar = React.createClass({
   _findUserById: function(id) {
     id = parseInt(id);
-    users = UserStore.all();
+    var users = UserStore.all();
     for (var i = 0; i < users.length; i++) {
       if (users[i].id == id) {
         return users[i];
@@ -79,7 +79,7 @@ var Navbar = React.createClass({
 
     if (this.props.user) {
       fname = this.props.user.fname;
-      lname = this.props.user.lname;
+      var lname = this.props.user.lname;
       cover_pic =   <img className="cover-image" src={this.props.user.cover_pic} />;
       profile_pic =   <img className="profile-image" src={this.props.user.profile_pic} />;
     }

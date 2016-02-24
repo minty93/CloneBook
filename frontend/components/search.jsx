@@ -21,7 +21,10 @@ var Search = React.createClass({
   },
 
   componentWillReceiveProps: function(newProps){
+
+  SearchApiUtil.search("", 1, function(){
     this.setState({page: 1, query: ""});
+  }.bind(this));
 
   },
 

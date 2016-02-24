@@ -44,6 +44,8 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 	var ReactRouter = __webpack_require__(159);
@@ -56,12 +58,12 @@
 	var CommentsForm = __webpack_require__(242);
 	var App = __webpack_require__(276);
 	var SessionForm = __webpack_require__(277);
-	var UserForm = __webpack_require__(278);
+	var UserForm = __webpack_require__(283);
 	var CurrentUserStore = __webpack_require__(247);
 	var SessionsApiUtil = __webpack_require__(256);
-	var UsersIndex = __webpack_require__(279);
-	var About = __webpack_require__(280);
-	var Friends = __webpack_require__(281);
+	var UsersIndex = __webpack_require__(284);
+	var About = __webpack_require__(285);
+	var Friends = __webpack_require__(286);
 	var PhotoIndex = __webpack_require__(270);
 	
 	// var App = React.createClass({
@@ -76,7 +78,7 @@
 	//   }
 	// });
 	
-	var _ensureLoggedOut = function (nextState, replace, callback) {
+	var _ensureLoggedOut = function _ensureLoggedOut(nextState, replace, callback) {
 	  if (CurrentUserStore.userHasBeenFetched()) {
 	    _redirectIfLoggedIn();
 	  } else {
@@ -24069,6 +24071,8 @@
 /* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var PostsApiUtil = __webpack_require__(207);
 	var UserApiUtil = __webpack_require__(214);
@@ -24078,11 +24082,11 @@
 	var PostForm = React.createClass({
 	  displayName: 'PostForm',
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    return { body: "" };
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	    return React.createElement(
 	      'div',
 	      { className: 'post-form' },
@@ -24105,11 +24109,11 @@
 	  //   }
 	  // },
 	
-	  changeBody: function (e) {
+	  changeBody: function changeBody(e) {
 	    this.setState({ body: e.currentTarget.value });
 	  },
 	
-	  handleSubmit: function (e) {
+	  handleSubmit: function handleSubmit(e) {
 	    if (this.props.params.userId) {
 	      var profile_user = UserStore._findUserById(this.props.params.userId);
 	    }
@@ -24120,7 +24124,7 @@
 	    e.preventDefault();
 	    var that = this;
 	    var post = { body: this.state.body, profile_id: this.props.params.userId, profile_name: profile_name };
-	    var callback = function () {
+	    var callback = function callback() {
 	      that.setState({ body: "" });
 	    };
 	    PostsApiUtil.createPost(post, callback);
@@ -24134,75 +24138,77 @@
 /* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
 	var PostApiActions = __webpack_require__(208);
 	
 	var PostApiUtil = {
-	  fetchSinglePost: function (id) {
+	  fetchSinglePost: function fetchSinglePost(id) {
 	    $.ajax({
 	      url: "api/posts/" + id,
 	      type: "GET",
 	      dataType: "json",
-	      success: function (data) {
+	      success: function success(data) {
 	        PostApiActions.receivePost(data);
 	      }
 	    });
 	  },
 	
-	  fetchAllPosts: function () {
+	  fetchAllPosts: function fetchAllPosts() {
 	    $.ajax({
 	      url: "api/posts",
 	      type: "GET",
 	      dataType: "json",
-	      success: function (data) {
+	      success: function success(data) {
 	        PostApiActions.receivePosts(data);
 	      }
 	    });
 	  },
 	
-	  destroyPost: function (id) {
+	  destroyPost: function destroyPost(id) {
 	    $.ajax({
 	      url: "api/posts/" + id,
 	      type: "DELETE",
 	      dataType: "json",
-	      success: function (data) {
+	      success: function success(data) {
 	        PostApiActions.deletePost(data);
 	      }
 	    });
 	  },
 	
-	  createPost: function (data, callback) {
+	  createPost: function createPost(data, callback) {
 	    $.ajax({
 	      data: { post: data },
 	      url: "api/posts",
 	      type: "POST",
 	      dataType: "json",
-	      success: function (data) {
+	      success: function success(data) {
 	        callback && callback();
 	        PostApiActions.createPost(data);
 	      }
 	    });
 	  },
 	
-	  createLike: function (data, post_id, callback) {
+	  createLike: function createLike(data, post_id, callback) {
 	    $.ajax({
 	      data: { like: data },
 	      url: "api/posts" + post_id + "/likes",
 	      type: "POST",
 	      dataType: "json",
-	      success: function (data) {
+	      success: function success(data) {
 	        callback && callback();
 	        PostApiActions.createLike(data);
 	      }
 	    });
 	  },
 	
-	  deleteLike: function (data, post_id, callback) {
+	  deleteLike: function deleteLike(data, post_id, callback) {
 	    $.ajax({
 	      data: { like: data },
 	      url: "api/posts" + post_id + "/likes",
 	      type: "POST",
 	      dataType: "json",
-	      success: function (data) {
+	      success: function success(data) {
 	        callback && callback();
 	        PostApiActions.createLike(data);
 	      }
@@ -24217,32 +24223,34 @@
 /* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var PostConstants = __webpack_require__(209);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var PostApiActions = {
-	  receivePosts: function (posts) {
+	  receivePosts: function receivePosts(posts) {
 	    AppDispatcher.dispatch({
 	      actionType: PostConstants.RECEIVE_POSTS,
 	      posts: posts
 	    });
 	  },
 	
-	  receivePost: function (post) {
+	  receivePost: function receivePost(post) {
 	    AppDispatcher.dispatch({
 	      actionType: PostConstants.RECEIVE_POST,
 	      post: post
 	    });
 	  },
 	
-	  deletePost: function (post) {
+	  deletePost: function deletePost(post) {
 	    AppDispatcher.dispatch({
 	      actionType: PostConstants.DELETE_POST,
 	      post: post
 	    });
 	  },
 	
-	  createPost: function (post) {
+	  createPost: function createPost(post) {
 	
 	    AppDispatcher.dispatch({
 	      actionType: PostConstants.CREATE_POST,
@@ -24250,14 +24258,14 @@
 	    });
 	  },
 	
-	  deleteLike: function (like) {
+	  deleteLike: function deleteLike(like) {
 	    AppDispatcher.dispatch({
 	      actionType: LikeConstants.DELETE_LIKE,
 	      like: like
 	    });
 	  },
 	
-	  createLike: function (like) {
+	  createLike: function createLike(like) {
 	    AppDispatcher.dispatch({
 	      actionType: LikeConstants.CREATE_LIKE,
 	      like: like
@@ -24272,6 +24280,7 @@
 /* 209 */
 /***/ function(module, exports) {
 
+	"use strict";
 	
 	var PostConstants = {
 	  RECEIVE_POSTS: "RECEIVE_POSTS",
@@ -24286,6 +24295,8 @@
 /* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var Dispatcher = __webpack_require__(211).Dispatcher;
 	var AppDispatcher = new Dispatcher();
 	
@@ -24603,17 +24614,19 @@
 /* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
 	var UserApiActions = __webpack_require__(215);
 	var CurrentUserActions = __webpack_require__(217);
 	var UserActions = __webpack_require__(215);
 	
 	var UsersApiUtil = {
-	  fetchAllUsers: function (cb) {
+	  fetchAllUsers: function fetchAllUsers(cb) {
 	    $.ajax({
 	      url: "api/users",
 	      type: "GET",
 	      dataType: "json",
-	      success: function (data) {
+	      success: function success(data) {
 	        UserApiActions.receiveUsers(data);
 	        cb && cb();
 	      }
@@ -24621,25 +24634,25 @@
 	    });
 	  },
 	
-	  fetchUser: function (id, callback) {
+	  fetchUser: function fetchUser(id, callback) {
 	    $.ajax({
 	      url: '/api/users/' + id,
 	      type: 'GET',
 	      dataType: 'json',
-	      success: function (user) {
+	      success: function success(user) {
 	        UserApiActions.receiveUser(user);
 	        callback && callback(user);
 	      }
 	    });
 	  },
 	
-	  createUser: function (attrs, callback) {
+	  createUser: function createUser(attrs, callback) {
 	    $.ajax({
 	      url: 'api/users',
 	      type: 'POST',
 	      dataType: 'json',
 	      data: { user: attrs },
-	      success: function (user) {
+	      success: function success(user) {
 	        UserActions.receiveUser(user);
 	        CurrentUserActions.receiveCurrentUser(user);
 	        callback && callback();
@@ -24647,7 +24660,7 @@
 	    });
 	  },
 	
-	  updateUser: function (formData, profile_id, callback) {
+	  updateUser: function updateUser(formData, profile_id, callback) {
 	    $.ajax({
 	      url: 'api/users/' + profile_id,
 	      type: 'PATCH',
@@ -24655,7 +24668,7 @@
 	      contentType: false,
 	      dataType: 'json',
 	      data: formData,
-	      success: function (user) {
+	      success: function success(user) {
 	        UserActions.receiveUser(user);
 	        callback && callback();
 	      }
@@ -24670,18 +24683,20 @@
 /* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var UserConstants = __webpack_require__(216);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var UserApiActions = {
-	  receiveUsers: function (users) {
+	  receiveUsers: function receiveUsers(users) {
 	    AppDispatcher.dispatch({
 	      actionType: UserConstants.RECEIVE_USERS,
 	      users: users
 	    });
 	  },
 	
-	  receiveUser: function (user) {
+	  receiveUser: function receiveUser(user) {
 	    AppDispatcher.dispatch({
 	      actionType: UserConstants.RECEIVE_USER,
 	      user: user
@@ -24695,6 +24710,7 @@
 /* 216 */
 /***/ function(module, exports) {
 
+	"use strict";
 	
 	var UserConstants = {
 	  RECEIVE_USERS: "RECEIVE_USERS",
@@ -24711,17 +24727,19 @@
 /* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var AppDispatcher = __webpack_require__(210);
 	var CurrentUserConstants = __webpack_require__(218);
 	
 	var CurrentUserActions = {
-	  receiveCurrentUser: function (currentUser) {
+	  receiveCurrentUser: function receiveCurrentUser(currentUser) {
 	    AppDispatcher.dispatch({
 	      actionType: CurrentUserConstants.RECEIVE_CURRENT_USER,
 	      currentUser: currentUser
 	    });
 	  },
-	  logOut: function () {
+	  logOut: function logOut() {
 	    AppDispatcher.dispatch({
 	      actionType: CurrentUserConstants.LOG_OUT
 	    });
@@ -24734,6 +24752,8 @@
 /* 218 */
 /***/ function(module, exports) {
 
+	"use strict";
+	
 	var CurrentUserConstants = {
 	  RECEIVE_CURRENT_USER: "RECEIVE_CURRENT_USER",
 	  LOG_OUT: "LOG_OUT"
@@ -24745,6 +24765,7 @@
 /* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	
 	var _posts = [],
 	    Store = __webpack_require__(220).Store,
@@ -31301,6 +31322,7 @@
 /* 237 */
 /***/ function(module, exports) {
 
+	"use strict";
 	
 	var CommentConstants = {
 	  RECEIVE_COMMENTS: "RECEIVE_COMMENTS",
@@ -31315,6 +31337,7 @@
 /* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	
 	var _users = [],
 	    Store = __webpack_require__(220).Store,
@@ -31518,6 +31541,8 @@
 /* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
 	var React = __webpack_require__(1);
 	var PostStore = __webpack_require__(219);
 	var CommentStore = __webpack_require__(240);
@@ -31534,21 +31559,21 @@
 	  displayName: "PostsIndex",
 	
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    return { posts: PostStore.all() };
 	  },
 	
-	  componentWillMount: function () {
+	  componentWillMount: function componentWillMount() {
 	    this.listener = PostStore.addListener(this._onChange);
 	    PostsApiUtil.fetchAllPosts();
 	    UserApiUtil.fetchAllUsers();
 	  },
 	
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    this.listener.remove();
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	    return React.createElement(
 	      "div",
 	      { className: "main-page group" },
@@ -31602,7 +31627,7 @@
 	    );
 	  },
 	
-	  _onChange: function () {
+	  _onChange: function _onChange() {
 	    if (this.isMounted()) {
 	      this.setState({ posts: PostStore.all() });
 	    }
@@ -31616,6 +31641,7 @@
 /* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	
 	var _comments = [],
 	    Store = __webpack_require__(220).Store,
@@ -31677,6 +31703,8 @@
 /* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
 	var React = __webpack_require__(1);
 	var PostStore = __webpack_require__(219);
 	var PostsApiUtil = __webpack_require__(207);
@@ -31693,7 +31721,7 @@
 	  displayName: "PostsIndexItems",
 	
 	
-	  _findPostById: function (id) {
+	  _findPostById: function _findPostById(id) {
 	    var res;
 	    PostStore.all().forEach(function (post) {
 	      if (id == post.id) {
@@ -31703,14 +31731,14 @@
 	    return res;
 	  },
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    var postId = this.props.post.id;
 	    var post = this._findPostById(postId) || {};
 	    return { post_image: post.profile_pic };
 	  },
 	  //
 	  //
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    this.listener = UserStore.addListener(this._onChange);
 	    UserApiUtil.fetchUser(parseInt(this.props.post.author_id), function (user) {
 	      if (this.isMounted()) {
@@ -31721,11 +31749,11 @@
 	  },
 	
 	  //
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    this.listener.remove();
 	  },
 	
-	  _onChange: function () {
+	  _onChange: function _onChange() {
 	    var postId = this.props.post.postId;
 	    var post = this._findPostById(postId);
 	    UserApiUtil.fetchUser(parseInt(this.props.post.author_id), function (user) {
@@ -31748,13 +31776,13 @@
 	  //       to = <div></div>;
 	  //       }
 	
-	  handleDelete: function (e) {
+	  handleDelete: function handleDelete(e) {
 	    e.preventDefault();
 	    var that = this;
 	    PostsApiUtil.destroyPost(this.props.post.id);
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	
 	    var comments;
 	    var profile_pic;
@@ -31852,6 +31880,8 @@
 /* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var CommentsApiUtil = __webpack_require__(243);
 	var PostsApiUtil = __webpack_require__(207);
@@ -31861,11 +31891,11 @@
 	var CommentForm = React.createClass({
 	  displayName: 'CommentForm',
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    return { description: "" };
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	    return React.createElement(
 	      'div',
 	      { className: 'comment-form' },
@@ -31884,15 +31914,15 @@
 	  //   }
 	  // },
 	
-	  changeBody: function (e) {
+	  changeBody: function changeBody(e) {
 	    this.setState({ description: e.currentTarget.value });
 	  },
 	
-	  handleSubmit: function (e) {
+	  handleSubmit: function handleSubmit(e) {
 	    e.preventDefault();
 	    var that = this;
 	    var comment = { description: that.state.description, commentable_id: this.props.commentableId, commentable_type: this.props.commentableType };
-	    var callback = function () {
+	    var callback = function callback() {
 	      that.setState({ description: "" });
 	    };
 	    PostsApiUtil.fetchAllPosts();
@@ -31908,49 +31938,51 @@
 /* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
 	var CommentApiActions = __webpack_require__(244);
 	
 	var CommentApiUtil = {
-	  fetchSingleComment: function (id) {
+	  fetchSingleComment: function fetchSingleComment(id) {
 	    $.ajax({
 	      url: "api/posts/" + id,
 	      type: "GET",
 	      dataType: "json",
-	      success: function (data) {
+	      success: function success(data) {
 	        CommentApiActions.receiveComment(data);
 	      }
 	    });
 	  },
 	
-	  fetchAllComments: function (post_id) {
+	  fetchAllComments: function fetchAllComments(post_id) {
 	    $.ajax({
 	      url: "api/posts/" + post_id + "/comments",
 	      type: "GET",
 	      dataType: "json",
-	      success: function (data) {
+	      success: function success(data) {
 	        CommentApiActions.receiveComments(data);
 	      }
 	    });
 	  },
 	
-	  destroyComment: function (id) {
+	  destroyComment: function destroyComment(id) {
 	    $.ajax({
 	      url: "api/comments/" + id,
 	      type: "DELETE",
 	      dataType: "json",
-	      success: function (data) {
+	      success: function success(data) {
 	        CommentApiActions.deleteComment(data);
 	      }
 	    });
 	  },
 	
-	  createComment: function (data, post_id, callback) {
+	  createComment: function createComment(data, post_id, callback) {
 	    $.ajax({
 	      data: { comment: data },
 	      url: "api/posts/" + post_id + "/comments",
 	      type: "POST",
 	      dataType: "json",
-	      success: function (data) {
+	      success: function success(data) {
 	        callback && callback();
 	        CommentApiActions.createComment(data);
 	      }
@@ -31965,32 +31997,34 @@
 /* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var CommentConstants = __webpack_require__(237);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var CommentApiActions = {
-	  receiveComments: function (comments) {
+	  receiveComments: function receiveComments(comments) {
 	    AppDispatcher.dispatch({
 	      actionType: CommentConstants.RECEIVE_COMMENTS,
 	      comments: comments
 	    });
 	  },
 	
-	  receiveComment: function (comment) {
+	  receiveComment: function receiveComment(comment) {
 	    AppDispatcher.dispatch({
 	      actionType: CommentConstants.RECEIVE_COMMENT,
 	      comment: comment
 	    });
 	  },
 	
-	  deleteComment: function (comment) {
+	  deleteComment: function deleteComment(comment) {
 	    AppDispatcher.dispatch({
 	      actionType: CommentConstants.DELETE_COMMENT,
 	      comment: comment
 	    });
 	  },
 	
-	  createComment: function (comment) {
+	  createComment: function createComment(comment) {
 	    AppDispatcher.dispatch({
 	      actionType: CommentConstants.CREATE_COMMENT,
 	      comment: comment
@@ -32005,6 +32039,8 @@
 /* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
 	var React = __webpack_require__(1);
 	var CommentStore = __webpack_require__(240);
 	var PostStore = __webpack_require__(219);
@@ -32020,7 +32056,7 @@
 	  displayName: "CommentsIndexItem",
 	
 	
-	  _findCommentById: function (id) {
+	  _findCommentById: function _findCommentById(id) {
 	    var res;
 	    CommentStore.all().forEach(function (comment) {
 	      if (id == comment.id) {
@@ -32030,14 +32066,14 @@
 	    return res;
 	  },
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    var commentId = this.props.comment.id;
 	    var comment = this._findCommentById(commentId) || {};
 	    return { comment_image: CurrentUserStore.user().profile_pic };
 	  },
 	  //
 	  //
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    this.listener = UserStore.addListener(this._onChange);
 	    UserApiUtil.fetchUser(parseInt(this.props.comment.author_id), function (user) {
 	      if (this.isMounted()) {
@@ -32047,11 +32083,11 @@
 	  },
 	
 	  //
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    this.listener.remove();
 	  },
 	
-	  _onChange: function () {
+	  _onChange: function _onChange() {
 	    var commentId = this.props.comment.commentId;
 	    var comment = this._findCommentById(commentId);
 	    UserApiUtil.fetchUser(parseInt(this.props.comment.author_id), function (user) {
@@ -32061,7 +32097,7 @@
 	    }.bind(this));
 	  },
 	
-	  handleDelete: function (e) {
+	  handleDelete: function handleDelete(e) {
 	    e.preventDefault();
 	    var that = this;
 	    UserApiUtil.fetchAllUsers();
@@ -32071,7 +32107,7 @@
 	
 	  // <h1 className="comment-timeago">Created <TimeAgo date={this.props.comment.created_at} /></h1>
 	
-	  render: function () {
+	  render: function render() {
 	
 	    var deletebutton = React.createElement("div", null);
 	
@@ -32093,7 +32129,7 @@
 	        { className: "comment-index-items-input" },
 	        React.createElement(
 	          Link,
-	          { className: "comment-username", to: `users/${ this.props.comment.author_id }` },
+	          { className: "comment-username", to: "users/" + this.props.comment.author_id },
 	          this.props.comment.author_name
 	        ),
 	        React.createElement(
@@ -32256,6 +32292,8 @@
 /* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var Store = __webpack_require__(220).Store;
 	var AppDispatcher = __webpack_require__(210);
 	var CurrentUserConstants = __webpack_require__(218);
@@ -33098,6 +33136,8 @@
 /* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var CurrentUserStore = __webpack_require__(247);
 	var SessionsApiUtil = __webpack_require__(256);
@@ -33111,26 +33151,26 @@
 	
 	  mixins: [History],
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	
 	    return {
 	      currentUser: CurrentUserStore.currentUser()
 	    };
 	  },
 	
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    this.listener = CurrentUserStore.addListener(this._onChange);
 	  },
 	
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    this.listener.remove();
 	  },
 	
-	  componentWillReceiveProps: function () {
+	  componentWillReceiveProps: function componentWillReceiveProps() {
 	    this._onChange();
 	  },
 	
-	  _onChange: function () {
+	  _onChange: function _onChange() {
 	    if (this.isMounted() && CurrentUserStore.user().id) {
 	      UserApiUtil.fetchUser(parseInt(CurrentUserStore.user().id), function (user) {
 	        this.setState({ currentUser: user });
@@ -33138,23 +33178,23 @@
 	    }
 	  },
 	
-	  logout: function (e) {
+	  logout: function logout(e) {
 	    e.preventDefault();
 	    SessionsApiUtil.logout(function () {
 	      this.history.pushState({}, "/login");
 	    }.bind(this));
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	
 	    if (CurrentUserStore.isLoggedIn()) {
-	      currentUser = CurrentUserStore.user();
+	      var currentUser = CurrentUserStore.user();
 	      return React.createElement(
 	        'div',
 	        { className: 'main-header group' },
 	        React.createElement(
 	          Link,
-	          { className: 'link', to: `/` },
+	          { className: 'link', to: '/' },
 	          React.createElement('img', { src: 'http://s22.postimg.org/7wbexk3cx/Screen_Shot_2016_02_02_at_9_23_29_PM.png', className: 'side-logo' })
 	        ),
 	        React.createElement(
@@ -33170,7 +33210,7 @@
 	            null,
 	            React.createElement(
 	              Link,
-	              { className: 'link', to: `/` },
+	              { className: 'link', to: '/' },
 	              'Home'
 	            )
 	          ),
@@ -33179,7 +33219,7 @@
 	            { className: 'logged-in' },
 	            React.createElement(
 	              Link,
-	              { className: 'link', to: `users/${ currentUser.id }` },
+	              { className: 'link', to: 'users/' + currentUser.id },
 	              React.createElement('img', { src: this.state.currentUser.profile_pic }),
 	              currentUser.fname
 	            )
@@ -33216,41 +33256,43 @@
 /* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var CurrentUserActions = __webpack_require__(217);
 	var SessionsApiUtil = {
-	  login: function (credentials, success) {
+	  login: function login(credentials, _success) {
 	
 	    $.ajax({
 	      url: '/api/session',
 	      type: 'POST',
 	      dataType: 'json',
 	      data: credentials,
-	      success: function (currentUser) {
+	      success: function success(currentUser) {
 	        CurrentUserActions.receiveCurrentUser(currentUser);
-	        success && success();
+	        _success && _success();
 	      }
 	
 	    });
 	  },
 	
-	  logout: function (cb) {
+	  logout: function logout(cb) {
 	    $.ajax({
 	      url: '/api/session',
 	      type: 'DELETE',
 	      dataType: 'json',
-	      success: function () {
+	      success: function success() {
 	        CurrentUserActions.logOut();
 	        cb && cb();
 	      }
 	    });
 	  },
 	
-	  fetchCurrentUser: function (cb) {
+	  fetchCurrentUser: function fetchCurrentUser(cb) {
 	    $.ajax({
 	      url: '/api/session',
 	      type: 'GET',
 	      dataType: 'json',
-	      success: function (currentUser) {
+	      success: function success(currentUser) {
 	        console.log("fetched current user!");
 	        CurrentUserActions.receiveCurrentUser(currentUser);
 	        cb && cb(currentUser);
@@ -33266,6 +33308,8 @@
 /* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var SearchResultsStore = __webpack_require__(258);
 	var SearchApiUtil = __webpack_require__(260);
@@ -33278,45 +33322,48 @@
 	  displayName: 'Search',
 	
 	
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    this.listener = SearchResultsStore.addListener(this._onChange);
 	  },
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    return { page: 1, query: "" };
 	  },
 	
-	  _onChange: function () {
+	  _onChange: function _onChange() {
 	    this.forceUpdate();
 	  },
 	
-	  componentWillReceiveProps: function (newProps) {
+	  componentWillReceiveProps: function componentWillReceiveProps(newProps) {
+	
+	    SearchApiUtil.search("", 1, function () {
+	      this.setState({ page: 1, query: "" });
+	    }.bind(this));
+	  },
+	
+	  reset: function reset() {
 	    this.setState({ page: 1, query: "" });
 	  },
 	
-	  reset: function () {
-	    this.setState({ page: 1, query: "" });
-	  },
-	
-	  search: function (e) {
+	  search: function search(e) {
 	    var query = e.target.value;
 	    SearchApiUtil.search(query, 1);
 	
 	    this.setState({ page: 1, query: query });
 	  },
 	
-	  nextPage: function () {
+	  nextPage: function nextPage() {
 	    var nextPage = this.state.page + 1;
 	    SearchApiUtil.search(this.state.query, nextPage);
 	
 	    this.setState({ page: nextPage });
 	  },
 	
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    this.listener.remove();
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	    var searchResults = SearchResultsStore.all().map(function (searchResult, index) {
 	      if (searchResult._type === "User") {
 	        return React.createElement(
@@ -33324,7 +33371,7 @@
 	          { className: 'search-result', key: index },
 	          React.createElement(
 	            Link,
-	            { to: `users/${ searchResult.id }` },
+	            { to: 'users/' + searchResult.id },
 	            React.createElement('img', { className: 'searchimage', src: searchResult.profile_pic_url }),
 	            searchResult.fname
 	          )
@@ -33360,6 +33407,8 @@
 /* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var Store = __webpack_require__(220).Store;
 	var AppDispatcher = __webpack_require__(210);
 	var SearchConstants = __webpack_require__(259);
@@ -33395,6 +33444,8 @@
 /* 259 */
 /***/ function(module, exports) {
 
+	"use strict";
+	
 	var SearchConstants = {
 	  RECEIVE_SEARCH_RESULTS: "RECEIVE_SEARCH_RESULTS"
 	};
@@ -33405,18 +33456,21 @@
 /* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var SearchActions = __webpack_require__(261);
 	
 	var SearchApiUtil = {
 	
-	  search: function (query, page) {
+	  search: function search(query, page, cb) {
 	    $.ajax({
 	      url: '/api/search',
 	      type: 'GET',
 	      dataType: 'json',
 	      data: { query: query, page: page },
-	      success: function (data) {
+	      success: function success(data) {
 	        SearchActions.receiveResults(data);
+	        cb && cb();
 	      }
 	    });
 	  }
@@ -33429,11 +33483,13 @@
 /* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var SearchConstants = __webpack_require__(259);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var SearchActions = {
-	  receiveResults: function (data) {
+	  receiveResults: function receiveResults(data) {
 	    AppDispatcher.dispatch({
 	      actionType: SearchConstants.RECEIVE_SEARCH_RESULTS,
 	      searchResults: data.results,
@@ -33449,6 +33505,8 @@
 /* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
@@ -33473,9 +33531,10 @@
 	  displayName: 'UserProfile',
 	
 	
-	  _findUserById: function (id) {
+	  _findUserById: function _findUserById(id) {
 	    id = parseInt(id);
-	    users = UserStore.all();
+	
+	    var users = UserStore.all();
 	    for (var i = 0; i < users.length; i++) {
 	      if (users[i].id == id) {
 	        return users[i];
@@ -33483,7 +33542,7 @@
 	    }
 	  },
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    var userId = this.props.userId || this.props.params.userId;
 	    UserApiUtil.fetchUser(parseInt(userId));
 	    if (this._findUserById(userId) != undefined) {
@@ -33492,7 +33551,7 @@
 	    return { user: user };
 	  },
 	
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    var userId = this.props.userId || this.props.params.userId;
 	    this.listener = UserStore.addListener(this._onChange);
 	    UserApiUtil.fetchUser(parseInt(userId), function (user) {
@@ -33500,7 +33559,7 @@
 	    }.bind(this));
 	  },
 	
-	  componentWillReceiveProps: function (newProps) {
+	  componentWillReceiveProps: function componentWillReceiveProps(newProps) {
 	    UserApiUtil.fetchUser(parseInt(newProps.params.userId), function (user) {
 	      if (this.isMounted()) {
 	        this.setState({ user: user });
@@ -33508,13 +33567,13 @@
 	    }.bind(this));
 	  },
 	
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    if (this.isMounted()) {
 	      this.listener.remove();
 	    }
 	  },
 	
-	  _onChange: function () {
+	  _onChange: function _onChange() {
 	    var userId = this.props.params.userId;
 	    var user;
 	    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user) {
@@ -33525,7 +33584,7 @@
 	    // this._findUserById(userId);
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	
 	    var received_posts;
 	    var navbar;
@@ -33536,7 +33595,7 @@
 	    if (this.state.user) {
 	      if (this.state.user.received_posts) {
 	        received_posts = this.state.user.received_posts.slice(0);
-	        fname = this.state.user.fname;
+	        var fname = this.state.user.fname;
 	        navbar = React.createElement(Navbar, { params: this.props.params, user: this.state.user });
 	        received_posts = received_posts.reverse().map(function (post) {
 	          return React.createElement(PostIndexItem, { post: post, key: post.id });
@@ -33583,8 +33642,8 @@
 	        profile_form = React.createElement(ProfileForm, { className: 'fullpage', params: this.props.params });
 	      }
 	
-	      cover_pic = React.createElement('img', { className: 'cover-image', src: this.state.user.cover_pic });
-	      profile_pic = React.createElement('img', { className: 'profile-image', src: this.state.user.profile_pic });
+	      var cover_pic = React.createElement('img', { className: 'cover-image', src: this.state.user.cover_pic });
+	      var profile_pic = React.createElement('img', { className: 'profile-image', src: this.state.user.profile_pic });
 	    }
 	
 	    return React.createElement(
@@ -33612,6 +33671,8 @@
 /* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
 	var React = __webpack_require__(1);
 	var CommentStore = __webpack_require__(240);
 	var PostStore = __webpack_require__(219);
@@ -33626,9 +33687,9 @@
 	  displayName: "FriendRequestItem",
 	
 	
-	  _findUserById: function (id) {
+	  _findUserById: function _findUserById(id) {
 	    id = parseInt(id);
-	    users = UserStore.all();
+	    var users = UserStore.all();
 	    for (var i = 0; i < users.length; i++) {
 	      if (users[i].id == id) {
 	        return users[i];
@@ -33636,45 +33697,46 @@
 	    }
 	  },
 	
-	  getInitialState: function () {
-	    user = this._findUserById(this.props.params.userId);
+	  getInitialState: function getInitialState() {
+	    var user = this._findUserById(this.props.params.userId);
 	    return { user: {} };
 	  },
 	
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    this.listener = UserStore.addListener(this._onChange);
 	  },
 	
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    this.listener.remove();
 	  },
 	
-	  _onChange: function () {
-	    user = this._findUserById(this.props.params.userId);
+	  _onChange: function _onChange() {
+	    var user = this._findUserById(this.props.params.userId);
 	    this.setState({ user: user });
 	  },
 	
-	  componentWillReceiveProps(newProps) {
-	    user = this._findUserById(newProps.params.userId);
+	  componentWillReceiveProps: function componentWillReceiveProps(newProps) {
+	    var user = this._findUserById(newProps.params.userId);
 	    this.setState({ user: user });
 	  },
 	
-	  handleFriend: function () {
-	    user = this.state.user;
+	
+	  handleFriend: function handleFriend() {
+	    var user = this.state.user;
 	    name = user.fname + " " + user.lname;
 	    FriendApiUtil.createFriend({ requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name });
 	    UserApiUtil.fetchUser(this.props.params.userId);
 	  },
 	
-	  handleDelete: function () {
+	  handleDelete: function handleDelete() {
 	
-	    user = this.state.user;
+	    var user = this.state.user;
 	    name = user.fname + " " + user.lname;
 	    FriendApiUtil.deleteFriend({ requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name });
 	    UserApiUtil.fetchUser(this.props.params.userId);
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	
 	    var userprofile = this._findUserById(this.props.params.userId);
 	    var currentUser = this._findUserById(CurrentUserStore.user().id);
@@ -33734,37 +33796,39 @@
 /* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var FriendActions = __webpack_require__(265);
 	
 	var FriendApiUtil = {
 	
-	   createFriend: function (friend) {
+	   createFriend: function createFriend(friend) {
 	      $.ajax({
 	         method: 'POST',
 	         url: 'api/friend_requests',
 	         data: { friend_request: friend },
-	         success: function (friend) {
+	         success: function success(friend) {
 	            FriendActions.receiveNewFriend(friend);
 	         }
 	      });
 	   },
 	
-	   fetchFriends: function () {
+	   fetchFriends: function fetchFriends() {
 	      $.ajax({
 	         method: 'GET',
 	         url: 'api/friend_requests',
-	         success: function (friends) {
+	         success: function success(friends) {
 	            FriendActions.receiveAllFriends(friends);
 	         }
 	      });
 	   },
 	
-	   deleteFriend: function (friend) {
+	   deleteFriend: function deleteFriend(friend) {
 	      $.ajax({
 	         method: 'DELETE',
 	         url: '/api/friend_requests',
 	         data: friend,
-	         success: function (friend) {
+	         success: function success(friend) {
 	            FriendActions.removedFriend(friend);
 	         }
 	      });
@@ -33777,26 +33841,27 @@
 /* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
 	
 	var UserConstants = __webpack_require__(216);
 	var AppDispatcher = __webpack_require__(210);
 	
 	var FriendActions = {
 	
-	  receiveNewFriend: function (friend) {
+	  receiveNewFriend: function receiveNewFriend(friend) {
 	    AppDispatcher.dispatch({
 	      actionType: UserConstants.FRIEND_RECEIVED,
 	      friend: friend
 	    });
 	  },
 	
-	  removedFriend: function (friends) {
+	  removedFriend: function removedFriend(friends) {
 	    AppDispatcher.dispatch({
 	      actionType: UserConstants.FRIEND_REMOVED,
 	      friends: friends
 	    });
 	  },
-	  receiveAllFriends: function (friends) {
+	  receiveAllFriends: function receiveAllFriends(friends) {
 	    AppDispatcher.dispatch({
 	      actionType: UserConstants.FRIENDS_RECEIVED,
 	      friends: friends
@@ -33810,6 +33875,8 @@
 /* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var UsersApiUtil = __webpack_require__(214);
 	var ImageApiUtil = __webpack_require__(267);
@@ -33817,11 +33884,11 @@
 	var UserCoverForm = React.createClass({
 	  displayName: 'UserCoverForm',
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    return { imageFile: null, imageUrl: "", saving: false };
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	    var photo_upload;
 	    var photo_upload2;
 	    if (this.state.imageFile) {
@@ -33854,7 +33921,7 @@
 	    );
 	  },
 	
-	  changeFile: function (e) {
+	  changeFile: function changeFile(e) {
 	    var reader = new FileReader();
 	    var file = e.currentTarget.files[0];
 	
@@ -33869,7 +33936,7 @@
 	      }
 	  },
 	
-	  handleSubmit: function (e) {
+	  handleSubmit: function handleSubmit(e) {
 	    e.preventDefault();
 	
 	    if (!this.state.saving) {
@@ -33884,7 +33951,7 @@
 	    }
 	  },
 	
-	  resetForm: function () {
+	  resetForm: function resetForm() {
 	    this.setState({ imageFile: null, imageUrl: "", saving: false });
 	  }
 	});
@@ -33895,11 +33962,13 @@
 /* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
 	var PhotoApiActions = __webpack_require__(268);
 	
 	var ImagesApiUtil = {
 	
-	  createImage: function (formData, callback) {
+	  createImage: function createImage(formData, callback) {
 	    $.ajax({
 	      url: "api/photos/",
 	      type: 'POST',
@@ -33907,7 +33976,7 @@
 	      processData: false,
 	      contentType: false,
 	      dataType: 'json',
-	      success: function (photo) {
+	      success: function success(photo) {
 	        PhotoApiActions.receivePhoto(photo);
 	        callback && callback();
 	      }
@@ -33921,12 +33990,14 @@
 /* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var AppDispatcher = __webpack_require__(210);
 	var UserConstants = __webpack_require__(216);
 	
 	var PhotoActions = {
 	
-	  receivePhoto: function (photo) {
+	  receivePhoto: function receivePhoto(photo) {
 	    AppDispatcher.dispatch({
 	      actionType: UserConstants.RECEIVE_PHOTO,
 	      photo: photo
@@ -33941,6 +34012,8 @@
 /* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var UsersApiUtil = __webpack_require__(214);
 	var ImageApiUtil = __webpack_require__(267);
@@ -33948,11 +34021,11 @@
 	var UserProfileForm = React.createClass({
 	  displayName: 'UserProfileForm',
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    return { imageFile: null, imageUrl: "", saving: false };
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	    var photo_upload;
 	    var photo_upload2;
 	    if (this.state.imageFile) {
@@ -33984,7 +34057,7 @@
 	    );
 	  },
 	
-	  changeFile: function (e) {
+	  changeFile: function changeFile(e) {
 	    var reader = new FileReader();
 	    var file = e.currentTarget.files[0];
 	
@@ -33999,7 +34072,7 @@
 	      }
 	  },
 	
-	  handleSubmit: function (e) {
+	  handleSubmit: function handleSubmit(e) {
 	    e.preventDefault();
 	    if (!this.state.saving) {
 	      var formData = new FormData();
@@ -34013,7 +34086,7 @@
 	    }
 	  },
 	
-	  resetForm: function () {
+	  resetForm: function resetForm() {
 	    this.setState({ imageFile: null, imageUrl: "", saving: false });
 	  }
 	});
@@ -34024,6 +34097,8 @@
 /* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var ImagesApiUtil = __webpack_require__(267);
 	var PhotoIndexItem = __webpack_require__(271);
@@ -34039,9 +34114,9 @@
 	  displayName: 'PhotoIndex',
 	
 	
-	  _findUserById: function (id) {
+	  _findUserById: function _findUserById(id) {
 	    id = parseInt(id);
-	    users = UserStore.all();
+	    var users = UserStore.all();
 	    for (var i = 0; i < users.length; i++) {
 	      if (users[i].id == id) {
 	        return users[i];
@@ -34049,13 +34124,13 @@
 	    }
 	  },
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    var userId = this.props.userId || this.props.params.userId;
 	    var user = this._findUserById(userId);
 	    return { user: user };
 	  },
 	
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    var userId = this.props.userId || this.props.params.userId;
 	    this.listener = UserStore.addListener(this._onChange);
 	    // this.listener = PostStore.addListener(this._onChange);
@@ -34063,11 +34138,11 @@
 	    UserApiUtil.fetchUser(parseInt(userId));
 	  },
 	
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    this.listener.remove();
 	  },
 	
-	  _onChange: function () {
+	  _onChange: function _onChange() {
 	    var userId = this.props.params.userId;
 	    var user;
 	    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user) {
@@ -34076,7 +34151,7 @@
 	      }
 	    }.bind(this));
 	  },
-	  render: function () {
+	  render: function render() {
 	    var photoIndex;
 	    var photoform = React.createElement('div', null);
 	    var cover_form;
@@ -34092,7 +34167,7 @@
 	      profile_form = React.createElement(ProfileForm, { className: 'fullpage', params: this.props.params });
 	    }
 	
-	    if (currentUser.id == this.props.params.userId) {
+	    if (this.state.user.id == CurrentUserStore.user().id) {
 	      photoform = React.createElement(ImageForm, { className: 'photo-form', user: this.state.user });
 	    }
 	    return React.createElement(
@@ -34120,6 +34195,8 @@
 /* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
 	var React = __webpack_require__(1);
 	var ImagesApiUtil = __webpack_require__(267);
 	
@@ -34127,7 +34204,7 @@
 	  displayName: "PhotoIndexItem",
 	
 	
-	  render: function () {
+	  render: function render() {
 	    return React.createElement(
 	      "li",
 	      null,
@@ -34143,6 +34220,8 @@
 /* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var ImageApiUtil = __webpack_require__(267);
 	var UserApiUtil = __webpack_require__(214);
@@ -34152,11 +34231,11 @@
 	  displayName: 'ImageForm',
 	
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    return { url: "", file: null, description: "", saving: false, upload: "Upload Photo" };
 	  },
 	
-	  changeFile: function (e) {
+	  changeFile: function changeFile(e) {
 	    e.preventDefault();
 	    var reader = new FileReader();
 	    var file = e.currentTarget.files[0];
@@ -34172,15 +34251,15 @@
 	    }
 	  },
 	
-	  clearFields: function () {
+	  clearFields: function clearFields() {
 	    this.setState({ url: "", file: null, description: "", saving: false, upload: "Upload Photo" });
 	  },
 	
-	  changeDes: function (e) {
+	  changeDes: function changeDes(e) {
 	    this.setState({ description: e.currentTarget.value });
 	  },
 	
-	  handleSubmit: function (e) {
+	  handleSubmit: function handleSubmit(e) {
 	    e.preventDefault();
 	    if (!this.state.saving) {
 	      var file = this.state.file;
@@ -34194,7 +34273,7 @@
 	    }
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	    return React.createElement(
 	      'div',
 	      { className: 'photo-upload group' },
@@ -34221,6 +34300,8 @@
 /* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var CurrentUserStore = __webpack_require__(247);
 	var SessionsApiUtil = __webpack_require__(256);
@@ -34240,9 +34321,9 @@
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
 	
-	  _findUserById: function (id) {
+	  _findUserById: function _findUserById(id) {
 	    id = parseInt(id);
-	    users = UserStore.all();
+	    var users = UserStore.all();
 	    for (var i = 0; i < users.length; i++) {
 	      if (users[i].id == id) {
 	        return users[i];
@@ -34250,13 +34331,13 @@
 	    }
 	  },
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    var userId = this.props.userId || this.props.params.userId;
 	    var user = this._findUserById(userId);
 	    return { user: user };
 	  },
 	
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    var userId = this.props.userId || this.props.params.userId;
 	    this.listener = UserStore.addListener(this._onChange);
 	    // this.listener = PostStore.addListener(this._onChange);
@@ -34264,7 +34345,7 @@
 	    UserApiUtil.fetchUser(parseInt(userId));
 	  },
 	
-	  componentWillReceiveProps: function (newProps) {
+	  componentWillReceiveProps: function componentWillReceiveProps(newProps) {
 	    var userId = newProps.params.userId;
 	    UserApiUtil.fetchUser(parseInt(userId), function (user) {
 	      if (this.isMounted()) {
@@ -34273,11 +34354,11 @@
 	    }.bind(this));
 	  },
 	
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    this.listener.remove();
 	  },
 	
-	  _onChange: function () {
+	  _onChange: function _onChange() {
 	    var userId = this.props.params.userId;
 	    var user;
 	    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user) {
@@ -34287,7 +34368,7 @@
 	    }.bind(this));
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	    var fname;
 	    var cover_pic;
 	    var profile_pic;
@@ -34296,7 +34377,7 @@
 	
 	    if (this.props.user) {
 	      fname = this.props.user.fname;
-	      lname = this.props.user.lname;
+	      var lname = this.props.user.lname;
 	      cover_pic = React.createElement('img', { className: 'cover-image', src: this.props.user.cover_pic });
 	      profile_pic = React.createElement('img', { className: 'profile-image', src: this.props.user.profile_pic });
 	    }
@@ -34332,22 +34413,22 @@
 	          { className: 'profile-nav group' },
 	          React.createElement(
 	            Link,
-	            { to: `users/${ this.props.params.userId }/timeline` },
+	            { to: 'users/' + this.props.params.userId + '/timeline' },
 	            'Timeline'
 	          ),
 	          React.createElement(
 	            Link,
-	            { to: `users/${ this.props.params.userId }/about` },
+	            { to: 'users/' + this.props.params.userId + '/about' },
 	            'About'
 	          ),
 	          React.createElement(
 	            Link,
-	            { to: `users/${ this.props.params.userId }/friends` },
+	            { to: 'users/' + this.props.params.userId + '/friends' },
 	            'Friends'
 	          ),
 	          React.createElement(
 	            Link,
-	            { to: `users/${ this.props.params.userId }/photos` },
+	            { to: 'users/' + this.props.params.userId + '/photos' },
 	            'Photos'
 	          )
 	        )
@@ -34555,6 +34636,8 @@
 /* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1),
 	    Header = __webpack_require__(255),
 	    SessionsApiUtil = __webpack_require__(256),
@@ -34563,16 +34646,16 @@
 	var App = React.createClass({
 	  displayName: 'App',
 	
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    this.Listener = CurrentUserStore.addListener(this.forceUpdate.bind(this));
 	    SessionsApiUtil.fetchCurrentUser();
 	  },
 	
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    this.Listener.remove();
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	    if (!CurrentUserStore.userHasBeenFetched()) {
 	      return React.createElement(
 	        'p',
@@ -34597,17 +34680,26 @@
 /* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
+	var _sign_up = __webpack_require__(278);
+	
+	var _sign_up2 = _interopRequireDefault(_sign_up);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
 	var SessionsApiUtil = __webpack_require__(256);
 	var UsersApiUtil = __webpack_require__(214);
+	
 	
 	var SessionForm = React.createClass({
 	  displayName: 'SessionForm',
 	
 	  mixins: [History],
 	
-	  submit: function (e) {
+	  submit: function submit(e) {
 	    e.preventDefault();
 	
 	    var credentials = $(e.currentTarget).serializeJSON();
@@ -34616,16 +34708,14 @@
 	    }.bind(this));
 	  },
 	
-	  userCreate: function (e) {
-	    e.preventDefault();
-	    var credentials = $(e.currentTarget).serializeJSON();
-	    UsersApiUtil.createUser(credentials, function () {
+	  userCreate: function userCreate(user) {
+	    UsersApiUtil.createUser(user, function () {
 	      this.history.pushState({}, "/");
 	    }.bind(this));
 	    UsersApiUtil.fetchAllUsers();
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	
 	    return React.createElement(
 	      'div',
@@ -34717,62 +34807,7 @@
 	            null,
 	            'Sign Up'
 	          ),
-	          React.createElement(
-	            'form',
-	            { onSubmit: this.userCreate, className: 'signup group' },
-	            React.createElement(
-	              'label',
-	              null,
-	              'First Name',
-	              React.createElement('input', { type: 'text', name: 'fname' })
-	            ),
-	            React.createElement(
-	              'label',
-	              null,
-	              'Last Name',
-	              React.createElement('input', { type: 'text', name: 'lname' })
-	            ),
-	            React.createElement('br', null),
-	            React.createElement(
-	              'label',
-	              null,
-	              'Email',
-	              React.createElement('input', { type: 'text', name: 'email' })
-	            ),
-	            React.createElement(
-	              'label',
-	              null,
-	              'Password',
-	              React.createElement('input', { type: 'password', name: 'password' })
-	            ),
-	            React.createElement('br', null),
-	            React.createElement(
-	              'label',
-	              null,
-	              'Birthday',
-	              React.createElement('input', { type: 'date', name: 'birthday' })
-	            ),
-	            React.createElement('br', null),
-	            React.createElement(
-	              'label',
-	              null,
-	              'Gender',
-	              React.createElement(
-	                'div',
-	                { className: 'gender' },
-	                React.createElement('input', { type: 'radio', name: 'gender', value: 'male' }),
-	                ' Male',
-	                React.createElement('input', { className: 'radiobutton', type: 'radio', name: 'gender', value: 'female' }),
-	                ' Female'
-	              )
-	            ),
-	            React.createElement('input', { className: 'signbutton', type: 'submit', value: 'Sign Up' }),
-	            React.createElement(
-	              'a',
-	              { className: 'btn-facebook', href: '/auth/facebook' },
-	              'Login with Facebook'
-	            )
-	          )
+	          React.createElement(_sign_up2.default, { submit: this.userCreate })
 	        )
 	      )
 	    );
@@ -34786,6 +34821,625 @@
 /* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Form = __webpack_require__(279);
+	
+	var _FormField = __webpack_require__(280);
+	
+	var _Input = __webpack_require__(281);
+	
+	var _Select = __webpack_require__(282);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var SignUpForm = function (_Component) {
+	  _inherits(SignUpForm, _Component);
+	
+	  function SignUpForm() {
+	    _classCallCheck(this, SignUpForm);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(SignUpForm).apply(this, arguments));
+	  }
+	
+	  _createClass(SignUpForm, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        _Form.Form,
+	        { submit: this.props.submit, initialValues: this.initialValues, validators: this.validators, className: 'signup group' },
+	        _react2.default.createElement(
+	          _FormField.FormField,
+	          { className: 'form-input' },
+	          _react2.default.createElement(_Input.Input, { type: 'text', name: 'fname', id: 'user-fname' }),
+	          _react2.default.createElement(_Input.Input, { type: 'text', name: 'lname', id: 'user-lname' }),
+	          _react2.default.createElement(_Input.Input, { type: 'email', name: 'email', id: 'user-email' }),
+	          _react2.default.createElement(_Input.Input, { type: 'password', name: 'password', id: 'user-password' }),
+	          _react2.default.createElement(_Input.Input, { type: 'date', name: 'birthday', id: 'user-birthday' }),
+	          _react2.default.createElement(_Select.Select, { id: 'user-gender', name: 'gender', options: ["", "male", "female"] })
+	        ),
+	        _react2.default.createElement(
+	          'label',
+	          { htmlFor: 'user-fname' },
+	          'First Name'
+	        ),
+	        _react2.default.createElement(
+	          'label',
+	          { htmlFor: 'user-email' },
+	          'Email'
+	        ),
+	        _react2.default.createElement(
+	          'label',
+	          { htmlFor: 'user-lname' },
+	          'Last Name'
+	        ),
+	        _react2.default.createElement(
+	          'label',
+	          { htmlFor: 'user-password' },
+	          'Password'
+	        ),
+	        _react2.default.createElement(
+	          'label',
+	          { htmlFor: 'user-birthday' },
+	          'Birthday'
+	        ),
+	        _react2.default.createElement(
+	          'label',
+	          { htmlForm: 'user-gender' },
+	          'Gender'
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { type: 'submit', className: 'signbutton', value: 'Sign Up' },
+	          'Sign Up'
+	        ),
+	        _react2.default.createElement(
+	          'a',
+	          { className: 'btn-facebook', href: '/auth/facebook' },
+	          'Login with Facebook'
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return SignUpForm;
+	}(_react.Component);
+	
+	exports.default = SignUpForm;
+	
+	
+	SignUpForm.prototype.validators = {
+	  fname: ["presence"],
+	  lname: ["presence"],
+	  email: ["presence"],
+	  birthday: ["presence"],
+	  gender: ["presence"],
+	  password: ["presence", "length"]
+	};
+	
+	SignUpForm.prototype.initialValues = {
+	  fname: "",
+	  lname: "",
+	  email: "",
+	  password: "",
+	  birthday: "",
+	  gender: ""
+	};
+
+/***/ },
+/* 279 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Form = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var defaultValidators = {
+	  presence: function presence(value) {
+	    if (typeof value === "undefined" || typeof value === "string" && !value) {
+	      return "can't be blank";
+	    }
+	    return "";
+	  },
+	
+	  confirmation: function confirmation(value, values, field) {
+	    var confirmVal = values[field + "_confirmation"];
+	    if (value !== confirmVal) {
+	      return "must match confirmation";
+	    }
+	    return "";
+	  },
+	
+	  length: function length(value) {
+	    if (typeof value === "string" && value.length < 6) {
+	      return "must be at least 6 characters";
+	    }
+	    return "";
+	  }
+	};
+	
+	var formatField = function formatField(field) {
+	  return field.replace(/_/g, " ").replace(/[A-Z]/g, function (letter) {
+	    return " " + letter.toLowerCase();
+	  });
+	};
+	
+	var Form = exports.Form = function (_Component) {
+	  _inherits(Form, _Component);
+	
+	  function Form(props) {
+	    _classCallCheck(this, Form);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Form).call(this, props));
+	
+	    _this.state = { values: _this.props.initialValues || {}, errors: {} };
+	    _this.setValidators(props);
+	    return _this;
+	  }
+	
+	  _createClass(Form, [{
+	    key: "logWarnings",
+	    value: function logWarnings(props) {
+	      if (typeof props.validators === "undefined") console.warn("Please supply validators to Form");
+	      if (typeof props.initialValues === "undefined") console.warn("Please supply initialValues to Form");
+	    }
+	  }, {
+	    key: "setValidators",
+	    value: function setValidators(props) {
+	      var _this2 = this;
+	
+	      this.validators = {};
+	      var validators = props.validators;
+	
+	      if (!validators) return;
+	      for (var field in validators) {
+	        this.validators[field] = [];
+	        validators[field].forEach(function (validator) {
+	          if (typeof validator === "string") {
+	            _this2.validators[field].push(defaultValidators[validator]);
+	          } else if (typeof validator === "function") {
+	            _this2.validators[field].push(validator);
+	          }
+	        }, this);
+	      }
+	    }
+	  }, {
+	    key: "onChange",
+	    value: function onChange(event) {
+	      var _event$target = event.target;
+	      var name = _event$target.name;
+	      var type = _event$target.type;
+	      var value = _event$target.value;
+	      var checked = _event$target.checked;
+	
+	      if (typeof name !== "string") return;
+	      if (type === "checkbox") value = checked;
+	      this.state.values[name] = value;
+	      this.forceUpdate();
+	    }
+	  }, {
+	    key: "onSubmit",
+	    value: function onSubmit(event) {
+	      event.preventDefault();
+	      this.performValidations();
+	      if (!this.anyErrors()) this.props.submit(this.state.values);
+	    }
+	  }, {
+	    key: "performValidations",
+	    value: function performValidations() {
+	      var values = this.state.values,
+	          errors = {},
+	          value;
+	      for (var field in this.validators) {
+	        errors[field] = [];
+	        value = values[field];
+	        this.validators[field].forEach(function (validator) {
+	          var message = validator(value, values, field);
+	          if (message) errors[field].push(message);
+	        });
+	      }
+	      this.state.errors = errors;
+	      this.forceUpdate();
+	    }
+	  }, {
+	    key: "errorMessages",
+	    value: function errorMessages() {
+	      var messages = [],
+	          errors = this.state.errors,
+	          formattedField;
+	      for (var field in errors) {
+	        if (errors[field].length) {
+	          formattedField = formatField(field);
+	          errors[field].forEach(function (message) {
+	            messages.push(formattedField + " " + message);
+	          });
+	        }
+	      }
+	      return messages;
+	    }
+	  }, {
+	    key: "renderErrors",
+	    value: function renderErrors() {
+	      var messages = this.errorMessages();
+	      if (!messages.length) return null;
+	      return _react2.default.createElement(
+	        "ul",
+	        { className: "validation-errors" },
+	        messages.map(function (message, idx) {
+	          return _react2.default.createElement(
+	            "li",
+	            { key: idx },
+	            message
+	          );
+	        })
+	      );
+	    }
+	  }, {
+	    key: "hasError",
+	    value: function hasError(name) {
+	      var errors = this.state.errors[name];
+	      return !!(errors && errors.length);
+	    }
+	  }, {
+	    key: "anyErrors",
+	    value: function anyErrors() {
+	      for (var name in this.state.errors) {
+	        if (this.hasError(name)) return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: "inputClassName",
+	    value: function inputClassName(name) {
+	      return this.hasError(name) ? "validation-error" : "";
+	    }
+	  }, {
+	    key: "inputClassNames",
+	    value: function inputClassNames() {
+	      var classNames = {};
+	      for (var name in this.state.values) {
+	        classNames[name] = this.inputClassName(name);
+	      }
+	      return classNames;
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      var className = this.props.className;
+	
+	      var inputClassNames = this.inputClassNames(),
+	          values = this.state.values;
+	      var childProps = { inputClassNames: inputClassNames, values: values };
+	
+	      return _react2.default.createElement(
+	        "form",
+	        {
+	          className: className,
+	          onSubmit: this.onSubmit.bind(this),
+	          onChange: this.onChange.bind(this)
+	        },
+	        this.renderErrors(),
+	        _react2.default.Children.map(this.props.children, function (child) {
+	          return _react2.default.cloneElement(child, childProps);
+	        })
+	      );
+	    }
+	  }]);
+	
+	  return Form;
+	}(_react.Component);
+	
+	Form.propTypes = {
+	  submit: _react2.default.PropTypes.func.isRequired,
+	  initialValues: _react2.default.PropTypes.object,
+	  validators: _react2.default.PropTypes.object
+	};
+
+/***/ },
+/* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.FormField = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var FormField = exports.FormField = function (_Component) {
+	  _inherits(FormField, _Component);
+	
+	  function FormField() {
+	    _classCallCheck(this, FormField);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(FormField).apply(this, arguments));
+	  }
+	
+	  _createClass(FormField, [{
+	    key: 'render',
+	    value: function render() {
+	      var _props = this.props;
+	      var className = _props.className;
+	      var children = _props.children;
+	
+	      var other = _objectWithoutProperties(_props, ['className', 'children']);
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: className },
+	        _react2.default.Children.map(children, function (child) {
+	          return _react2.default.cloneElement(child, other);
+	        })
+	      );
+	    }
+	  }]);
+	
+	  return FormField;
+	}(_react.Component);
+
+/***/ },
+/* 281 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Input = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Input = exports.Input = function (_Component) {
+	  _inherits(Input, _Component);
+	
+	  function Input() {
+	    _classCallCheck(this, Input);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Input).apply(this, arguments));
+	  }
+	
+	  _createClass(Input, [{
+	    key: "className",
+	    value: function className() {
+	      var _props = this.props;
+	      var inputClassNames = _props.inputClassNames;
+	      var className = _props.className;
+	      var name = _props.name;
+	
+	      var result = "";
+	      if (inputClassNames[name]) result += inputClassNames[name];
+	      if (className) result += " " + className;
+	      return result.trim();
+	    }
+	  }, {
+	    key: "value",
+	    value: function value() {
+	      var _props2 = this.props;
+	      var value = _props2.value;
+	      var values = _props2.values;
+	      var name = _props2.name;
+	
+	      if (typeof value !== "undefined") return value;
+	      return values[name];
+	    }
+	  }, {
+	    key: "inputProps",
+	    value: function inputProps() {
+	      var _props3 = this.props;
+	      var inputClassNames = _props3.inputClassNames;
+	      var values = _props3.values;
+	      var value = _props3.value;
+	      var className = _props3.className;
+	
+	      var other = _objectWithoutProperties(_props3, ["inputClassNames", "values", "value", "className"]);
+	
+	      var className = this.className(),
+	          value = this.value();
+	      var props = Object.assign({}, other, { className: className });
+	      if (this.props.type === "checkbox") {
+	        props.checked = value;
+	      } else {
+	        props.value = value;
+	      }
+	      return props;
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      return _react2.default.createElement("input", this.inputProps());
+	    }
+	  }]);
+	
+	  return Input;
+	}(_react.Component);
+	
+	Input.propTypes = {
+	  type: _react2.default.PropTypes.string.isRequired,
+	  name: _react2.default.PropTypes.string
+	};
+
+/***/ },
+/* 282 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Select = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Select = exports.Select = function (_Component) {
+	  _inherits(Select, _Component);
+	
+	  function Select() {
+	    _classCallCheck(this, Select);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Select).apply(this, arguments));
+	  }
+	
+	  _createClass(Select, [{
+	    key: "className",
+	    value: function className() {
+	      var _props = this.props;
+	      var inputClassNames = _props.inputClassNames;
+	      var className = _props.className;
+	      var name = _props.name;
+	
+	      var result = "";
+	      if (inputClassNames[name]) result += inputClassNames[name];
+	      if (className) result += " " + className;
+	      return result.trim();
+	    }
+	  }, {
+	    key: "value",
+	    value: function value() {
+	      var _props2 = this.props;
+	      var value = _props2.value;
+	      var values = _props2.values;
+	      var name = _props2.name;
+	
+	      if (typeof value !== "undefined") return value;
+	      return values[name];
+	    }
+	  }, {
+	    key: "selectProps",
+	    value: function selectProps() {
+	      var _props3 = this.props;
+	      var inputClassNames = _props3.inputClassNames;
+	      var values = _props3.values;
+	      var value = _props3.value;
+	      var className = _props3.className;
+	      var children = _props3.children;
+	      var options = _props3.options;
+	
+	      var other = _objectWithoutProperties(_props3, ["inputClassNames", "values", "value", "className", "children", "options"]);
+	
+	      var className = this.className(),
+	          value = this.value();
+	      var props = Object.assign({}, other, { className: className });
+	      return props;
+	    }
+	  }, {
+	    key: "renderOptions",
+	    value: function renderOptions() {
+	      var options = this.props.options;
+	
+	      if (!options) return null;
+	      return options.map(function (option, idx) {
+	        return _react2.default.createElement(
+	          "option",
+	          { value: option, key: idx },
+	          option
+	        );
+	      });
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      return _react2.default.createElement(
+	        "select",
+	        this.selectProps(),
+	        this.renderOptions(),
+	        this.props.children
+	      );
+	    }
+	  }]);
+	
+	  return Select;
+	}(_react.Component);
+	
+	Select.propTypes = {
+	  name: _react2.default.PropTypes.string.isRequired,
+	  options: _react2.default.PropTypes.array
+	};
+
+/***/ },
+/* 283 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
 	var SessionsApiUtil = __webpack_require__(256);
@@ -34796,7 +35450,7 @@
 	
 	  mixins: [History],
 	
-	  submit: function (e) {
+	  submit: function submit(e) {
 	    e.preventDefault();
 	
 	    var credentials = $(e.currentTarget).serializeJSON();
@@ -34805,7 +35459,7 @@
 	    }.bind(this));
 	  },
 	
-	  userCreate: function (e) {
+	  userCreate: function userCreate(e) {
 	    e.preventDefault();
 	    var credentials = $(e.currentTarget).serializeJSON();
 	    UsersApiUtil.createUser(credentials, function () {
@@ -34813,7 +35467,7 @@
 	    }.bind(this));
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	
 	    return React.createElement(
 	      'div',
@@ -34963,9 +35617,11 @@
 	module.exports = UserForm;
 
 /***/ },
-/* 279 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var UsersStore = __webpack_require__(238);
 	var UsersApiUtil = __webpack_require__(214);
@@ -34973,20 +35629,20 @@
 	var UsersIndex = React.createClass({
 	  displayName: 'UsersIndex',
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    return { users: UsersStore.all() };
 	  },
 	
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    this.listener = UsersStore.addListener(this._onChange);
 	    UsersApiUtil.fetchUsers();
 	  },
 	
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    this.listener.remove();
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	    var users = this.state.users.map(function (user) {
 	      return React.createElement(
 	        'li',
@@ -35015,7 +35671,7 @@
 	    );
 	  },
 	
-	  _onChange: function () {
+	  _onChange: function _onChange() {
 	    this.setState({ users: UsersStore.all() });
 	  }
 	});
@@ -35023,9 +35679,11 @@
 	module.exports = UsersIndex;
 
 /***/ },
-/* 280 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
@@ -35044,9 +35702,9 @@
 	  displayName: 'About',
 	
 	
-	  _findUserById: function (id) {
+	  _findUserById: function _findUserById(id) {
 	    id = parseInt(id);
-	    users = UserStore.all();
+	    var users = UserStore.all();
 	    for (var i = 0; i < users.length; i++) {
 	      if (users[i].id == id) {
 	        return users[i];
@@ -35054,13 +35712,13 @@
 	    }
 	  },
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    var userId = this.props.userId || this.props.params.userId;
 	    var user = this._findUserById(userId);
 	    return { user: user };
 	  },
 	
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    var userId = this.props.userId || this.props.params.userId;
 	    this.listener = UserStore.addListener(this._onChange);
 	    // this.listener = PostStore.addListener(this._onChange);
@@ -35068,15 +35726,15 @@
 	    UserApiUtil.fetchUser(parseInt(userId));
 	  },
 	
-	  componentWillReceiveProps: function (newProps) {
+	  componentWillReceiveProps: function componentWillReceiveProps(newProps) {
 	    UserApiUtil.fetchAllUsers();
 	  },
 	
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    this.listener.remove();
 	  },
 	
-	  _onChange: function () {
+	  _onChange: function _onChange() {
 	    var userId = this.props.params.userId;
 	    var user;
 	    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user) {
@@ -35086,17 +35744,17 @@
 	    }.bind(this));
 	  },
 	
-	  render: function () {
+	  render: function render() {
 	    var received_posts;
 	    var cover_form;
 	    var profile_form;
 	
 	    if (this.state.user) {
-	      birthday = this.state.user.birthday;
-	      gender = this.state.user.gender;
-	      fname = this.state.user.fname;
-	      lname = this.state.user.lname;
-	      email = this.state.user.email;
+	      var birthday = this.state.user.birthday;
+	      var gender = this.state.user.gender;
+	      var fname = this.state.user.fname;
+	      var lname = this.state.user.lname;
+	      var email = this.state.user.email;
 	    }
 	
 	    if (this.state.user.id == CurrentUserStore.user().id) {
@@ -35159,9 +35817,11 @@
 	module.exports = About;
 
 /***/ },
-/* 281 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var UserApiUtil = __webpack_require__(214);
 	var PostsApiUtil = __webpack_require__(207);
@@ -35182,9 +35842,9 @@
 	  displayName: 'Friends',
 	
 	
-	  _findUserById: function (id) {
+	  _findUserById: function _findUserById(id) {
 	    id = parseInt(id);
-	    users = UserStore.all();
+	    var users = UserStore.all();
 	    for (var i = 0; i < users.length; i++) {
 	      if (users[i].id == id) {
 	        return users[i];
@@ -35192,29 +35852,29 @@
 	    }
 	  },
 	
-	  getInitialState: function () {
+	  getInitialState: function getInitialState() {
 	    var userId = this.props.userId || this.props.params.userId;
 	    var user = this._findUserById(userId);
 	    return { user: user };
 	  },
 	
-	  componentDidMount: function () {
+	  componentDidMount: function componentDidMount() {
 	    var userId = this.props.userId || this.props.params.userId;
 	    this.listener = UserStore.addListener(this._onChange);
 	    UserApiUtil.fetchAllUsers();
 	  },
 	
-	  componentWillReceiveProps: function (newProps) {
+	  componentWillReceiveProps: function componentWillReceiveProps(newProps) {
 	    UserApiUtil.fetchAllUsers();
 	  },
 	
-	  componentWillUnmount: function () {
+	  componentWillUnmount: function componentWillUnmount() {
 	    if (this.isMounted()) {
 	      this.listener.remove();
 	    }
 	  },
 	
-	  _onChange: function () {
+	  _onChange: function _onChange() {
 	    var userId = this.props.params.userId;
 	    var user;
 	    UserApiUtil.fetchUser(parseInt(this.props.params.userId), function (user) {
@@ -35233,7 +35893,7 @@
 	  //     }
 	  //   }
 	  // }
-	  render: function () {
+	  render: function render() {
 	    var received_posts;
 	    var cover_form;
 	    var profile_form;
@@ -35263,16 +35923,17 @@
 	        }
 	      });
 	
-	      if (findfriends) {
+	      if (findfriends.length != 0) {
 	        var that = this;
 	        friends = findfriends.map(function (friend_id) {
-	          friend = that._findUserById(friend_id);
+	          var friend = that._findUserById(friend_id);
+	          debugger;
 	          return React.createElement(
 	            'div',
 	            { key: friend_id, className: 'friend-list group' },
 	            React.createElement(
 	              Link,
-	              { to: `users/${ friend_id }` },
+	              { to: 'users/' + friend_id },
 	              React.createElement(
 	                'h2',
 	                null,

@@ -283,3 +283,121 @@
 .preview-image-button:hover{
    opacity: 0.75;
 }
+.signup {
+  position: relative;
+}
+
+.signup > label {
+
+  padding: 10px 0 0px 0px;
+  display: block;
+  margin-top: 10px;
+  position: relative;
+}
+.form-input {
+
+  position: relative;
+  width: 150px;
+  float: right;
+  top: 7px;
+
+
+}
+//
+.form-input > input{
+  width: 150px;
+  height: 20px;
+  background: white;
+  color: black;
+  border: 1px solid black;
+  margin-bottom: 20px;
+}
+
+.form-input > input:last-child{
+
+  margin-bottom: 0px;
+}
+
+// .signup >  a{
+//   width: 150px;
+//   height: 20px;
+//   background: white;
+//   color: black;
+//   border: 1px solid black;
+//   position: absolute;
+//   right: 0px;
+// }
+
+
+
+//
+.form {
+  position: absolute;
+  top: 0px;
+}
+//
+//
+.signup {
+  width: 400px;
+}
+//
+.signup >  input, select {
+  float: right;
+}
+
+//
+.signbutton {
+  float: left;
+  margin-top: 40px;
+  box-sizing: border-box;
+  border-top: 1px solid #95d67c;
+  width: 191px;
+  height: 36px;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  background: -webkit-gradient(linear, center bottom, center top, from(#578843), to(#74b960));
+  border: 1px solid lightgray;
+  border-radius: 5%;
+  opacity: 1;
+}
+//
+//
+.signbutton:hover{
+   opacity: 0.75;
+}
+//
+//
+.btn-facebook,
+.btn-facebook:visited {
+  float: left;
+  margin-top: 40px;
+  border-top: 1px solid #95d67c;
+  height: 36px;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  background: -webkit-gradient(linear, center bottom, center top, from(#578843), to(#74b960));
+  border: 1px solid lightgray;
+  border-radius: 5%;
+  opacity: 1;
+  padding: 7.5px;
+  width: 200px;
+}
+//
+.btn-facebook:hover{
+   opacity: 0.75;
+}
+//
+//
+.btndiv{
+  width: 600px;
+  margin-right: 0px ;
+  display: inline-block;
+}
+
+.login-button{
+  margin-right: 20px;
+}

@@ -22,7 +22,7 @@ var Friends = React.createClass({
 
   _findUserById: function(id) {
     id = parseInt(id);
-    users = UserStore.all();
+    var users = UserStore.all();
     for (var i = 0; i < users.length; i++) {
       if (users[i].id == id) {
         return users[i];
@@ -108,10 +108,11 @@ var Friends = React.createClass({
     );
 
 
-    if (findfriends) {
+    if (findfriends.length != 0) {
       var that = this;
     friends = findfriends.map(function(friend_id){
-      friend = that._findUserById(friend_id);
+      var friend = that._findUserById(friend_id);
+      debugger
       return (
         <div key={friend_id} className="friend-list group">
         <Link to={`users/${friend_id}`}>

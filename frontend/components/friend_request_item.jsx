@@ -14,7 +14,7 @@ var FriendRequestItem = React.createClass({
 
   _findUserById: function(id) {
     id = parseInt(id);
-    users = UserStore.all();
+    var users = UserStore.all();
     for (var i = 0; i < users.length; i++) {
       if (users[i].id == id) {
         return users[i];
@@ -23,7 +23,7 @@ var FriendRequestItem = React.createClass({
   },
 
   getInitialState: function(){
-    user = this._findUserById(this.props.params.userId);
+    var user = this._findUserById(this.props.params.userId);
     return {user: {} };
   },
 
@@ -36,19 +36,19 @@ var FriendRequestItem = React.createClass({
   },
 
   _onChange: function(){
-    user = this._findUserById(this.props.params.userId);
+    var user = this._findUserById(this.props.params.userId);
     this.setState({user: user})
   },
 
   componentWillReceiveProps(newProps){
-    user = this._findUserById(newProps.params.userId);
+    var user = this._findUserById(newProps.params.userId);
     this.setState({user: user})
   },
 
 
 
 handleFriend: function(){
-  user = this.state.user
+  var user = this.state.user
   name = user.fname + " " + user.lname;
   FriendApiUtil.createFriend({requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name});
   UserApiUtil.fetchUser(this.props.params.userId);
@@ -58,7 +58,7 @@ handleFriend: function(){
 
 handleDelete: function(){
 
-  user = this.state.user
+  var user = this.state.user
   name = user.fname + " " + user.lname;
   FriendApiUtil.deleteFriend({requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name});
   UserApiUtil.fetchUser(this.props.params.userId);

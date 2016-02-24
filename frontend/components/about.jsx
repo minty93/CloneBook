@@ -19,7 +19,7 @@ var About = React.createClass({
 
   _findUserById: function(id) {
     id = parseInt(id);
-    users = UserStore.all();
+    var users = UserStore.all();
     for (var i = 0; i < users.length; i++) {
       if (users[i].id == id) {
         return users[i];
@@ -66,11 +66,11 @@ var About = React.createClass({
     var profile_form;
 
     if (this.state.user) {
-      birthday = this.state.user.birthday;
-      gender = this.state.user.gender;
-      fname = this.state.user.fname;
-      lname = this.state.user.lname;
-      email = this.state.user.email;
+      var birthday = this.state.user.birthday;
+      var gender = this.state.user.gender;
+      var fname = this.state.user.fname;
+      var lname = this.state.user.lname;
+      var email = this.state.user.email;
 
 
     }

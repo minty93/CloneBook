@@ -27,7 +27,8 @@ var UserProfile = React.createClass({
 
   _findUserById: function(id) {
     id = parseInt(id);
-    users = UserStore.all();
+    
+    var users = UserStore.all();
     for (var i = 0; i < users.length; i++) {
       if (users[i].id == id) {
         return users[i];
@@ -88,7 +89,7 @@ var UserProfile = React.createClass({
     if (this.state.user) {
       if(this.state.user.received_posts){
       received_posts = this.state.user.received_posts.slice(0);
-      fname = this.state.user.fname;
+      var fname = this.state.user.fname;
       navbar =  <Navbar params={this.props.params} user={this.state.user}/>;
       received_posts = received_posts.reverse().map(function(post) {
         return (<PostIndexItem post={post} key={post.id}/>);
@@ -129,8 +130,8 @@ var UserProfile = React.createClass({
 
     }
 
-      cover_pic =   <img className="cover-image" src={this.state.user.cover_pic} />;
-      profile_pic =   <img className="profile-image" src={this.state.user.profile_pic} />;
+      var cover_pic =   <img className="cover-image" src={this.state.user.cover_pic} />;
+      var profile_pic =   <img className="profile-image" src={this.state.user.profile_pic} />;
     }
 
 

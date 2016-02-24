@@ -27,7 +27,7 @@ var UserProfile = React.createClass({
 
   _findUserById: function(id) {
     id = parseInt(id);
-    
+
     var users = UserStore.all();
     for (var i = 0; i < users.length; i++) {
       if (users[i].id == id) {
@@ -114,7 +114,7 @@ var UserProfile = React.createClass({
          post_form = <PostsForm params={this.props.params} placeholder="Post Something"/>
        }
 
-       else if (this.state.user.id == this.props.params.userId) {
+       else if (this.state.user.id == CurrentUserStore.user().id) {
          post_form = <PostsForm params={this.props.params} placeholder="What's on your mind?"/>
 
        }

@@ -58,7 +58,7 @@ PostStore._removePost = function (post) {
 
 PostStore._findPostById = function(id) {
   id = parseInt(id);
-  posts = PostStore.all();
+  var posts = PostStore.all();
   for (var i = 0; i < posts.length; i++) {
     if (posts[i].id == id) {
       return posts[i];

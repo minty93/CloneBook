@@ -25,8 +25,15 @@ const defaultValidators = {
 };
 
 const formatField = (field) => {
+  if (field == "fname") {
+    return "first name"
+  }
+  else if (field == "lname") {
+    return "last name"
+
+  }
   return field.replace(/_/g, " ").replace(/[A-Z]/g, letter => {
-    return ` ${letter.toLowerCase()}`;
+        return ` ${letter.toLowerCase()}`;
   });
 };
 

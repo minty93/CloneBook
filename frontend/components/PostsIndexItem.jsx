@@ -50,7 +50,9 @@ var PostsIndexItems = React.createClass({
    var postId = this.props.post.postId;
    var post = this._findPostById(postId);
    UserApiUtil.fetchUser(parseInt(this.props.post.author_id), function(user){
-     this.setState({post_image: user.profile_pic})
+     if (this.isMounted()) {
+       this.setState({post_image: user.profile_pic})
+     }
    }.bind(this));
  },
 

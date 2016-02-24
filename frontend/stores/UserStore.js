@@ -44,7 +44,7 @@ UserStore._updateUser = function (user) {
 
 UserStore._findUserById = function(id) {
   id = parseInt(id);
-  users = UserStore.all();
+  var users = UserStore.all();
   for (var i = 0; i < users.length; i++) {
     if (users[i].id == id) {
       return users[i];
@@ -90,7 +90,7 @@ UserStore.addNewFriend = function(friend){
 
 UserStore._findPostById = function(id) {
   id = parseInt(id);
-  posts = PostStore.all();
+  var posts = PostStore.all();
   for (var i = 0; i < posts.length; i++) {
     if (posts[i].id == id) {
       return posts[i];

@@ -112,7 +112,6 @@ var Friends = React.createClass({
       var that = this;
     friends = findfriends.map(function(friend_id){
       var friend = that._findUserById(friend_id);
-      debugger
       return (
         <div key={friend_id} className="friend-list group">
         <Link to={`users/${friend_id}`}>

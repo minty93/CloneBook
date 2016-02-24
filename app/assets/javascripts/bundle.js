@@ -35927,7 +35927,6 @@
 	        var that = this;
 	        friends = findfriends.map(function (friend_id) {
 	          var friend = that._findUserById(friend_id);
-	          debugger;
 	          return React.createElement(
 	            'div',
 	            { key: friend_id, className: 'friend-list group' },

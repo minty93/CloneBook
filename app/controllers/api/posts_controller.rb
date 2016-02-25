@@ -24,6 +24,7 @@ class Api::PostsController < ApplicationController
        if rec_friends.include?(id)
          friends.push(id)
        end
+       friends.push(current_user.id)
      end
 
      @posts = posts.where("posts.author_id IN (?) OR posts.profile_id IN (?)", friends, friends).to_a

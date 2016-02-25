@@ -19,8 +19,8 @@ export default class SignUpForm extends Component {
         </FormField>
 
         <label htmlFor="user-fname">First Name</label>
-        <label htmlFor="user-email">Email</label>
         <label htmlFor="user-lname">Last Name</label>
+        <label htmlFor="user-email">Email</label>
 
 
         <label htmlFor="user-password">Password</label>

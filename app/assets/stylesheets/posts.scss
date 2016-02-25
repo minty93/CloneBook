@@ -128,15 +128,36 @@
 
 .username{
   margin-left: 10px;
+  color: #3B68B8;
+
+}
+
+.post-index-items > span{
+
+  color: #3B68B8;
+
+}
+.post-index-items > a{
+
+  color: #3B68B8;
+
+}
+
+.post-index-items > a:hover{
+  text-decoration: underline;
 }
 
 .username > a{
   position: relative;
-  color: darkblue;
+  color: #3B68B8;
   font-size: 17px;
   float: left;
   display: block;
   padding-top: 17px;
+}
+
+.username > a:hover{
+  text-decoration: underline;
 }
 
 .timeago > span {

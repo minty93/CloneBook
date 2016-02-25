@@ -72,10 +72,48 @@ UserStore._removePost = function (post) {
 };
 
 UserStore.addNewFriend = function(friend){
-  a = UserStore._findUserById(parseInt(friend.requester_id));
+  var a = UserStore._findUserById(parseInt(friend.requester_id));
   a.requested_friends.push({requestee_id:friend.requestee_id});
-  b = UserStore._findUserById(parseInt(friend.requestee_id));
+  var b = UserStore._findUserById(parseInt(friend.requestee_id));
   b.received_friends.push({requester_id:friend.requester_id});
+};
+
+
+UserStore.resetFriends = function(friend){
+  var a = UserStore._findUserById(parseInt(friend.requestee_id));
+  var b = UserStore._findUserById(parseInt(friend.requester_id));
+  var req_friends =[];
+  var rec_friends = [];
+  a.requested_friends.forEach(function(obj){
+    req_friends.push(obj.requestee_id)}
+  )
+
+  var ind = req_friends.indexOf(friend.requester_id)
+  a.requested_friends.splice(ind, 1);
+
+  a.received_friends.forEach(function(obj){
+    rec_friends.push(obj.requester_id)}
+  )
+
+  ind = rec_friends.indexOf(friend.requester_id)
+  a.received_friends.splice(ind, 1);
+
+
+  req_friends =[];
+  rec_friends = [];
+
+  b.requested_friends.forEach(function(obj){
+    req_friends.push(obj.requestee_id)}
+  )
+  var ind = req_friends.indexOf(friend.requestee_id)
+  b.requested_friends.splice(ind, 1);
+
+  b.received_friends.forEach(function(obj){
+    rec_friends.push(obj.requester_id)}
+  )
+
+  ind = rec_friends.indexOf(friend.requestee_id)
+  b.received_friends.splice(ind, 1);
 };
 
 
@@ -192,8 +230,8 @@ UserStore.__onDispatch = function (payload) {
     // FriendStore.__emitChange();
     break;
   case UserConstants.FRIEND_REMOVED:
-    // var result = resetFriends(payload.friends);
-    // FriendStore.__emitChange();
+    UserStore.resetFriends(payload.friend);
+    UserStore.__emitChange();
 }
 
   // case ImageConstants.DELETE_IMAGE:

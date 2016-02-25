@@ -60,7 +60,7 @@ handleDelete: function(){
 
   var user = this.state.user
   name = user.fname + " " + user.lname;
-  FriendApiUtil.deleteFriend({requestee_id: this.props.params.userId, profile_pic: user.profile_pic, name: name});
+  FriendApiUtil.deleteFriend({requestee_id: this.props.params.userId});
   UserApiUtil.fetchUser(this.props.params.userId);
 
 },
@@ -88,7 +88,7 @@ handleDelete: function(){
     );
 
     if (rec_friends.indexOf(profileid) !== -1 && req_friends.indexOf(profileid) !== -1) {
-      button = <button className="friend-button" onClick={this.handleDelete}>Friends</button>;
+      button = <button className="friend-button" onClick={this.handleDelete}>Unfriend</button>;
     }
     else if (rec_friends.indexOf(profileid) !== -1 && req_friends.indexOf(profileid) == -1){
         button = <button className="friend-button" onClick={this.handleFriend}>Accept Friendship</button>;

@@ -4,7 +4,31 @@ class Api::PostsController < ApplicationController
 
 
   def index
-    @posts = Post.all.includes(:comments, :author)
+    posts = Post.all.includes(:comments, :author)
+    req_friends = []
+    rec_friends =[]
+    friends = []
+    b = current_user.received_friends.to_a
+    a = current_user.requested_friends.to_a
+
+
+     a.each do |friend|
+       req_friends.push(friend.requestee_id)
+     end
+
+     b.each do |friend|
+       rec_friends.push(friend.requester_id)
+     end
+
+     req_friends.each do |id|
+       if rec_friends.include?(id)
+         friends.push(id)
+       end
+     end
+
+     @posts = posts.where("posts.author_id IN (?) OR posts.profile_id IN (?)", friends, friends).to_a
+
+
   end
 
 

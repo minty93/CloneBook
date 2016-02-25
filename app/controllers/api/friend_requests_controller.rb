@@ -60,6 +60,12 @@ class Api::FriendRequestsController < ApplicationController
   #
 
   def destroy
+    requestee_id = params["requestee_id"].to_i
+    current_user_id = current_user.id
+    @friend_request = FriendRequest.where(["requestee_id = ? and requester_id = ?", requestee_id, current_user_id])
+    @friend_request = @friend_request[0]
+    friend_request2 = FriendRequest.where(["requester_id = ? and requestee_id = ?", requestee_id, current_user_id])
+    friend_request2[0].destroy
     @friend_request.destroy
     render :show
   end

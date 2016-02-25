@@ -8,7 +8,6 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: {format: :json} do
     resources :friend_requests, except: [:destroy]
-    resource :friend_requests, only: [:destroy] 
     resources :posts do
       resources :comments, except: [:destroy] do
       end
@@ -22,6 +21,7 @@ Rails.application.routes.draw do
     end
     resources :likes, only: [:destroy]
     get "search", to: "utils#search"
+    delete "friend_requests", to: "friend_requests#destroy" 
   end
 
 

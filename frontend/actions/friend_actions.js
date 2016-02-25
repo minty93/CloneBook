@@ -11,10 +11,10 @@ receiveNewFriend: function(friend){
     });
   },
 
-  removedFriend: function(friends){
+  removedFriend: function(friend){
     AppDispatcher.dispatch({
       actionType: UserConstants.FRIEND_REMOVED,
-      friends: friends
+      friend: friend
     });
   },
   receiveAllFriends: function(friends){

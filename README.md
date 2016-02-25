@@ -1,6 +1,6 @@
 #Clonebook
 
-[Link](http://clonebook.tech)
+[Link](http://www.clonebook.tech)
 
 ##Description
 A social networking website for inspired by Facebook to connect to the Galaxies and Beyond!
